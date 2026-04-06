@@ -1,0 +1,876 @@
+@model EmployeeManagement.ViewModels.HolidayViewModel
+
+@{
+    ViewData["Title"] = "Holidays";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-header-title">Holidays Calendar</h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Dashboard</a></li>
+            <li class="breadcrumb-item active">Holidays</li>
+        </ol>
+    </div>
+    <a asp-action="Create" class="add-btn">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        Add Holiday
+    </a>
+</div>
+
+<!-- Search Form -->
+<div class="search-card">
+    <div class="search-card-header">
+        <span class="section-badge blue">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" stroke-width="1.2"/>
+                <path d="M9 9L12 12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+            Search Holidays
+        </span>
+    </div>
+    <form asp-action="Index" method="get" class="search-form">
+        <div class="search-form-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <label asp-for="SearchTerm" class="field-label">Search</label>
+                    <div style="display: flex; gap: 12px; align-items: flex-start;">
+                        <div style="flex: 1;">
+                            <div class="search-input-wrapper">
+                                <svg class="search-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <circle cx="7.5" cy="7.5" r="5.5" stroke="currentColor" stroke-width="1.2"/>
+                                    <path d="M12 12L15 15" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                                </svg>
+                                <input asp-for="SearchTerm" class="field-control" placeholder="Search by holiday title or description..." />
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 8px; padding-top: 0;">
+                            <button type="submit" class="btn-primary" style="background-color: black; white-space: nowrap;">
+                                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin-right:6px">
+                                    <circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" stroke-width="1.2"/>
+                                    <path d="M9 9L12 12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                                </svg>
+                                Search
+                            </button>
+                            <a asp-action="Index" class="btn-ghost" style="white-space: nowrap;">
+                                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin-right:6px">
+                                    <path d="M1 7h12M7 1v12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                                </svg>
+                                Reset
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<div class="table-card">
+    <!-- Toolbar -->
+    <div class="table-toolbar">
+        <span class="table-title">All Holidays</span>
+
+        <div class="filter-chips">
+            <div class="chip filter-chip active" data-filter="all">All <span style="opacity:.5;margin-left:2px">@Model.Holidays.Count()</span></div>
+            <div class="chip filter-chip" data-filter="upcoming">Upcoming</div>
+            <div class="chip filter-chip" data-filter="past">Past</div>
+        </div>
+
+        <div class="table-search">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                <circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" stroke-width="1.2"/>
+                <path d="M9 9L12 12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+            <input id="tableSearch" type="text" placeholder="Search holiday title, description..." />
+        </div>
+
+        <!-- Items per page selector -->
+        <div class="items-per-page">
+            <select id="itemsPerPage" class="per-page-select">
+                <option value="10">10 per page</option>
+                <option value="25">25 per page</option>
+                <option value="50">50 per page</option>
+                <option value="100">100 per page</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Desktop table -->
+    <div class="table-wrap">
+        <table class="emp-table" id="holidaysTable">
+            <thead>
+                <tr>
+                    <th data-sort="0">HOLIDAY</th>
+                    <th data-sort="1">START DATE</th>
+                    <th data-sort="2">END DATE</th>
+                    <th data-sort="3">DURATION</th>
+                    <th data-sort="4">DESCRIPTION</th>
+                    <th>ACTIONS</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                @{
+                    var avatarColors = new[] {
+                        ("#e8eefa","#1a4fa0"), ("#e8f5ee","#1a7a4a"), ("#fef3e0","#a05c00"),
+                        ("#fdecea","#c0392b"), ("#f2f2ef","#3a3a38"), ("#f0eeff","#4a35c0")
+                    };
+                    int colorIdx = 0;
+                }
+                @foreach (var item in Model.Holidays)
+                {
+                    var (bg, tc) = avatarColors[colorIdx++ % avatarColors.Length];
+                    var initials = !string.IsNullOrEmpty(item.Title) && item.Title.Length > 0 
+                        ? item.Title.Substring(0, 1).ToUpper() 
+                        : "H";
+                    var duration = (item.EndDate - item.StartDate).Days + 1;
+                    var isUpcoming = item.StartDate > DateTime.Today;
+                    var isPast = item.EndDate < DateTime.Today;
+
+                    <tr data-id="@item.Id" data-start-date="@item.StartDate.ToString("yyyy-MM-dd")" data-end-date="@item.EndDate.ToString("yyyy-MM-dd")">
+                        <td>
+                                <div>
+                                    <div class="emp-name">@item.Title</div>
+                                </div>
+                        </td>
+                        <td style="color:var(--ink2)">
+                            <span class="date-badge">@item.StartDate.ToString("dd MMM yyyy")</span>
+                        </td>
+                        <td style="color:var(--ink2)">
+                            <span class="date-badge">@item.EndDate.ToString("dd MMM yyyy")</span>
+                        </td>
+                        <td style="color:var(--ink2);font-weight:500">
+                            <span class="duration-badge" style="background:@bg;color:@tc">@duration day@(duration > 1 ? "s" : "")</span>
+                        </td>
+                        <td style="color:var(--ink2);max-width:200px">
+                            @if (!string.IsNullOrEmpty(item.Description))
+                            {
+                                <span title="@item.Description" style="display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">@item.Description</span>
+                            }
+                            else
+                            {
+                                <span style="color:var(--ink4)">—</span>
+                            }
+                        </td>
+                        <td>
+                            <div class="action-group">
+                                <a class="action-btn" asp-action="Details" asp-route-id="@item.Id" title="View Details">
+                                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                                        <circle cx="7" cy="7" r="2.5" fill="currentColor"/>
+                                        <path d="M1 7C2.5 3.5 4.5 2 7 2s4.5 1.5 6 5c-1.5 3.5-3.5 5-6 5S2.5 10.5 1 7z" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                                    </svg>
+                                </a>
+                                <a class="action-btn" asp-action="Edit" asp-route-id="@item.Id" title="Edit">
+                                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                                        <path d="M9.5 2.5l2 2-7 7H2.5v-2l7-7z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" fill="none"/>
+                                    </svg>
+                                </a>
+                                <a class="action-btn del" asp-action="Delete" asp-route-id="@item.Id" title="Delete">
+                                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                                        <path d="M2 4h10M5 4V2.5h4V4M11 4l-.75 8H3.75L3 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                                    </svg>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <!-- Mobile cards container -->
+        <div id="mobileHolidayCards" class="mobile-emp-cards"></div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="table-pagination">
+        <span class="pagination-info" id="paginationInfo"></span>
+        <div class="pagination-controls" id="tablePagination">
+            <button class="pagination-btn" id="prevPage" disabled>Previous</button>
+            <div class="page-numbers" id="pageNumbers"></div>
+            <button class="pagination-btn" id="nextPage">Next</button>
+        </div>
+    </div>
+</div>
+
+<style>
+        .search-card {
+        background: var(--card-bg);
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        margin-bottom: 20px;
+        overflow: hidden;
+    }
+
+    .search-card-header {
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+        background: var(--bg2);
+    }
+
+    .section-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .section-badge.blue {
+        background: #e8eefa;
+        color: #1a4fa0;
+    }
+
+    .search-form {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .search-form-body {
+        padding: 20px;
+    }
+
+    .search-form-footer {
+        padding: 16px 20px;
+        background: var(--bg2);
+        border-top: 1px solid var(--border);
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+    }
+
+    /* Search input wrapper */
+    .search-input-wrapper {
+        position: relative;
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--ink3);
+        pointer-events: none;
+    }
+
+    /* Form field styles */
+    .field-label {
+        display: block;
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--ink2);
+        margin-bottom: 6px;
+    }
+
+    .field-control {
+        width: 100%;
+        padding: 12px 12px 12px 40px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        font-size: 14px;
+        color: var(--ink1);
+        background: var(--card-bg);
+        transition: all 0.15s;
+    }
+
+    .field-control:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(26, 79, 160, 0.1);
+    }
+
+    .field-hint {
+        display: block;
+        font-size: 11px;
+        color: var(--ink3);
+        margin-top: 6px;
+    }
+    /* Holiday-specific styles */
+    .date-badge {
+        background: var(--bg2);
+        padding: 4px 8px;
+        border-radius: 20px;
+        font-size: 11px;
+        color: var(--ink3);
+        white-space: nowrap;
+        display: inline-block;
+    }
+
+    .duration-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    .emp-cell {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .emp-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 13px;
+        flex-shrink: 0;
+    }
+
+    .emp-name {
+        font-weight: 500;
+        font-size: 13px;
+        color: var(--ink1);
+    }
+
+    /* Pagination styles */
+    .table-pagination {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 20px;
+        border-top: 1px solid var(--border);
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .pagination-info {
+        font-size: 12px;
+        color: var(--ink3);
+    }
+
+    .pagination-controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .pagination-btn {
+        padding: 6px 12px;
+        border: 1px solid var(--border);
+        background: var(--card-bg);
+        border-radius: 6px;
+        font-size: 12px;
+        color: var(--ink2);
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .pagination-btn:hover:not(:disabled) {
+        background: var(--bg2);
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    .pagination-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .page-numbers {
+        display: flex;
+        gap: 4px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .page-number {
+        min-width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--border);
+        background: var(--card-bg);
+        border-radius: 6px;
+        font-size: 12px;
+        color: var(--ink2);
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .page-number:hover {
+        background: var(--bg2);
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    .page-number.active {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: white;
+    }
+
+    /* Items per page selector */
+    .items-per-page {
+        margin-left: auto;
+    }
+
+    .per-page-select {
+        padding: 6px 10px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        font-size: 12px;
+        color: var(--ink2);
+        background: var(--card-bg);
+        cursor: pointer;
+    }
+
+    .per-page-select:hover {
+        border-color: var(--primary);
+    }
+
+    /* Action buttons */
+    .action-group {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .action-btn {
+        width: 32px;
+        height: 32px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        color: var(--ink2);
+        background: var(--bg2);
+        transition: all 0.15s;
+        text-decoration: none;
+    }
+
+    .action-btn:hover {
+        background: var(--primary);
+        color: rgb(0, 0, 0);
+        text-decoration: none;
+    }
+
+    .action-btn.del:hover {
+        background: #c0392b;
+        color: white;
+    }
+
+    /* Mobile card styles */
+    .mobile-emp-cards {
+        display: none;
+        padding: 16px;
+    }
+
+    .mobile-emp-card {
+        background: var(--card-bg);
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        border: 1px solid var(--border);
+        transition: all 0.2s;
+    }
+
+    .mobile-emp-card:hover {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        transform: translateY(-2px);
+    }
+
+    /* Responsive adjustments */
+    @@media (max-width: 768px) {
+        /* Hide desktop table on mobile */
+        .table-wrap .emp-table {
+            display: none;
+        }
+        
+        /* Show mobile cards */
+        .mobile-emp-cards {
+            display: block;
+        }
+        
+        /* Adjust toolbar for mobile */
+        .table-toolbar {
+            flex-direction: column;
+            align-items: stretch !important;
+            gap: 12px;
+        }
+        
+        .table-title {
+            text-align: center;
+        }
+        
+        .filter-chips {
+            justify-content: center;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .table-search {
+            width: 100%;
+        }
+        
+        .table-search input {
+            width: 100%;
+        }
+        
+        .items-per-page {
+            margin-left: 0;
+            width: 100%;
+        }
+        
+        .per-page-select {
+            width: 100%;
+        }
+        
+        .table-pagination {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .pagination-controls {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .page-numbers {
+            justify-content: center;
+        }
+        
+        .pagination-info {
+            text-align: center;
+        }
+        
+        /* Adjust action buttons in mobile cards */
+        .mobile-emp-card .action-group {
+            justify-content: flex-end;
+            border-top: 1px solid var(--border);
+            padding-top: 12px;
+            margin-top: 8px;
+        }
+    }
+
+    /* Tablet adjustments */
+    @@media (min-width: 769px) and (max-width: 1024px) {
+        .emp-table th:nth-child(4),
+        .emp-table td:nth-child(4) {
+            display: none;
+        }
+        
+        .table-toolbar {
+            flex-wrap: wrap;
+        }
+        
+        .items-per-page {
+            margin-left: 0;
+        }
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Get DOM elements
+    const searchInput = document.getElementById('tableSearch');
+    const tableBody = document.getElementById('tableBody');
+    const rows = Array.from(tableBody.querySelectorAll('tr'));
+    const mobileContainer = document.getElementById('mobileHolidayCards');
+    const filterChips = document.querySelectorAll('.filter-chip');
+    const itemsPerPageSelect = document.getElementById('itemsPerPage');
+    const prevBtn = document.getElementById('prevPage');
+    const nextBtn = document.getElementById('nextPage');
+    const pageNumbersDiv = document.getElementById('pageNumbers');
+    const paginationInfo = document.getElementById('paginationInfo');
+
+    // Pagination state
+    let currentPage = 1;
+    let itemsPerPage = 10;
+    let filteredRows = rows;
+    let totalPages = 1;
+    let currentFilter = 'all';
+
+    // Initialize
+    function init() {
+        itemsPerPage = parseInt(itemsPerPageSelect.value);
+        filterRows();
+        updatePagination();
+        renderCurrentPage();
+        toggleMobileView();
+    }
+
+    // Filter rows based on search and date filter
+    function filterRows() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        filteredRows = rows.filter(row => {
+            const title = row.querySelector('.emp-name')?.textContent.toLowerCase() || '';
+            const description = row.querySelector('td:nth-child(5) span')?.textContent.toLowerCase() || '';
+
+            const matchesSearch = !searchTerm || 
+                title.includes(searchTerm) || 
+                description.includes(searchTerm);
+            
+            // Date filter logic
+            let matchesFilter = true;
+            if (currentFilter !== 'all') {
+                const startDateStr = row.dataset.startDate;
+                const endDateStr = row.dataset.endDate;
+                if (startDateStr && endDateStr) {
+                    const startDate = new Date(startDateStr);
+                    const endDate = new Date(endDateStr);
+                    endDate.setHours(23, 59, 59);
+                    
+                    if (currentFilter === 'upcoming') {
+                        matchesFilter = endDate >= today;
+                    } else if (currentFilter === 'past') {
+                        matchesFilter = endDate < today;
+                    }
+                }
+            }
+            
+            return matchesSearch && matchesFilter;
+        });
+        
+        totalPages = Math.ceil(filteredRows.length / itemsPerPage);
+        if (currentPage > totalPages) currentPage = totalPages || 1;
+    }
+
+    // Render current page
+    function renderCurrentPage() {
+        const start = (currentPage - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        const pageRows = filteredRows.slice(start, end);
+        
+        // Hide all rows first
+        rows.forEach(row => row.style.display = 'none');
+        
+        // Show only current page rows
+        pageRows.forEach(row => row.style.display = '');
+        
+        // Update mobile cards
+        generateMobileCards(pageRows);
+        
+        // Update pagination info
+        updatePaginationInfo();
+    }
+
+    // Update pagination controls
+    function updatePagination() {
+        prevBtn.disabled = currentPage === 1;
+        nextBtn.disabled = currentPage === totalPages || totalPages === 0;
+        generatePageNumbers();
+    }
+
+    // Generate page number buttons
+    function generatePageNumbers() {
+        pageNumbersDiv.innerHTML = '';
+        
+        if (totalPages <= 7) {
+            for (let i = 1; i <= totalPages; i++) {
+                addPageButton(i);
+            }
+        } else {
+            addPageButton(1);
+            
+            if (currentPage > 3) {
+                addEllipsis();
+            }
+            
+            let start = Math.max(2, currentPage - 1);
+            let end = Math.min(totalPages - 1, currentPage + 1);
+            
+            for (let i = start; i <= end; i++) {
+                addPageButton(i);
+            }
+            
+            if (currentPage < totalPages - 2) {
+                addEllipsis();
+            }
+            
+            addPageButton(totalPages);
+        }
+    }
+
+    function addPageButton(pageNum) {
+        const btn = document.createElement('button');
+        btn.className = `page-number ${pageNum === currentPage ? 'active' : ''}`;
+        btn.textContent = pageNum;
+        btn.addEventListener('click', () => {
+            currentPage = pageNum;
+            renderCurrentPage();
+            updatePagination();
+        });
+        pageNumbersDiv.appendChild(btn);
+    }
+
+    function addEllipsis() {
+        const span = document.createElement('span');
+        span.className = 'page-number';
+        span.textContent = '...';
+        span.style.cursor = 'default';
+        pageNumbersDiv.appendChild(span);
+    }
+
+    // Update pagination info text
+    function updatePaginationInfo() {
+        const start = filteredRows.length ? (currentPage - 1) * itemsPerPage + 1 : 0;
+        const end = Math.min(currentPage * itemsPerPage, filteredRows.length);
+        paginationInfo.textContent = `Showing ${start}-${end} of ${filteredRows.length} holidays`;
+        
+        // Update total count in filter chips
+        const allChip = document.querySelector('.filter-chip[data-filter="all"]');
+        if (allChip) {
+            const countSpan = allChip.querySelector('span');
+            if (countSpan) {
+                countSpan.textContent = rows.length;
+            }
+        }
+    }
+
+    // Generate mobile cards
+    function generateMobileCards(pageRows) {
+        if (!mobileContainer) return;
+        
+        mobileContainer.innerHTML = '';
+        
+        pageRows.forEach(row => {
+            const title = row.querySelector('.emp-name').textContent;
+            
+            // Get badge colors from duration badge or create default
+            const durationBadge = row.querySelector('.duration-badge');
+            let bg = '#e8eefa';
+            let tc = '#1a4fa0';
+            let avatarText = title.charAt(0).toUpperCase();
+            
+            if (durationBadge) {
+                bg = durationBadge.style.backgroundColor;
+                tc = durationBadge.style.color;
+            }
+            
+            const startDate = row.querySelector('td:nth-child(2) .date-badge')?.textContent || '—';
+            const endDate = row.querySelector('td:nth-child(3) .date-badge')?.textContent || '—';
+            const duration = row.querySelector('td:nth-child(4) .duration-badge')?.textContent || '—';
+            const description = row.querySelector('td:nth-child(5) span')?.textContent || 'No description';
+            
+            // Get links
+            const detailsLink = row.querySelector('.action-group a[title="View Details"]')?.href || '#';
+            const editLink = row.querySelector('.action-group a[title="Edit"]')?.href || '#';
+            const deleteLink = row.querySelector('.action-group a[title="Delete"]')?.href || '#';
+            
+            const card = document.createElement('div');
+            card.className = 'mobile-emp-card';
+            card.innerHTML = `
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+                    <div class="emp-avatar" style="background:${bg};color:${tc};width:40px;height:40px;font-size:16px">${avatarText}</div>
+                    <div style="flex:1">
+                        <div class="emp-name" style="font-weight:600;margin-bottom:4px">${title}</div>
+                        <span class="duration-badge" style="background:${bg};color:${tc};font-size:11px">${duration}</span>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+                    <div>
+                        <div style="font-size:10px;color:var(--ink3);margin-bottom:2px">START DATE</div>
+                        <div class="date-badge" style="background:var(--bg2);display:inline-block">${startDate}</div>
+                    </div>
+                    <div>
+                        <div style="font-size:10px;color:var(--ink3);margin-bottom:2px">END DATE</div>
+                        <div class="date-badge" style="background:var(--bg2);display:inline-block">${endDate}</div>
+                    </div>
+                </div>
+                <div style="margin-bottom:12px">
+                    <div style="font-size:10px;color:var(--ink3);margin-bottom:4px">DESCRIPTION</div>
+                    <div style="font-size:12px;color:var(--ink2);background:var(--bg2);padding:8px;border-radius:8px">${description}</div>
+                </div>
+                <div class="action-group" style="justify-content:flex-end">
+                    <a class="action-btn" href="${detailsLink}" title="View Details">
+                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <circle cx="7" cy="7" r="2.5" fill="currentColor"/>
+                            <path d="M1 7C2.5 3.5 4.5 2 7 2s4.5 1.5 6 5c-1.5 3.5-3.5 5-6 5S2.5 10.5 1 7z" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                        </svg>
+                    </a>
+                    <a class="action-btn" href="${editLink}" title="Edit">
+                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path d="M9.5 2.5l2 2-7 7H2.5v-2l7-7z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" fill="none"/>
+                        </svg>
+                    </a>
+                    <a class="action-btn del" href="${deleteLink}" title="Delete">
+                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path d="M2 4h10M5 4V2.5h4V4M11 4l-.75 8H3.75L3 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                        </svg>
+                    </a>
+                </div>
+            `;
+            mobileContainer.appendChild(card);
+        });
+    }
+
+    // Toggle mobile/desktop view
+    function toggleMobileView() {
+        if (!mobileContainer) return;
+        
+        if (window.innerWidth <= 768) {
+            mobileContainer.style.display = 'block';
+        } else {
+            mobileContainer.style.display = 'none';
+        }
+    }
+
+    // Filter chips
+    filterChips.forEach(chip => {
+        chip.addEventListener('click', function () {
+            filterChips.forEach(c => c.classList.remove('active'));
+            this.classList.add('active');
+            currentFilter = this.dataset.filter;
+            currentPage = 1;
+            filterRows();
+            updatePagination();
+            renderCurrentPage();
+        });
+    });
+
+    // Event Listeners
+    searchInput.addEventListener('input', function() {
+        currentPage = 1;
+        filterRows();
+        updatePagination();
+        renderCurrentPage();
+    });
+
+    itemsPerPageSelect.addEventListener('change', function() {
+        itemsPerPage = parseInt(this.value);
+        currentPage = 1;
+        filterRows();
+        updatePagination();
+        renderCurrentPage();
+    });
+
+    prevBtn.addEventListener('click', function() {
+        if (currentPage > 1) {
+            currentPage--;
+            renderCurrentPage();
+            updatePagination();
+        }
+    });
+
+    nextBtn.addEventListener('click', function() {
+        if (currentPage < totalPages) {
+            currentPage++;
+            renderCurrentPage();
+            updatePagination();
+        }
+    });
+
+    window.addEventListener('resize', toggleMobileView);
+
+    // Initialize
+    init();
+});
+</script>

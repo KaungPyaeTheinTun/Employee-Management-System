@@ -1,0 +1,557 @@
+﻿@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Create Account";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-header-title">@ViewData["Title"]</h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Dashboard</a></li>
+            <li class="breadcrumb-item"><a asp-page="./Login">Log in</a></li>
+            <li class="breadcrumb-item active">Register</li>
+        </ol>
+    </div>
+    <a asp-page="./Login" class="btn-ghost">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin-right:6px">
+            <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        Back to Login
+    </a>
+</div>
+
+<div class="row" style="justify-content: center;">
+    <div class="col-md-6">
+        <!-- Registration Card -->
+        <div class="form-card" style="margin-bottom:16px;max-width:500px;margin:0 auto;">
+            <div class="form-card-header">
+                <span class="section-badge green">
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                        <circle cx="6" cy="6" r="4" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                        <path d="M6 3v3l2 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                        <path d="M4 8l2 1 2-1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                    </svg>
+                    New Account Registration
+                </span>
+                <span class="field-hint" style="font-size:11px">Fill in your details</span>
+            </div>
+
+            <div class="form-card-body">
+                <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                    <div asp-validation-summary="ModelOnly" class="field-error" style="padding:12px 16px;background:var(--red-bg);border-radius:9px;border:1px solid rgba(192,57,43,0.2);margin-bottom:20px;" role="alert"></div>
+
+                    <!-- Email Field -->
+                    <div style="margin-bottom:20px">
+                        <label asp-for="Input.Email" class="field-label">Email Address</label>
+                        <div style="position:relative">
+                            <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--ink3);z-index:1;">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <rect x="2" y="3" width="12" height="10" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                                    <path d="M3 5l5 4 5-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                            </span>
+                            <input asp-for="Input.Email" class="field-control" style="padding-left:36px;" autocomplete="username" aria-required="true" placeholder="name@company.com" />
+                        </div>
+                        <span asp-validation-for="Input.Email" class="field-error"></span>
+                        <small class="field-hint" style="display:block;margin-top:4px">Use your work email for company access</small>
+                    </div>
+
+                    <!-- Password Field with Show/Hide Toggle -->
+                    <div style="margin-bottom:20px">
+                        <label asp-for="Input.Password" class="field-label">Password</label>
+                        <div style="position:relative">
+                            <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--ink3);z-index:1;">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <rect x="2" y="6" width="12" height="8" rx="1.5" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                                    <path d="M5 6V4C5 2.5 6 1 8 1s3 1.5 3 3v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                            </span>
+                            <input asp-for="Input.Password" type="password" id="passwordField" class="field-control" style="padding-left:36px;padding-right:40px;" autocomplete="new-password" aria-required="true" placeholder="••••••••" />
+                            <button type="button" id="togglePassword" class="btn-icon" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;padding:6px;cursor:pointer;color:var(--ink3);display:flex;align-items:center;justify-content:center;border-radius:6px;" onclick="togglePasswordVisibility('passwordField', 'eyeIcon', 'eyeOffIcon')">
+                                <!-- Eye Icon (Visible) -->
+                                <svg id="eyeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:block;">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                                <!-- Eye Off Icon (Hidden) -->
+                                <svg id="eyeOffIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;">
+                                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                    <line x1="1" y1="1" x2="23" y2="23"></line>
+                                </svg>
+                            </button>
+                        </div>
+                        <span asp-validation-for="Input.Password" class="field-error"></span>
+                        
+                        <!-- Password Strength Indicator -->
+                        <div style="margin-top:8px;">
+                            <div style="display:flex;gap:4px;margin-bottom:4px;">
+                                <div class="password-strength-bar" style="flex:1;height:4px;background:#e2e8f0;border-radius:2px;overflow:hidden;">
+                                    <div class="strength-indicator" style="width:0%;height:100%;background:var(--red);transition:width 0.3s;"></div>
+                                </div>
+                                <div class="password-strength-bar" style="flex:1;height:4px;background:#e2e8f0;border-radius:2px;overflow:hidden;">
+                                    <div class="strength-indicator" style="width:0%;height:100%;background:var(--red);transition:width 0.3s;"></div>
+                                </div>
+                                <div class="password-strength-bar" style="flex:1;height:4px;background:#e2e8f0;border-radius:2px;overflow:hidden;">
+                                    <div class="strength-indicator" style="width:0%;height:100%;background:var(--red);transition:width 0.3s;"></div>
+                                </div>
+                                <div class="password-strength-bar" style="flex:1;height:4px;background:#e2e8f0;border-radius:2px;overflow:hidden;">
+                                    <div class="strength-indicator" style="width:0%;height:100%;background:var(--red);transition:width 0.3s;"></div>
+                                </div>
+                            </div>
+                            <small class="field-hint" id="passwordStrengthText">Enter a password</small>
+                        </div>
+                        
+                        <!-- Password Requirements -->
+                        <div style="margin-top:8px;display:grid;grid-template-columns:repeat(2,1fr);gap:4px;">
+                            <div class="requirement-item" data-requirement="length">
+                                <svg width="10" height="10" viewBox="0 0 10 10" style="margin-right:4px;">
+                                    <circle cx="5" cy="5" r="4" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                                </svg>
+                                <span>8+ characters</span>
+                            </div>
+                            <div class="requirement-item" data-requirement="uppercase">
+                                <svg width="10" height="10" viewBox="0 0 10 10" style="margin-right:4px;">
+                                    <circle cx="5" cy="5" r="4" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                                </svg>
+                                <span>Uppercase</span>
+                            </div>
+                            <div class="requirement-item" data-requirement="lowercase">
+                                <svg width="10" height="10" viewBox="0 0 10 10" style="margin-right:4px;">
+                                    <circle cx="5" cy="5" r="4" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                                </svg>
+                                <span>Lowercase</span>
+                            </div>
+                            <div class="requirement-item" data-requirement="number">
+                                <svg width="10" height="10" viewBox="0 0 10 10" style="margin-right:4px;">
+                                    <circle cx="5" cy="5" r="4" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                                </svg>
+                                <span>Number</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Confirm Password Field with Show/Hide Toggle -->
+                    <div style="margin-bottom:24px">
+                        <label asp-for="Input.ConfirmPassword" class="field-label">Confirm Password</label>
+                        <div style="position:relative">
+                            <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--ink3);z-index:1;">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <rect x="2" y="6" width="12" height="8" rx="1.5" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                                    <path d="M5 6V4C5 2.5 6 1 8 1s3 1.5 3 3v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                    <path d="M8 9v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                            </span>
+                            <input asp-for="Input.ConfirmPassword" type="password" id="confirmPasswordField" class="field-control" style="padding-left:36px;padding-right:40px;" autocomplete="new-password" aria-required="true" placeholder="••••••••" />
+                            <button type="button" id="toggleConfirmPassword" class="btn-icon" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;padding:6px;cursor:pointer;color:var(--ink3);display:flex;align-items:center;justify-content:center;border-radius:6px;" onclick="togglePasswordVisibility('confirmPasswordField', 'confirmEyeIcon', 'confirmEyeOffIcon')">
+                                <!-- Eye Icon (Visible) -->
+                                <svg id="confirmEyeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:block;">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                                <!-- Eye Off Icon (Hidden) -->
+                                <svg id="confirmEyeOffIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;">
+                                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                    <line x1="1" y1="1" x2="23" y2="23"></line>
+                                </svg>
+                            </button>
+                        </div>
+                        <span asp-validation-for="Input.ConfirmPassword" class="field-error"></span>
+                        <div class="password-match-indicator" style="margin-top:4px;display:none;align-items:center;gap:4px;">
+                            <svg width="12" height="12" viewBox="0 0 12 12">
+                                <circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                            </svg>
+                            <span class="field-hint">Passwords match</span>
+                        </div>
+                    </div>
+
+                    <!-- Terms and Conditions -->
+                    <div style="margin-bottom:24px;padding:12px;background:var(--bg2);border-radius:9px;">
+                        <div class="field-checkbox">
+                            <input type="checkbox" id="AcceptTerms" name="AcceptTerms" required />
+                            <label for="AcceptTerms">I agree to the <a href="#" style="color:var(--blue);">Terms of Service</a> and <a href="#" style="color:var(--blue);">Privacy Policy</a></label>
+                        </div>
+                        <small class="field-hint" style="display:block;margin-top:4px;">By creating an account, you agree to our terms</small>
+                    </div>
+
+                    <!-- Actions -->
+                    <div style="margin-bottom:16px">
+                        <button id="registerSubmit" type="submit" class="btn-primary" style="width:100%;justify-content:center;">
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin-right:6px;vertical-align:-2px">
+                                <path d="M2 7l3.5 3.5L12 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Create Account
+                        </button>
+                    </div>
+
+                    <!-- Login Link -->
+                    <div style="border-top:1px solid var(--border);padding-top:16px;text-align:center;">
+                        <p style="margin:0;font-size:14px;color:var(--ink3)">
+                            Already have an account? 
+                            <a asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl" style="color:var(--blue);text-decoration:none;font-weight:500;">Sign in</a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- External Registration Section -->
+        @if ((Model.ExternalLogins?.Count ?? 0) > 0)
+        {
+            <div class="form-card" style="margin-top:16px;max-width:500px;margin:16px auto 0;">
+                <div class="form-card-header">
+                    <span class="section-badge neutral">
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                            <circle cx="6" cy="6" r="4.5" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                            <path d="M4 4l4 4M8 4l-4 4" stroke="currentColor" stroke-width="1.2"/>
+                        </svg>
+                        Register with External Services
+                    </span>
+                </div>
+                <div class="form-card-body">
+                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
+                        <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
+                            @foreach (var provider in Model.ExternalLogins!)
+                            {
+                                <button type="submit" class="btn-ghost" name="provider" value="@provider.Name" style="flex:1;min-width:120px;justify-content:center;" title="Register using your @provider.DisplayName account">
+                                    @if (provider.Name.ToLower().Contains("google"))
+                                    {
+                                        <span style="margin-right:6px;">G</span>
+                                    }
+                                    else if (provider.Name.ToLower().Contains("microsoft"))
+                                    {
+                                        <span style="margin-right:6px;">MS</span>
+                                    }
+                                    else if (provider.Name.ToLower().Contains("facebook"))
+                                    {
+                                        <span style="margin-right:6px;">FB</span>
+                                    }
+                                    else if (provider.Name.ToLower().Contains("github"))
+                                    {
+                                        <span style="margin-right:6px;">GH</span>
+                                    }
+                                    else
+                                    {
+                                        <span style="margin-right:6px;">•</span>
+                                    }
+                                    @provider.DisplayName
+                                </button>
+                            }
+                        </div>
+                    </form>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="form-card" style="margin-top:16px;max-width:500px;margin:16px auto 0;background:var(--bg2)">
+                <div class="form-card-body">
+                    <div class="field-hint" style="text-align:center;padding:12px;">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="display:inline;margin-right:4px;vertical-align:-2px">
+                            <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                            <path d="M8 5v3M8 11h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                        External registration services can be configured. See 
+                        <a href="https://go.microsoft.com/fwlink/?LinkID=532715" style="color:var(--blue);">this article</a> 
+                        for setup instructions.
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Security Notice -->
+        <div style="max-width:500px;margin:20px auto 0;text-align:center;">
+            <div class="field-hint" style="font-size:12px;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                    <rect x="2" y="5" width="10" height="7" rx="1.5" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                    <path d="M4 5V3.5C4 2 5.5 1 7 1s3 1 3 2.5V5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                    <circle cx="7" cy="9" r="1" fill="currentColor"/>
+                </svg>
+                <span>Your information is encrypted and secure</span>
+                <span style="width:4px;height:4px;background:var(--ink4);border-radius:50%;"></span>
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                    <path d="M2 7h10M7 2v10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+                <span>GDPR compliant</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Password strength and requirement styles */
+.password-strength-bar {
+    transition: background-color 0.3s;
+}
+
+.requirement-item {
+    display: flex;
+    align-items: center;
+    font-size: 11px;
+    color: var(--ink4);
+    padding: 2px 0;
+}
+
+.requirement-item.met {
+    color: var(--green);
+}
+
+.requirement-item.met svg {
+    color: var(--green);
+}
+
+.requirement-item.met circle {
+    fill: var(--green);
+    stroke: var(--green);
+}
+
+.field-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+}
+
+.field-checkbox input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    cursor: pointer;
+}
+
+.field-checkbox label {
+    font-size: 14px;
+    color: var(--ink2);
+    cursor: pointer;
+    font-weight: normal;
+}
+
+.password-match-indicator {
+    color: var(--green);
+}
+
+.password-match-indicator svg {
+    stroke: var(--green);
+}
+
+/* Input field styles */
+input.field-control {
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input.field-control:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(26, 79, 160, 0.1);
+}
+
+/* Password toggle button styles */
+.btn-icon {
+    transition: color 0.2s, background-color 0.2s;
+    z-index: 2;
+}
+
+.btn-icon:hover {
+    background-color: var(--bg2) !important;
+    color: var(--blue) !important;
+}
+
+.btn-icon:active {
+    background-color: var(--bg3) !important;
+}
+
+/* Responsive adjustments */
+@@media (max-width: 576px) {
+    .form-card {
+        margin-left: 12px;
+        margin-right: 12px;
+    }
+    
+    .form-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+    
+    .requirement-item {
+        font-size: 10px;
+    }
+}
+
+/* Animation for submit button */
+.btn-primary {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(26, 79, 160, 0.2);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+/* Terms checkbox highlight */
+.field-checkbox input[type="checkbox"]:checked + label {
+    color: var(--green);
+}
+</style>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Password show/hide functionality
+        function togglePasswordVisibility(fieldId, iconId, offIconId) {
+            const passwordField = document.getElementById(fieldId);
+            const eyeIcon = document.getElementById(iconId);
+            const eyeOffIcon = document.getElementById(offIconId);
+            
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                eyeIcon.style.display = 'none';
+                eyeOffIcon.style.display = 'block';
+            } else {
+                passwordField.type = 'password';
+                eyeIcon.style.display = 'block';
+                eyeOffIcon.style.display = 'none';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordInput = document.getElementById('passwordField');
+            const confirmPasswordInput = document.getElementById('confirmPasswordField');
+            const emailInput = document.getElementById('Input_Email');
+            
+            // Focus on email field on page load
+            if (emailInput) {
+                emailInput.focus();
+            }
+            
+            // Password strength indicator
+            if (passwordInput) {
+                passwordInput.addEventListener('input', function() {
+                    const password = this.value;
+                    const strengthBars = document.querySelectorAll('.strength-indicator');
+                    const strengthText = document.getElementById('passwordStrengthText');
+                    
+                    // Calculate password strength
+                    let strength = 0;
+                    if (password.length >= 8) strength++;
+                    if (password.match(/[A-Z]/)) strength++;
+                    if (password.match(/[a-z]/)) strength++;
+                    if (password.match(/[0-9]/)) strength++;
+                    if (password.match(/[^A-Za-z0-9]/)) strength++;
+                    
+                    // Update requirement indicators
+                    updateRequirement('length', password.length >= 8);
+                    updateRequirement('uppercase', /[A-Z]/.test(password));
+                    updateRequirement('lowercase', /[a-z]/.test(password));
+                    updateRequirement('number', /[0-9]/.test(password));
+                    
+                    // Update strength bars
+                    const barCount = 4;
+                    const normalizedStrength = Math.min(strength, barCount);
+                    
+                    strengthBars.forEach((bar, index) => {
+                        if (index < normalizedStrength) {
+                            if (normalizedStrength <= 2) {
+                                bar.style.background = 'var(--red)';
+                            } else if (normalizedStrength === 3) {
+                                bar.style.background = 'var(--amber)';
+                            } else {
+                                bar.style.background = 'var(--green)';
+                            }
+                            bar.style.width = '100%';
+                        } else {
+                            bar.style.width = '0%';
+                        }
+                    });
+                    
+                    // Update strength text
+                    if (password.length === 0) {
+                        strengthText.textContent = 'Enter a password';
+                    } else if (normalizedStrength <= 2) {
+                        strengthText.textContent = 'Weak password';
+                    } else if (normalizedStrength === 3) {
+                        strengthText.textContent = 'Medium password';
+                    } else {
+                        strengthText.textContent = 'Strong password';
+                    }
+                });
+            }
+            
+            // Password match indicator
+            if (confirmPasswordInput && passwordInput) {
+                function checkPasswordMatch() {
+                    const matchIndicator = document.querySelector('.password-match-indicator');
+                    if (confirmPasswordInput.value && passwordInput.value) {
+                        if (passwordInput.value === confirmPasswordInput.value) {
+                            matchIndicator.style.display = 'flex';
+                            matchIndicator.querySelector('span').textContent = 'Passwords match';
+                            matchIndicator.style.color = 'var(--green)';
+                        } else {
+                            matchIndicator.style.display = 'flex';
+                            matchIndicator.querySelector('span').textContent = 'Passwords do not match';
+                            matchIndicator.style.color = 'var(--red)';
+                        }
+                    } else {
+                        matchIndicator.style.display = 'none';
+                    }
+                }
+                
+                passwordInput.addEventListener('input', checkPasswordMatch);
+                confirmPasswordInput.addEventListener('input', checkPasswordMatch);
+            }
+            
+            // Helper function to update requirement indicators
+            function updateRequirement(requirement, met) {
+                const element = document.querySelector(`.requirement-item[data-requirement="${requirement}"]`);
+                if (element) {
+                    if (met) {
+                        element.classList.add('met');
+                        const svg = element.querySelector('svg');
+                        if (svg) {
+                            svg.innerHTML = '<circle cx="5" cy="5" r="4" fill="currentColor" stroke="currentColor"/>';
+                        }
+                    } else {
+                        element.classList.remove('met');
+                        const svg = element.querySelector('svg');
+                        if (svg) {
+                            svg.innerHTML = '<circle cx="5" cy="5" r="4" stroke="currentColor" stroke-width="1.2" fill="none"/>';
+                        }
+                    }
+                }
+            }
+            
+            // Prevent form submission if terms not accepted
+            const registerForm = document.getElementById('registerForm');
+            const termsCheckbox = document.getElementById('AcceptTerms');
+            
+            if (registerForm && termsCheckbox) {
+                registerForm.addEventListener('submit', function(e) {
+                    if (!termsCheckbox.checked) {
+                        e.preventDefault();
+                        alert('Please accept the Terms of Service and Privacy Policy to continue.');
+                        termsCheckbox.focus();
+                    }
+                });
+            }
+            
+            // Optional: Add keyboard shortcut (Ctrl+Shift+P) to toggle password
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey && e.shiftKey && e.key === 'P') {
+                    e.preventDefault();
+                    if (passwordInput) {
+                        togglePasswordVisibility('passwordField', 'eyeIcon', 'eyeOffIcon');
+                    }
+                }
+                if (e.ctrlKey && e.shiftKey && e.key === 'C') {
+                    e.preventDefault();
+                    if (confirmPasswordInput) {
+                        togglePasswordVisibility('confirmPasswordField', 'confirmEyeIcon', 'confirmEyeOffIcon');
+                    }
+                }
+            });
+        });
+    </script>
+}

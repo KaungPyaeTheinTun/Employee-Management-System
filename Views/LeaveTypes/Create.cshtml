@@ -1,0 +1,172 @@
+@model EmployeesManagement.Models.LeaveType
+
+@{
+    ViewData["Title"] = "Add New Leave Type";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-header-title">Add New Leave Type</h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Dashboard</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index">Leave Types</a></li>
+            <li class="breadcrumb-item active">Add New</li>
+        </ol>
+    </div>
+    <a asp-action="Index" class="btn-ghost">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin-right:6px">
+            <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        Back to List
+    </a>
+</div>
+
+<form asp-action="Create" id="createForm">
+    <div asp-validation-summary="ModelOnly" class="field-error" style="padding:12px 16px;background:var(--red-bg);border-radius:9px;border:1px solid rgba(192,57,43,0.2);margin-bottom:20px;"></div>
+
+    <!-- Leave Type Details -->
+    <div class="form-card" style="margin-bottom:16px">
+        <div class="form-card-header">
+            <span class="section-badge blue">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <rect x="2" y="3" width="8" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                    <path d="M4 2v2M8 2v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+                Leave Type Information
+            </span>
+        </div>
+        <div class="form-card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="Name" class="field-label">Leave Type Name</label>
+                    <input asp-for="Name" class="field-control" placeholder="e.g. Annual Leave, Sick Leave" />
+                    <span asp-validation-for="Name" class="field-error"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Code" class="field-label">Leave Code</label>
+                    <input asp-for="Code" class="field-control" placeholder="e.g. AL, SL, CL" />
+                    <span asp-validation-for="Code" class="field-error"></span>
+                    <small class="field-hint" style="display:block;margin-top:4px">A unique code to identify this leave type</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- System Information (Read-only/Hidden in real scenario) -->
+    <div class="form-card" style="margin-bottom:16px;opacity:0.8">
+        <div class="form-card-header">
+            <span class="section-badge green">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <circle cx="6" cy="6" r="4" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                    <path d="M6 3v3l2 1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+                System Information
+            </span>
+            <span class="field-hint" style="font-size:11px">Auto-populated by system</span>
+        </div>
+        <div class="form-card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="CreatedById" class="field-label">Created By</label>
+                    <input asp-for="CreatedById" class="field-control" placeholder="Will be set automatically" />
+                    <span asp-validation-for="CreatedById" class="field-error"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="CreatedOn" class="field-label">Created On</label>
+                    <input asp-for="CreatedOn" class="field-control" type="date" readonly disabled/>
+                    <span asp-validation-for="CreatedOn" class="field-error"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="ModifiedById" class="field-label">Modified By</label>
+                    <input asp-for="ModifiedById" class="field-control" placeholder="Will be set on update" />
+                    <span asp-validation-for="ModifiedById" class="field-error"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="ModifiedOn" class="field-label">Modified On</label>
+                    <input asp-for="ModifiedOn" class="field-control" type="date" />
+                    <span asp-validation-for="ModifiedOn" class="field-error"></span>
+                </div>
+            </div>
+            <div class="field-hint" style="margin-top:12px;padding:8px 12px;background:var(--bg2);border-radius:6px">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="display:inline;margin-right:4px;vertical-align:-2px">
+                    <circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                    <path d="M7 4v4M7 10h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="form-actions" style="border-top:none;padding-top:0">
+        <a asp-action="Index" class="btn-ghost">Cancel</a>
+        <button type="submit" class="btn-primary">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin-right:6px;vertical-align:-2px">
+                <path d="M2 7l3.5 3.5L12 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Create Leave Type
+        </button>
+    </div>
+</form>
+
+<style>
+/* Additional styles for checkboxes and form elements */
+.field-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0;
+}
+
+.field-checkbox input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    cursor: pointer;
+}
+
+.field-checkbox label {
+    font-size: 14px;
+    color: var(--ink2);
+    cursor: pointer;
+    font-weight: normal;
+}
+
+input[readonly], 
+input[disabled] {
+    background-color: var(--bg2);
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Responsive adjustments */
+@@media (max-width: 768px) {
+    .field-hint {
+        font-size: 11px;
+    }
+    
+    .form-card-body .row.g-3 > [class*="col-"] {
+        margin-bottom: 8px;
+    }
+}
+</style>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        // Auto-fill some fields for demo purposes (remove in production)
+        document.addEventListener('DOMContentLoaded', function() {
+            // In a real application, these would be set on the server
+            // This is just for demonstration
+            const today = new Date().toISOString().split('T')[0];
+            const createdById = document.querySelector('input[name="CreatedById"]');
+            const createdOn = document.querySelector('input[name="CreatedOn"]');
+            
+            if (createdById) {
+                createdById.value = "Current User"; // This would come from server
+            }
+            if (createdOn) {
+                createdOn.value = today;
+            }
+        });
+    </script>
+}

@@ -1,0 +1,484 @@
+@model EmployeesManagement.Models.Holiday
+
+@{
+    ViewData["Title"] = "Holiday Details";
+    
+    var duration = (Model.EndDate - Model.StartDate).Days + 1;
+    var isUpcoming = Model.StartDate > DateTime.Today;
+    var isPast = Model.EndDate < DateTime.Today;
+    var isCurrent = !isUpcoming && !isPast;
+    
+    var statusText = isUpcoming ? "Upcoming" : (isPast ? "Past" : "Current");
+    var statusBg = isUpcoming ? "#fef3e0" : (isPast ? "#f2f2ef" : "#e8f5ee");
+    var statusColor = isUpcoming ? "#a05c00" : (isPast ? "#3a3a38" : "#1a7a4a");
+    
+    var initials = !string.IsNullOrEmpty(Model.Title) && Model.Title.Length > 0 
+        ? Model.Title.Substring(0, 1).ToUpper() 
+        : "H";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-header-title">Holiday Details</h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Dashboard</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index">Holidays</a></li>
+            <li class="breadcrumb-item active">@Model.Title</li>
+        </ol>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <span class="status-badge" style="background:@statusBg;color:@statusColor;padding:8px 16px;font-size:13px;font-weight:600">@statusText</span>
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="add-btn">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path d="M9.5 2.5l2 2-7 7H2.5v-2l7-7z" stroke="currentColor" stroke-width="1.3" fill="none"/>
+            </svg>
+            Edit Holiday
+        </a>
+        <a asp-action="Index" class="btn-ghost">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin-right:6px">
+                <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            Back to List
+        </a>
+    </div>
+</div>
+
+<div class="detail-grid">
+    <!-- Left: Holiday Info Card -->
+    <div>
+        <div class="profile-card">
+            <div class="profile-card-top">
+                <div class="profile-avatar-lg" style="background:#e8eefa;color:#1a4fa0;font-size:32px;">@initials</div>
+                <div class="profile-name">@Model.Title</div>
+                <div class="profile-role">
+                    <span class="dept-badge" style="background:#e8eefa;color:#1a4fa0">@duration day@(duration > 1 ? "s" : "") holiday</span>
+                </div>
+            </div>
+            <div class="profile-card-body">
+                <div class="info-row">
+                    <div class="info-icon">📅</div>
+                    <div>
+                        <div class="info-label">START DATE</div>
+                        <div class="info-value">@Model.StartDate.ToString("dd MMMM yyyy")</div>
+                        <div class="mono" style="font-size:11px;color:var(--ink4)">@Model.StartDate.ToString("dddd")</div>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-icon">📅</div>
+                    <div>
+                        <div class="info-label">END DATE</div>
+                        <div class="info-value">@Model.EndDate.ToString("dd MMMM yyyy")</div>
+                        <div class="mono" style="font-size:11px;color:var(--ink4)">@Model.EndDate.ToString("dddd")</div>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-icon">⏱️</div>
+                    <div>
+                        <div class="info-label">DURATION</div>
+                        <div class="info-value"><strong>@duration</strong> day@(duration > 1 ? "s" : "")</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Audit Card -->
+        <div class="profile-card" style="margin-top:16px">
+            <div class="detail-section-header" style="border-radius:var(--r-lg) var(--r-lg) 0 0">
+                Audit Information
+            </div>
+            <div class="profile-card-body">
+                <div class="info-row">
+                    <div class="info-icon">⊕</div>
+                    <div>
+                        <div class="info-label">CREATED BY</div>
+                        <div class="info-value">@(Model.CreatedById ?? "System")</div>
+                        <div class="mono" style="font-size:11px;color:var(--ink4)">@Model.CreatedOn.ToString("dd MMM yyyy, HH:mm")</div>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-icon">✎</div>
+                    <div>
+                        <div class="info-label">LAST MODIFIED</div>
+                        <div class="info-value">@(Model.ModifiedById ?? "Not modified")</div>
+                        @if (!string.IsNullOrEmpty(Model.ModifiedById))
+                        {
+                            <div class="mono" style="font-size:11px;color:var(--ink4)">@Model.ModifiedOn.ToString("dd MMM yyyy, HH:mm")</div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right: Details Sections -->
+    <div class="detail-sections">
+
+        <!-- Holiday Description Section -->
+        <div class="detail-section">
+            <div class="detail-section-header">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="opacity:.6">
+                    <rect x="2" y="2" width="10" height="10" rx="1.5" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                    <path d="M4 5h6M4 8h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+                Description
+            </div>
+            <div class="detail-section-body">
+                <div style="background:var(--bg2);padding:16px;border-radius:8px;color:var(--ink2);line-height:1.5">
+                    @if (!string.IsNullOrEmpty(Model.Description))
+                    {
+                        @Model.Description
+                    }
+                    else
+                    {
+                        <span style="color:var(--ink4);font-style:italic">No description provided for this holiday</span>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Date Range Timeline -->
+        <div class="detail-section">
+            <div class="detail-section-header">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="opacity:.6">
+                    <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                    <path d="M7 4v3l2 2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+                Holiday Timeline
+            </div>
+            <div class="detail-section-body">
+                <div style="display:flex;flex-direction:column;gap:16px">
+                    <!-- Timeline Visualization -->
+                    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                        <div style="display:flex;align-items:center;gap:4px">
+                            <div style="width:12px;height:12px;border-radius:2px;background:var(--primary)"></div>
+                            <span style="font-size:11px;color:var(--ink3)">Holiday Period</span>
+                        </div>
+                        <div style="flex:1;height:4px;background:var(--border);border-radius:2px;position:relative">
+                            <div style="position:absolute;left:0;top:0;height:100%;width:100%;background:linear-gradient(90deg, var(--primary) 0%, var(--primary) 100%);border-radius:2px"></div>
+                        </div>
+                    </div>
+
+                    <!-- Date Range Display -->
+                    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+                        <div style="text-align:center">
+                            <div style="font-size:11px;color:var(--ink4);margin-bottom:4px">START</div>
+                            <div style="font-weight:600;font-size:15px">@Model.StartDate.ToString("dd")</div>
+                            <div style="font-size:12px;color:var(--ink2)">@Model.StartDate.ToString("MMM yyyy")</div>
+                            <div style="font-size:11px;color:var(--ink3)">@Model.StartDate.ToString("dddd")</div>
+                        </div>
+                        <div style="color:var(--ink3);font-size:20px">→</div>
+                        <div style="text-align:center">
+                            <div style="font-size:11px;color:var(--ink4);margin-bottom:4px">END</div>
+                            <div style="font-weight:600;font-size:15px">@Model.EndDate.ToString("dd")</div>
+                            <div style="font-size:12px;color:var(--ink2)">@Model.EndDate.ToString("MMM yyyy")</div>
+                            <div style="font-size:11px;color:var(--ink3)">@Model.EndDate.ToString("dddd")</div>
+                        </div>
+                    </div>
+
+                    <!-- Duration Summary -->
+                    <div style="background:var(--bg2);border-radius:8px;padding:12px;text-align:center">
+                        <span style="font-size:13px;color:var(--ink2)">This holiday spans </span>
+                        <strong style="font-size:16px;color:var(--primary)">@duration</strong>
+                        <span style="font-size:13px;color:var(--ink2)"> calendar day@(duration > 1 ? "s" : "")</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Information Card (Optional) -->
+        @if (isUpcoming)
+        {
+            <div class="detail-section" style="background:#fef3e0;border-color:rgba(160,92,0,0.2)">
+                <div class="detail-section-header" style="color:#a05c00">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                        <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                        <path d="M7 4v3l2 2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                    </svg>
+                    Upcoming Holiday
+                </div>
+                <div class="detail-section-body">
+                    <div style="font-size:13px;color:#a05c00">
+                        This holiday is scheduled for the future. @(DateTime.Now.Date.AddDays(7) > Model.StartDate ? "It's coming soon!" : "Plan ahead for this upcoming holiday.")
+                    </div>
+                </div>
+            </div>
+        }
+        else if (isCurrent)
+        {
+            <div class="detail-section" style="background:#e8f5ee;border-color:rgba(26,122,74,0.2)">
+                <div class="detail-section-header" style="color:#1a7a4a">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                        <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                        <path d="M4 7L6 9L10 5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                    </svg>
+                    Current Holiday
+                </div>
+                <div class="detail-section-body">
+                    <div style="font-size:13px;color:#1a7a4a">
+                        This holiday is currently in progress! @(Model.EndDate.Date == DateTime.Today ? "It ends today." : "Enjoy the holiday!")
+                    </div>
+                </div>
+            </div>
+        }
+        else if (isPast)
+        {
+            <div class="detail-section" style="background:var(--bg2);border-color:var(--border)">
+                <div class="detail-section-header">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                        <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                        <path d="M7 4v3l2 2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                    </svg>
+                    Past Holiday
+                </div>
+                <div class="detail-section-body">
+                    <div style="font-size:13px;color:var(--ink3)">
+                        This holiday has passed. It was @(DateTime.Now.Date - Model.EndDate.Date).Days days ago.
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
+</div>
+
+<style>
+    /* Holiday-specific styles */
+    .status-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    .dept-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    .detail-grid {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 20px;
+    }
+
+    /* Profile card styles */
+    .profile-card {
+        background: var(--card-bg);
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        overflow: hidden;
+    }
+
+    .profile-card-top {
+        padding: 24px 20px;
+        text-align: center;
+        background: var(--bg2);
+        border-bottom: 1px solid var(--border);
+    }
+
+    .profile-avatar-lg {
+        width: 80px;
+        height: 80px;
+        border-radius: 80px;
+        margin: 0 auto 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 32px;
+        background: #e8eefa;
+        color: #1a4fa0;
+    }
+
+    .profile-name {
+        font-weight: 600;
+        font-size: 16px;
+        color: var(--ink1);
+        margin-bottom: 6px;
+    }
+
+    .profile-role {
+        font-size: 12px;
+        color: var(--ink3);
+    }
+
+    .profile-card-body {
+        padding: 20px;
+    }
+
+    .info-row {
+        display: flex;
+        gap: 12px;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .info-row:last-child {
+        border-bottom: none;
+    }
+
+    .info-icon {
+        width: 24px;
+        height: 24px;
+        background: var(--bg2);
+        border-radius: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+    }
+
+    .info-label {
+        font-size: 10px;
+        color: var(--ink4);
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        margin-bottom: 2px;
+    }
+
+    .info-value {
+        font-size: 13px;
+        color: var(--ink1);
+        font-weight: 500;
+    }
+
+    /* Detail sections styles */
+    .detail-sections {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .detail-section {
+        background: var(--card-bg);
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        overflow: hidden;
+    }
+
+    .detail-section-header {
+        padding: 16px 20px;
+        background: var(--bg2);
+        font-weight: 600;
+        font-size: 13px;
+        color: var(--ink2);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .detail-section-body {
+        padding: 20px;
+    }
+
+    .detail-grid-2 {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+
+    .detail-field-label {
+        font-size: 11px;
+        color: var(--ink4);
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        margin-bottom: 4px;
+    }
+
+    .detail-field-value {
+        font-size: 14px;
+        color: var(--ink1);
+        font-weight: 500;
+    }
+
+    .mono {
+        font-family: monospace;
+        font-size: 11px;
+        color: var(--ink3);
+    }
+
+    /* Button styles */
+    .add-btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 16px;
+        background: var(--primary);
+        color: white;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        text-decoration: none;
+        gap: 6px;
+        transition: all 0.15s;
+    }
+
+    .add-btn:hover {
+        background: #134080;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(26, 79, 160, 0.2);
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-ghost {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 16px;
+        background: var(--bg2);
+        color: var(--ink2);
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        text-decoration: none;
+        border: 1px solid var(--border);
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+
+    .btn-ghost:hover {
+        background: var(--border);
+        color: var(--ink1);
+        text-decoration: none;
+    }
+
+    /* Responsive adjustments */
+    @@media (max-width: 768px) {
+        .detail-grid {
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        .detail-grid-2 {
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .page-header > div:last-child {
+            width: 100%;
+            flex-wrap: wrap;
+        }
+
+        .profile-avatar-lg {
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
+        }
+
+        .detail-section-body {
+            padding: 16px;
+        }
+    }
+</style>

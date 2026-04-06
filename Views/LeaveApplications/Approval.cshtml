@@ -1,0 +1,657 @@
+@model IEnumerable<EmployeesManagement.Models.LeaveApplication>
+@{
+    ViewData["Title"] = "Approve Leave Applications";
+    var statusColors = new Dictionary<string, (string bg, string text)>
+    {
+        ["Pending"] = ("#fef3e0", "#a05c00"),
+        ["Approved"] = ("#e8f5ee", "#1a7a4a"),
+        ["Rejected"] = ("#fdecea", "#c0392b"),
+        ["Cancelled"] = ("#f2f2ef", "#3a3a38")
+    };
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-header-title">Approve Leave Applications</h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Dashboard</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index">Leave Applications</a></li>
+            <li class="breadcrumb-item active">Approval Queue</li>
+        </ol>
+    </div>
+    <a asp-action="Index" class="add-btn" style="background:var(--bg2);color:var(--ink2);border:1px solid var(--border);">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M10 1L13 4M10 1L13 4M10 1H6M13 4V10M13 10L10 13M13 10L10 13M10 13H4M4 13L1 10M4 13L1 10M1 10V4M1 4L4 1M1 4L4 1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            <circle cx="7" cy="7" r="2" stroke="currentColor" stroke-width="1.2"/>
+        </svg>
+        Back to List
+    </a>
+</div>
+
+<div class="table-card">
+    <!-- Toolbar -->
+    <div class="table-toolbar">
+        <span class="table-title">Pending Approval Queue</span>
+
+        <div class="filter-chips">
+            <div class="chip filter-chip active" data-filter="all">All Pending <span style="opacity:.5;margin-left:2px">@Model.Count()</span></div>
+        </div>
+
+        <div class="table-search">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                <circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" stroke-width="1.2" />
+                <path d="M9 9L12 12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" />
+            </svg>
+            <input id="tableSearch" type="text" placeholder="Search employee, leave type..." />
+        </div>
+
+        <!-- Items per page selector -->
+        <div class="items-per-page">
+            <select id="itemsPerPage" class="per-page-select">
+                <option value="10">10 per page</option>
+                <option value="25">25 per page</option>
+                <option value="50">50 per page</option>
+                <option value="100">100 per page</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Desktop table -->
+    <div class="table-wrap">
+        <table class="emp-table" id="approvalTable">
+            <thead>
+                <tr>
+                    <th data-sort="0">EMPLOYEE</th>
+                    <th data-sort="1">LEAVE TYPE</th>
+                    <th data-sort="2">DURATION</th>
+                    <th data-sort="3">DAYS</th>
+                    <th data-sort="5">APPLIED ON</th>
+                    <th>ACTIONS</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                @{
+                    var avatarColors = new[] {
+                        ("#e8eefa","#1a4fa0"), ("#e8f5ee","#1a7a4a"), ("#fef3e0","#a05c00"),
+                        ("#fdecea","#c0392b"), ("#f2f2ef","#3a3a38"), ("#f0eeff","#4a35c0")
+                    };
+                    int colorIdx = 0;
+                }
+                @foreach (var item in Model)
+                {
+                    var (bg, tc) = avatarColors[colorIdx++ % avatarColors.Length];
+                    var employeeInitials = "";
+                    if (!string.IsNullOrEmpty(item.Employee?.FirstName) && !string.IsNullOrEmpty(item.Employee?.LastName))
+                    {
+                        employeeInitials = $"{item.Employee.FirstName.Substring(0, 1)}{item.Employee.LastName.Substring(0, 1)}".ToUpper();
+                    }
+
+                    var statusKey = item.Status?.Description ?? "Pending";
+                    var (statusBg, statusText) = statusColors.ContainsKey(statusKey) ? statusColors[statusKey] : ("#f2f2ef", "#3a3a38");
+
+                    <tr data-id="@item.Id">
+                        <td>
+                            <div style="display:flex;align-items:center;gap:10px;">
+                                <div class="emp-avatar" style="background:@bg;color:@tc">@employeeInitials</div>
+                                <div>
+                                    <div class="emp-name">@(item.Employee?.FullName ?? "—")</div>
+                                    <div class="emp-id">@(item.Employee?.EmpNo ?? "")</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="dept-badge" style="background:@bg;color:@tc">@(item.LeaveType?.Name ?? "—")</span>
+                        </td>
+                        <td style="color:var(--ink2)">@(item.Duration?.Description ?? "—")</td>
+                        <td style="color:var(--ink2);font-weight:500">@item.NoOfDays</td>
+                        <td>
+                            <div style="display:flex;flex-direction:column;gap:2px">
+                                <span class="date-badge">@item.StartDate.ToString("dd MMM yyyy")</span>
+                                <span style="font-size:10px;color:var(--ink4);text-align:center">to</span>
+                                <span class="date-badge">@item.EndDate.ToString("dd MMM yyyy")</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="action-group" style="gap:8px;">
+                                <a class="action-btn" asp-action="Details" asp-route-id="@item.Id" title="View Details">
+                                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                                        <circle cx="7" cy="7" r="2.5" fill="currentColor" />
+                                        <path d="M1 7C2.5 3.5 4.5 2 7 2s4.5 1.5 6 5c-1.5 3.5-3.5 5-6 5S2.5 10.5 1 7z" stroke="currentColor" stroke-width="1.2" fill="none" />
+                                    </svg>
+                                </a>
+                                <!-- Approve Form -->
+                                <form asp-action="ApproveLeave" method="post" style="display:inline;">
+                                    <input type="hidden" name="id" value="@item.Id" />
+
+                                    <button type="submit"
+                                        class="action-btn approve"
+                                        title="Approve Leave"
+                                        style="color:#1a7a4a; border:none; background:none;">
+
+                                        <svg width="16" height="16" viewBox="0 0 14 14" fill="none">
+                                            <circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.2"/>
+                                            <path d="M4 7L6 9L10 5"
+                                                stroke="currentColor"
+                                                stroke-width="1.8"
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"/>
+                                        </svg>
+
+                                    </button>
+                                </form>
+
+
+                                <!-- Reject Form -->
+                                <form asp-action="RejectLeave" method="post" style="display:inline;">
+                                    <input type="hidden" name="id" value="@item.Id" />
+
+                                    <button type="submit"
+                                        class="action-btn reject"
+                                        title="Reject Leave"
+                                        style="color:#c0392b; border:none; background:none;">
+
+                                        <svg width="16" height="16" viewBox="0 0 14 14" fill="none">
+                                            <circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.2"/>
+                                            <path d="M5 5L9 9M9 5L5 9"
+                                                stroke="currentColor"
+                                                stroke-width="1.8"
+                                                stroke-linecap="round"/>
+                                        </svg>
+
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <!-- Mobile cards (injected by JS) -->
+        <div id="mobileApprovalCards" class="mobile-emp-cards"></div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="table-pagination">
+        <span class="pagination-info" id="paginationInfo"></span>
+        <div class="pagination-controls" id="tablePagination">
+            <button class="pagination-btn" id="prevPage" disabled>Previous</button>
+            <div class="page-numbers" id="pageNumbers"></div>
+            <button class="pagination-btn" id="nextPage">Next</button>
+        </div>
+    </div>
+</div>
+
+<!-- Approval Summary Card -->
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:20px;">
+    <div style="background:var(--card-bg);border-radius:12px;padding:16px;border:1px solid var(--border);">
+        <div style="font-size:12px;color:var(--ink3);margin-bottom:4px;">Pending Applications</div>
+        <div style="font-size:28px;font-weight:600;color:var(--ink1);">@Model.Count()</div>
+        <div style="font-size:11px;color:var(--ink3);margin-top:8px;">Awaiting your approval</div>
+    </div>
+    
+    <div style="background:var(--card-bg);border-radius:12px;padding:16px;border:1px solid var(--border);">
+        <div style="font-size:12px;color:var(--ink3);margin-bottom:4px;">Total Days Requested</div>
+        <div style="font-size:28px;font-weight:600;color:var(--ink1);">@Model.Sum(x => x.NoOfDays)</div>
+        <div style="font-size:11px;color:var(--ink3);margin-top:8px;">Across all pending requests</div>
+    </div>
+    
+    <div style="background:var(--card-bg);border-radius:12px;padding:16px;border:1px solid var(--border);">
+        <div style="font-size:12px;color:var(--ink3);margin-bottom:4px;">Quick Actions</div>
+        <div style="display:flex;gap:8px;margin-top:8px;">
+            <a asp-action="Index" asp-route-status="Pending" style="text-decoration:none;background:var(--bg2);padding:6px 12px;border-radius:20px;font-size:12px;color:var(--ink2);">View All</a>
+            <a asp-action="Index" style="text-decoration:none;background:var(--bg2);padding:6px 12px;border-radius:20px;font-size:12px;color:var(--ink2);">Manage</a>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Additional styles for approval view */
+    .status-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    .date-badge {
+        background: var(--bg2);
+        padding: 4px 8px;
+        border-radius: 20px;
+        font-size: 11px;
+        color: var(--ink3);
+        white-space: nowrap;
+        display: inline-block;
+    }
+
+    .action-btn {
+        width: 32px;
+        height: 32px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        color: var(--ink2);
+        transition: all 0.2s;
+        text-decoration: none;
+    }
+    
+    .action-btn:hover {
+        background: var(--bg2);
+    }
+    
+    .action-btn.approve:hover {
+        background: #e8f5ee !important;
+        color: #1a7a4a !important;
+    }
+    
+    .action-btn.reject:hover {
+        background: #fdecea !important;
+        color: #c0392b !important;
+    }
+
+    .emp-id {
+        font-size: 11px;
+        color: var(--ink3);
+        margin-top: 2px;
+    }
+
+    /* Pagination styles */
+    .table-pagination {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 20px;
+        border-top: 1px solid var(--border);
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .pagination-info {
+        font-size: 12px;
+        color: var(--ink3);
+    }
+
+    .pagination-controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .pagination-btn {
+        padding: 6px 12px;
+        border: 1px solid var(--border);
+        background: var(--card-bg);
+        border-radius: 6px;
+        font-size: 12px;
+        color: var(--ink2);
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .pagination-btn:hover:not(:disabled) {
+        background: var(--bg2);
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    .pagination-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .page-numbers {
+        display: flex;
+        gap: 4px;
+    }
+
+    .page-number {
+        min-width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--border);
+        background: var(--card-bg);
+        border-radius: 6px;
+        font-size: 12px;
+        color: var(--ink2);
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .page-number:hover {
+        background: var(--bg2);
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    .page-number.active {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: white;
+    }
+
+    /* Items per page selector */
+    .items-per-page {
+        margin-left: auto;
+    }
+
+    .per-page-select {
+        padding: 6px 10px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        font-size: 12px;
+        color: var(--ink2);
+        background: var(--card-bg);
+        cursor: pointer;
+    }
+
+    .per-page-select:hover {
+        border-color: var(--primary);
+    }
+
+    /* Responsive adjustments */
+    @@media (max-width: 768px) {
+        .emp-table th:nth-child(2),
+        .emp-table td:nth-child(2),
+        .emp-table th:nth-child(3),
+        .emp-table td:nth-child(3),
+        .emp-table th:nth-child(4),
+        .emp-table td:nth-child(4) {
+            display: none;
+        }
+
+        .emp-table th:first-child,
+        .emp-table td:first-child,
+        .emp-table th:nth-child(5),
+        .emp-table td:nth-child(5),
+        .emp-table th:nth-child(6),
+        .emp-table td:nth-child(6),
+        .emp-table th:last-child,
+        .emp-table td:last-child {
+            display: table-cell;
+        }
+        
+        .table-pagination {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .pagination-controls {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .items-per-page {
+            margin-left: 0;
+            width: 100%;
+        }
+        
+        .per-page-select {
+            width: 100%;
+        }
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Get DOM elements
+    const searchInput = document.getElementById('tableSearch');
+    const tableBody = document.getElementById('tableBody');
+    const rows = Array.from(tableBody.querySelectorAll('tr'));
+    const mobileContainer = document.getElementById('mobileApprovalCards');
+    const itemsPerPageSelect = document.getElementById('itemsPerPage');
+    const prevBtn = document.getElementById('prevPage');
+    const nextBtn = document.getElementById('nextPage');
+    const pageNumbersDiv = document.getElementById('pageNumbers');
+    const paginationInfo = document.getElementById('paginationInfo');
+
+    // Pagination state
+    let currentPage = 1;
+    let itemsPerPage = 10;
+    let filteredRows = rows;
+    let totalPages = 1;
+
+    // Initialize
+    function init() {
+        itemsPerPage = parseInt(itemsPerPageSelect.value);
+        filterRows();
+        updatePagination();
+        renderCurrentPage();
+        toggleMobileView();
+    }
+
+    // Filter rows based on search
+    function filterRows() {
+        const searchTerm = searchInput.value.toLowerCase();
+        
+        filteredRows = rows.filter(row => {
+            const employeeName = row.querySelector('.emp-name')?.textContent.toLowerCase() || '';
+            const leaveType = row.querySelector('.dept-badge')?.textContent.toLowerCase() || '';
+            const employeeId = row.querySelector('.emp-id')?.textContent.toLowerCase() || '';
+
+            return !searchTerm || employeeName.includes(searchTerm) || leaveType.includes(searchTerm) || employeeId.includes(searchTerm);
+        });
+        
+        totalPages = Math.ceil(filteredRows.length / itemsPerPage);
+        if (currentPage > totalPages) currentPage = totalPages || 1;
+    }
+
+    // Render current page
+    function renderCurrentPage() {
+        const start = (currentPage - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        const pageRows = filteredRows.slice(start, end);
+        
+        // Hide all rows first
+        rows.forEach(row => row.style.display = 'none');
+        
+        // Show only current page rows
+        pageRows.forEach(row => row.style.display = '');
+        
+        // Update mobile cards
+        generateMobileCards(pageRows);
+        
+        // Update pagination info
+        updatePaginationInfo();
+    }
+
+    // Update pagination controls
+    function updatePagination() {
+        prevBtn.disabled = currentPage === 1;
+        nextBtn.disabled = currentPage === totalPages || totalPages === 0;
+        generatePageNumbers();
+    }
+
+    // Generate page number buttons
+    function generatePageNumbers() {
+        pageNumbersDiv.innerHTML = '';
+        
+        if (totalPages <= 7) {
+            for (let i = 1; i <= totalPages; i++) {
+                addPageButton(i);
+            }
+        } else {
+            addPageButton(1);
+            
+            if (currentPage > 3) {
+                addEllipsis();
+            }
+            
+            let start = Math.max(2, currentPage - 1);
+            let end = Math.min(totalPages - 1, currentPage + 1);
+            
+            for (let i = start; i <= end; i++) {
+                addPageButton(i);
+            }
+            
+            if (currentPage < totalPages - 2) {
+                addEllipsis();
+            }
+            
+            addPageButton(totalPages);
+        }
+    }
+
+    function addPageButton(pageNum) {
+        const btn = document.createElement('button');
+        btn.className = `page-number ${pageNum === currentPage ? 'active' : ''}`;
+        btn.textContent = pageNum;
+        btn.addEventListener('click', () => {
+            currentPage = pageNum;
+            renderCurrentPage();
+            updatePagination();
+        });
+        pageNumbersDiv.appendChild(btn);
+    }
+
+    function addEllipsis() {
+        const span = document.createElement('span');
+        span.className = 'page-number';
+        span.textContent = '...';
+        span.style.cursor = 'default';
+        pageNumbersDiv.appendChild(span);
+    }
+
+    // Update pagination info text
+    function updatePaginationInfo() {
+        const start = filteredRows.length ? (currentPage - 1) * itemsPerPage + 1 : 0;
+        const end = Math.min(currentPage * itemsPerPage, filteredRows.length);
+        paginationInfo.textContent = `Showing ${start}-${end} of ${filteredRows.length} pending applications`;
+    }
+
+    // Generate mobile cards
+    function generateMobileCards(pageRows) {
+        if (!mobileContainer) return;
+        
+        mobileContainer.innerHTML = '';
+        
+        pageRows.forEach(row => {
+            const employeeName = row.querySelector('.emp-name').textContent;
+            const employeeId = row.querySelector('.emp-id')?.textContent || '';
+            const employeeAvatar = row.querySelector('.emp-avatar');
+            const avatarBg = employeeAvatar.style.backgroundColor;
+            const avatarColor = employeeAvatar.style.color;
+            const avatarText = employeeAvatar.textContent;
+            
+            const leaveType = row.querySelector('.dept-badge').textContent;
+            const leaveTypeBg = row.querySelector('.dept-badge').style.backgroundColor;
+            const leaveTypeColor = row.querySelector('.dept-badge').style.color;
+            
+            const duration = row.querySelector('td:nth-child(3)').textContent.trim();
+            const days = row.querySelector('td:nth-child(4)').textContent.trim();
+            
+            const startDate = row.querySelector('td:nth-child(5) .date-badge:first-child').textContent;
+            const endDate = row.querySelector('td:nth-child(5) .date-badge:last-child').textContent;
+            const appliedDate = row.querySelector('td:nth-child(6) .date-badge')?.textContent || '';
+            
+            const detailsLink = row.querySelector('.action-group a[title="View Details"]').href;
+            const approveLink = row.querySelector('.action-group a[title="Approve Leave"]')?.href;
+            const rejectLink = row.querySelector('.action-group a[title="Reject Leave"]')?.href;
+
+            const card = document.createElement('div');
+            card.className = 'mobile-emp-card';
+            card.innerHTML = `
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+                    <div class="emp-avatar" style="background:${avatarBg};color:${avatarColor}">${avatarText}</div>
+                    <div style="flex:1">
+                        <div class="emp-name">${employeeName}</div>
+                        <div class="emp-id">${employeeId}</div>
+                    </div>
+                </div>
+                
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+                    <div>
+                        <div style="font-size:10px;color:var(--ink3);margin-bottom:2px">LEAVE TYPE</div>
+                        <span class="dept-badge" style="background:${leaveTypeBg};color:${leaveTypeColor}">${leaveType}</span>
+                    </div>
+                    <div>
+                        <div style="font-size:10px;color:var(--ink3);margin-bottom:2px">DURATION</div>
+                        <div style="font-size:12px">${duration} · ${days} days</div>
+                    </div>
+                </div>
+                
+                <div style="background:var(--bg2);border-radius:8px;padding:10px;margin-bottom:8px;">
+                    <div style="font-size:11px;color:var(--ink3);margin-bottom:4px">📅 Leave Period</div>
+                    <div style="font-size:12px;font-weight:500;">${startDate} — ${endDate}</div>
+                </div>
+                
+                <div style="background:var(--bg2);border-radius:8px;padding:10px;margin-bottom:12px;">
+                    <div style="font-size:11px;color:var(--ink3);margin-bottom:4px">⏰ Applied On</div>
+                    <div style="font-size:12px;">${appliedDate}</div>
+                </div>
+                
+                <div class="action-group" style="justify-content:flex-end;gap:12px;">
+                    <a class="action-btn" href="${detailsLink}" title="View Details">
+                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <circle cx="7" cy="7" r="2.5" fill="currentColor"/>
+                            <path d="M1 7C2.5 3.5 4.5 2 7 2s4.5 1.5 6 5c-1.5 3.5-3.5 5-6 5S2.5 10.5 1 7z" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                        </svg>
+                    </a>
+                    <a class="action-btn approve" href="${approveLink}" title="Approve Leave" style="color: #1a7a4a;" 
+                       onclick="return confirm('Are you sure you want to approve this leave application?');">
+                        <svg width="16" height="16" viewBox="0 0 14 14" fill="none">
+                            <circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                            <path d="M4 7L6 9L10 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </a>
+                    <a class="action-btn reject" href="${rejectLink}" title="Reject Leave" style="color: #c0392b;"
+                       onclick="return confirm('Are you sure you want to reject this leave application?');">
+                        <svg width="16" height="16" viewBox="0 0 14 14" fill="none">
+                            <circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                            <path d="M5 5L9 9M9 5L5 9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                        </svg>
+                    </a>
+                </div>
+            `;
+            mobileContainer.appendChild(card);
+        });
+    }
+
+    // Toggle mobile/desktop view
+    function toggleMobileView() {
+        if (!mobileContainer) return;
+        mobileContainer.style.display = window.innerWidth <= 768 ? 'block' : 'none';
+    }
+
+    // Event Listeners
+    searchInput.addEventListener('input', function() {
+        currentPage = 1;
+        filterRows();
+        updatePagination();
+        renderCurrentPage();
+    });
+
+    itemsPerPageSelect.addEventListener('change', function() {
+        itemsPerPage = parseInt(this.value);
+        currentPage = 1;
+        filterRows();
+        updatePagination();
+        renderCurrentPage();
+    });
+
+    prevBtn.addEventListener('click', function() {
+        if (currentPage > 1) {
+            currentPage--;
+            renderCurrentPage();
+            updatePagination();
+        }
+    });
+
+    nextBtn.addEventListener('click', function() {
+        if (currentPage < totalPages) {
+            currentPage++;
+            renderCurrentPage();
+            updatePagination();
+        }
+    });
+
+    window.addEventListener('resize', toggleMobileView);
+
+    // Initialize
+    init();
+});
+</script>

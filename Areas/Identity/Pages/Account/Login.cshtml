@@ -1,0 +1,311 @@
+﻿@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Log in";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-header-title">@ViewData["Title"]</h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Dashboard</a></li>
+            <li class="breadcrumb-item active">Log in</li>
+        </ol>
+    </div>
+</div>
+
+<div class="row" style="justify-content: center;">
+    <div class="col-md-6">
+        <!-- Login Card -->
+        <div class="form-card" style="margin-bottom:16px;max-width:500px;margin:0 auto;">
+            <div class="form-card-header">
+                <span class="section-badge blue">
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                        <circle cx="6" cy="6" r="4" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                        <path d="M6 3v3l2 2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                    </svg>
+                    Account Access
+                </span>
+                <span class="field-hint" style="font-size:11px">Enter your credentials</span>
+            </div>
+
+            <div class="form-card-body">
+                <form id="account" method="post">
+                    <div asp-validation-summary="ModelOnly" class="field-error" style="padding:12px 16px;background:var(--red-bg);border-radius:9px;border:1px solid rgba(192,57,43,0.2);margin-bottom:20px;" role="alert"></div>
+
+                    <!-- Email Field -->
+                    <div style="margin-bottom:20px">
+                        <label asp-for="Input.Email" class="field-label">Email Address</label>
+                        <div style="position:relative">
+                            <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--ink3)">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <rect x="2" y="3" width="12" height="10" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                                    <path d="M3 5l5 4 5-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                            </span>
+                            <input asp-for="Input.Email" class="field-control" style="padding-left:36px;" autocomplete="username" aria-required="true" placeholder="name@company.com" />
+                        </div>
+                        <span asp-validation-for="Input.Email" class="field-error"></span>
+                        <small class="field-hint" style="display:block;margin-top:4px">Enter your work email address</small>
+                    </div>
+
+                    <!-- Password Field with Show/Hide Toggle -->
+                    <div style="margin-bottom:20px">
+                        <label asp-for="Input.Password" class="field-label">Password</label>
+                        <div style="position:relative">
+                            <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--ink3);z-index:1;">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <rect x="2" y="6" width="12" height="8" rx="1.5" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                                    <path d="M5 6V4C5 2.5 6 1 8 1s3 1.5 3 3v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                            </span>
+                            <input asp-for="Input.Password" type="password" id="passwordField" class="field-control" style="padding-left:36px;padding-right:40px;" autocomplete="current-password" aria-required="true" placeholder="••••••••" />
+                            <button type="button" id="togglePassword" class="btn-icon" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;padding:6px;cursor:pointer;color:var(--ink3);display:flex;align-items:center;justify-content:center;border-radius:6px;" onclick="togglePasswordVisibility()">
+                                <!-- Eye Icon (Visible) -->
+                                <svg id="eyeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:block;">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                                <!-- Eye Off Icon (Hidden) -->
+                                <svg id="eyeOffIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;">
+                                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                    <line x1="1" y1="1" x2="23" y2="23"></line>
+                                </svg>
+                            </button>
+                        </div>
+                        <span asp-validation-for="Input.Password" class="field-error"></span>
+                    </div>
+
+                    <!-- Remember Me & Options -->
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+                        <div class="field-checkbox">
+                            <input class="form-check-input" asp-for="Input.RememberMe" />
+                            <label asp-for="Input.RememberMe" class="form-label">@Html.DisplayNameFor(m => m.Input.RememberMe)</label>
+                        </div>
+                        <a id="forgot-password" asp-page="./ForgotPassword" style="font-size:13px;color:var(--blue);text-decoration:none;">Forgot password?</a>
+                    </div>
+
+                    <!-- Actions -->
+                    <div style="margin-bottom:24px">
+                        <button id="login-submit" type="submit" class="btn-primary" style="width:100%;justify-content:center;">
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin-right:6px;vertical-align:-2px">
+                                <path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Sign In
+                        </button>
+                    </div>
+
+                    <!-- Registration Links -->
+                    <div style="border-top:1px solid var(--border);padding-top:20px;margin-top:8px;">
+                        <div style="display:flex;flex-direction:column;gap:12px;align-items:center;">
+                            <p style="margin:0;font-size:14px;color:var(--ink3)">
+                                Don't have an account? 
+                                <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" style="color:var(--blue);text-decoration:none;font-weight:500;">Create account</a>
+                            </p>
+                            <a id="resend-confirmation" asp-page="./ResendEmailConfirmation" style="font-size:13px;color:var(--ink4);text-decoration:none;display:flex;align-items:center;gap:4px;">
+                                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                    <path d="M1 6l3-3 3 3M4 3v5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                                    <path d="M2 8v2h8V8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                Resend email confirmation
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- External Login Section -->
+        @if ((Model.ExternalLogins?.Count ?? 0) > 0)
+        {
+            <div class="form-card" style="margin-top:16px;max-width:500px;margin:16px auto 0;">
+                <div class="form-card-header">
+                    <span class="section-badge neutral">
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                            <circle cx="6" cy="6" r="4.5" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                            <path d="M4 4l4 4M8 4l-4 4" stroke="currentColor" stroke-width="1.2"/>
+                        </svg>
+                        External Services
+                    </span>
+                </div>
+                <div class="form-card-body">
+                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
+                        <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
+                            @foreach (var provider in Model.ExternalLogins!)
+                            {
+                                <button type="submit" class="btn-ghost" name="provider" value="@provider.Name" style="flex:1;min-width:120px;justify-content:center;" title="Log in using your @provider.DisplayName account">
+                                    @if (provider.Name.ToLower().Contains("google"))
+                                    {
+                                        <span style="margin-right:6px;">G</span>
+                                    }
+                                    else if (provider.Name.ToLower().Contains("microsoft"))
+                                    {
+                                        <span style="margin-right:6px;">MS</span>
+                                    }
+                                    else if (provider.Name.ToLower().Contains("facebook"))
+                                    {
+                                        <span style="margin-right:6px;">FB</span>
+                                    }
+                                    else
+                                    {
+                                        <span style="margin-right:6px;">•</span>
+                                    }
+                                    @provider.DisplayName
+                                </button>
+                            }
+                        </div>
+                    </form>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="form-card" style="margin-top:16px;max-width:500px;margin:16px auto 0;background:var(--bg2)">
+                <div class="form-card-body">
+                    <div class="field-hint" style="text-align:center;padding:12px;">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="display:inline;margin-right:4px;vertical-align:-2px">
+                            <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                            <path d="M8 5v3M8 11h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                        External authentication services can be configured. See 
+                        <a href="https://go.microsoft.com/fwlink/?LinkID=532715" style="color:var(--blue);">this article</a> 
+                        for setup instructions.
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Security Notice -->
+        <div style="max-width:500px;margin:20px auto 0;text-align:center;">
+            <div class="field-hint" style="font-size:12px;display:flex;align-items:center;justify-content:center;gap:8px;">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                    <rect x="2" y="5" width="10" height="7" rx="1.5" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                    <path d="M4 5V3.5C4 2 5.5 1 7 1s3 1 3 2.5V5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                    <circle cx="7" cy="9" r="1" fill="currentColor"/>
+                </svg>
+                <span>Secure login with 256-bit encryption</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Additional styles for login specific elements */
+.field-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+}
+
+.field-checkbox input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    cursor: pointer;
+}
+
+.field-checkbox label {
+    font-size: 14px;
+    color: var(--ink2);
+    cursor: pointer;
+    font-weight: normal;
+}
+
+/* Input icon positioning */
+input.field-control {
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input.field-control:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(26, 79, 160, 0.1);
+}
+
+/* Password toggle button styles */
+.btn-icon {
+    transition: color 0.2s, background-color 0.2s;
+}
+
+.btn-icon:hover {
+    background-color: var(--bg2) !important;
+    color: var(--blue) !important;
+}
+
+.btn-icon:active {
+    background-color: var(--bg3) !important;
+}
+
+/* Responsive adjustments */
+@@media (max-width: 576px) {
+    .form-card {
+        margin-left: 12px;
+        margin-right: 12px;
+    }
+    
+    .field-checkbox {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .form-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+}
+
+/* Animation for login button */
+.btn-primary {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(26, 79, 160, 0.2);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+</style>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Password show/hide functionality
+        function togglePasswordVisibility() {
+            const passwordField = document.getElementById('passwordField');
+            const eyeIcon = document.getElementById('eyeIcon');
+            const eyeOffIcon = document.getElementById('eyeOffIcon');
+            
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                eyeIcon.style.display = 'none';
+                eyeOffIcon.style.display = 'block';
+            } else {
+                passwordField.type = 'password';
+                eyeIcon.style.display = 'block';
+                eyeOffIcon.style.display = 'none';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const emailInput = document.getElementById('Input_Email');
+            
+            // Focus on email field on page load
+            if (emailInput) {
+                emailInput.focus();
+            }
+            
+            // Optional: Add keyboard shortcut (Ctrl+Shift+E) to toggle password
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey && e.shiftKey && e.key === 'E') {
+                    e.preventDefault();
+                    togglePasswordVisibility();
+                }
+            });
+        });
+    </script>
+}

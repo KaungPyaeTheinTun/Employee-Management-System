@@ -1,0 +1,421 @@
+@model EmployeesManagement.Models.Holiday
+
+@{
+    ViewData["Title"] = "Add New Holiday";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-header-title">Add New Holiday</h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Dashboard</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index">Holidays</a></li>
+            <li class="breadcrumb-item active">Add New</li>
+        </ol>
+    </div>
+    <a asp-action="Index" class="btn-ghost">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin-right:6px">
+            <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        Back to List
+    </a>
+</div>
+
+<form asp-action="Create" id="createForm" method="post">
+    <div asp-validation-summary="ModelOnly" class="field-error" style="padding:12px 16px;background:var(--red-bg);border-radius:9px;border:1px solid rgba(192,57,43,0.2);margin-bottom:20px;"></div>
+
+    <!-- Holiday Information -->
+    <div class="form-card" style="margin-bottom:16px">
+        <div class="form-card-header">
+            <span class="section-badge blue">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <rect x="1.5" y="2.5" width="9" height="7" rx="1.5" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                    <path d="M3 5h6M3 7h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+                Holiday Information
+            </span>
+        </div>
+        <div class="form-card-body">
+            <div class="row g-3">
+                <div class="col-md-12">
+                    <label asp-for="Title" class="field-label">Holiday Title <span class="field-required">*</span></label>
+                    <input asp-for="Title" class="field-control" placeholder="e.g. New Year's Day, Christmas, Independence Day" />
+                    <span asp-validation-for="Title" class="field-error"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="StartDate" class="field-label">Start Date <span class="field-required">*</span></label>
+                    <input asp-for="StartDate" class="field-control" type="date" />
+                    <span asp-validation-for="StartDate" class="field-error"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="EndDate" class="field-label">End Date <span class="field-required">*</span></label>
+                    <input asp-for="EndDate" class="field-control" type="date" />
+                    <span asp-validation-for="EndDate" class="field-error"></span>
+                </div>
+                <div class="col-md-12">
+                    <label asp-for="Description" class="field-label">Description <span class="field-hint">(optional)</span></label>
+                    <textarea asp-for="Description" class="field-control" placeholder="Enter holiday description, notes, or additional information..." rows="4"></textarea>
+                    <span asp-validation-for="Description" class="field-error"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Duration Preview Card -->
+    <div class="form-card" style="margin-bottom:16px;background:var(--bg2);" id="durationPreview" style="display:none;">
+        <div class="form-card-body">
+            <div style="display:flex;gap:12px;align-items:center">
+                <div style="width:32px;height:32px;border-radius:32px;background:var(--primary-bg);color:var(--primary);display:flex;align-items:center;justify-content:center">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <rect x="2.5" y="3.5" width="11" height="9" rx="1.5" stroke="currentColor" stroke-width="1.2"/>
+                        <path d="M5 6h6M5 8h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div style="flex:1">
+                    <div style="font-weight:500;margin-bottom:2px">Holiday Duration</div>
+                    <div style="font-size:12px;color:var(--ink3)" id="durationText">Select dates to see duration</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Information Card -->
+    <div class="form-card" style="margin-bottom:16px;background:var(--bg2);">
+        <div class="form-card-body">
+            <div style="display:flex;gap:12px;align-items:flex-start">
+                <div style="width:32px;height:32px;border-radius:32px;background:#fef3e0;color:#a05c00;display:flex;align-items:center;justify-content:center">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.2"/>
+                        <path d="M8 4v4l2 2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div>
+                    <div style="font-weight:500;margin-bottom:2px">About Holidays</div>
+                    <div style="font-size:12px;color:var(--ink3)">Holidays are used for leave calculations and attendance tracking. Make sure to set the correct date range for multi-day holidays.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="form-actions" style="border-top:none;padding-top:0">
+        <a asp-action="Index" class="btn-ghost">Cancel</a>
+        <button type="submit" class="btn-primary" style="background-color: black;">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin-right:6px;vertical-align:-2px">
+                <path d="M2 7l3.5 3.5L12 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Create Holiday
+        </button>
+    </div>
+</form>
+
+<style>
+    /* Form field styles */
+    .field-label {
+        display: block;
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--ink2);
+        margin-bottom: 6px;
+    }
+
+    .field-required {
+        color: #c0392b;
+        font-size: 12px;
+    }
+
+    .field-control {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-size: 13px;
+        color: var(--ink1);
+        background: var(--card-bg);
+        transition: all 0.15s;
+    }
+
+    .field-control:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(26, 79, 160, 0.1);
+    }
+
+    input[type="date"].field-control {
+        appearance: none;
+        -webkit-appearance: none;
+    }
+
+    input[type="date"].field-control::-webkit-calendar-picker-indicator {
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 4px;
+    }
+
+
+    textarea.field-control {
+        resize: vertical;
+        min-height: 80px;
+    }
+
+    .field-error {
+        font-size: 11px;
+        color: #c0392b;
+        margin-top: 4px;
+        display: block;
+    }
+
+    .field-hint {
+        font-size: 11px;
+        color: var(--ink3);
+        margin-left: 4px;
+        font-weight: 400;
+    }
+
+    /* Form card styles */
+    .form-card {
+        background: var(--card-bg);
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        overflow: hidden;
+    }
+
+    .form-card-header {
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+        background: var(--bg2);
+    }
+
+    .form-card-body {
+        padding: 20px;
+    }
+
+    .section-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .section-badge.blue {
+        background: #e8eefa;
+        color: #1a4fa0;
+    }
+
+    .section-badge.green {
+        background: #e8f5ee;
+        color: #1a7a4a;
+    }
+
+    .section-badge.amber {
+        background: #fef3e0;
+        color: #a05c00;
+    }
+
+    /* Button styles */
+    .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        padding: 10px 20px;
+        background: var(--primary);
+        color: white;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        border: none;
+        cursor: pointer;
+        transition: all 0.15s;
+        text-decoration: none;
+    }
+
+    .btn-primary:hover {
+        background: #134080;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(26, 79, 160, 0.2);
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-ghost {
+        display: inline-flex;
+        align-items: center;
+        padding: 10px 20px;
+        background: var(--bg2);
+        color: var(--ink2);
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        text-decoration: none;
+        border: 1px solid var(--border);
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+
+    .btn-ghost:hover {
+        background: var(--border);
+        color: var(--ink1);
+        text-decoration: none;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+        padding: 20px 0;
+        border-top: 1px solid var(--border);
+        margin-top: 20px;
+    }
+
+    /* Grid system */
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin: -8px;
+    }
+
+    .g-3 {
+        margin: -8px;
+    }
+
+    .g-3 > [class*="col-"] {
+        padding: 8px;
+    }
+
+    .col-md-4 {
+        flex: 0 0 33.333333%;
+        max-width: 33.333333%;
+    }
+
+    .col-md-6 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+
+    .col-md-12 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .col-md-4,
+        .col-md-6,
+        .col-md-12 {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+        
+        .form-actions {
+            flex-direction: column-reverse;
+        }
+        
+        .btn-primary,
+        .btn-ghost {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .form-card-body {
+            padding: 16px;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Get date inputs
+        const startDateInput = document.querySelector('input[id="StartDate"]');
+        const endDateInput = document.querySelector('input[id="EndDate"]');
+        const durationPreview = document.getElementById('durationPreview');
+        const durationText = document.getElementById('durationText');
+
+        function calculateDuration() {
+            const startDate = startDateInput ? new Date(startDateInput.value) : null;
+            const endDate = endDateInput ? new Date(endDateInput.value) : null;
+
+            if (startDate && endDate && !isNaN(startDate) && !isNaN(endDate)) {
+                // Validate that end date is not before start date
+                if (endDate < startDate) {
+                    durationText.innerHTML = '<span style="color: #c0392b;">⚠️ End date cannot be before start date</span>';
+                    durationPreview.style.display = 'block';
+                    return;
+                }
+
+                // Calculate difference in days
+                const diffTime = Math.abs(endDate - startDate);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                
+                const startFormatted = startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                const endFormatted = endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                
+                if (diffDays === 1) {
+                    durationText.innerHTML = `📅 ${startFormatted} · <strong>1 day</strong> holiday`;
+                } else {
+                    durationText.innerHTML = `📅 ${startFormatted} — ${endFormatted} · <strong>${diffDays} days</strong> holiday`;
+                }
+                durationPreview.style.display = 'block';
+            } else if (startDate && !isNaN(startDate)) {
+                durationText.innerHTML = 'Select end date to see duration';
+                durationPreview.style.display = 'block';
+            } else if (endDate && !isNaN(endDate)) {
+                durationText.innerHTML = 'Select start date to see duration';
+                durationPreview.style.display = 'block';
+            } else {
+                durationPreview.style.display = 'none';
+            }
+        }
+
+        // Add event listeners
+        if (startDateInput) {
+            startDateInput.addEventListener('change', calculateDuration);
+        }
+        if (endDateInput) {
+            endDateInput.addEventListener('change', calculateDuration);
+        }
+
+        // Validate that end date is not before start date on form submit
+        const form = document.getElementById('createForm');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                const startDate = startDateInput ? new Date(startDateInput.value) : null;
+                const endDate = endDateInput ? new Date(endDateInput.value) : null;
+                
+                if (startDate && endDate && !isNaN(startDate) && !isNaN(endDate)) {
+                    if (endDate < startDate) {
+                        e.preventDefault();
+                        alert('End date cannot be before start date. Please correct the dates.');
+                        endDateInput.focus();
+                    }
+                }
+            });
+        }
+
+        // Set min date for start date (today or future? optional)
+        // Uncomment if you want to restrict to future dates only
+        // if (startDateInput) {
+        //     const today = new Date().toISOString().split('T')[0];
+        //     startDateInput.setAttribute('min', today);
+        // }
+        
+        // If end date changes, also set min date relative to start date
+        if (startDateInput && endDateInput) {
+            startDateInput.addEventListener('change', function() {
+                if (startDateInput.value) {
+                    endDateInput.setAttribute('min', startDateInput.value);
+                }
+            });
+            
+            // Trigger initial calculation if values exist
+            if (startDateInput.value || endDateInput.value) {
+                calculateDuration();
+            }
+        }
+    });
+</script>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

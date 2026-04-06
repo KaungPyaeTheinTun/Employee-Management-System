@@ -1,0 +1,359 @@
+@model EmployeesManagement.Models.Audit
+
+@{
+    ViewData["Title"] = "Audit Details";
+    
+    var auditTypeColors = new Dictionary<string, (string bg, string text)>
+    {
+        ["Create"] = ("#e8f5ee", "#1a7a4a"),
+        ["Update"] = ("#fef3e0", "#a05c00"),
+        ["Delete"] = ("#fdecea", "#c0392b"),
+    };
+    
+    var currentAuditType = Model.AuditType ?? "Update";
+    var (typeBg, typeText) = auditTypeColors.ContainsKey(currentAuditType) ? auditTypeColors[currentAuditType] : ("#f2f2ef", "#3a3a38");
+    
+    var userInitials = "?";
+    
+    var avatarBg = "#e8eefa";
+    var avatarText = "#1a4fa0";
+    
+    // Parse JSON values for better display
+    var oldValuesDict = !string.IsNullOrEmpty(Model.OldValues) ? 
+        System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, object>>(Model.OldValues) : null;
+    var newValuesDict = !string.IsNullOrEmpty(Model.NewValues) ? 
+        System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, object>>(Model.NewValues) : null;
+    var affectedColumnsList = !string.IsNullOrEmpty(Model.AffectedColumns) ? 
+        Model.AffectedColumns.Split(',', StringSplitOptions.RemoveEmptyEntries) : null;
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-header-title">Audit Details</h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Dashboard</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index">Audit Logs</a></li>
+            <li class="breadcrumb-item active">Audit #@Model.Id</li>
+        </ol>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <span class="status-badge" style="background:@typeBg;color:@typeText;padding:8px 16px;font-size:13px;font-weight:600">@currentAuditType</span>
+        <a asp-action="Index" class="btn-ghost">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin-right:6px">
+                <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            Back to List
+        </a>
+    </div>
+</div>
+
+<div class="detail-grid">
+    <!-- Left: User/Table Info Card -->
+    <div>
+        <div class="profile-card">
+            <div class="profile-card-top">
+                <div class="profile-avatar-lg" style="background:@avatarBg;color:@avatarText;font-size:32px;">@userInitials</div>
+                <div class="profile-role">
+                    <span class="dept-badge" style="background:@avatarBg;color:@avatarText;font-size:12px;padding:4px 10px;">@(Model.UserId ?? "System")</span>
+                </div>
+            </div>
+            <div class="profile-card-body">
+                <div class="info-row">
+                    <div class="info-icon">📊</div>
+                    <div>
+                        <div class="info-label">TABLE</div>
+                        <div class="info-value">@Model.TableName</div>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-icon">🔑</div>
+                    <div>
+                        <div class="info-label">PRIMARY KEY</div>
+                        <div class="info-value" style="font-family:monospace">@Model.PrimaryKey</div>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-icon">📅</div>
+                    <div>
+                        <div class="info-label">TIMESTAMP</div>
+                        <div class="info-value">@Model.DateTime.ToString("dd MMMM yyyy")</div>
+                        <div class="mono" style="font-size:11px;color:var(--ink4)">@Model.DateTime.ToString("HH:mm:ss")</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Affected Columns Card -->
+        @if (affectedColumnsList != null && affectedColumnsList.Any())
+        {
+            <div class="profile-card" style="margin-top:16px">
+                <div class="detail-section-header" style="border-radius:var(--r-lg) var(--r-lg) 0 0;background:rgba(26,79,160,0.05)">
+                    Affected Columns
+                </div>
+                <div class="profile-card-body">
+                    <div style="display:flex;flex-wrap:wrap;gap:6px">
+                        @foreach (var column in affectedColumnsList)
+                        {
+                            <span class="dept-badge" style="background:var(--bg2);color:var(--ink2);font-size:11px">@column.Trim()</span>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Audit Metadata Card -->
+        <div class="profile-card" style="margin-top:16px">
+            <div class="detail-section-header" style="border-radius:var(--r-lg) var(--r-lg) 0 0">
+                Audit Information
+            </div>
+            <div class="profile-card-body">
+                <div class="info-row">
+                    <div class="info-icon">⊕</div>
+                    <div>
+                        <div class="info-label">RECORD ID</div>
+                        <div class="info-value" style="font-family:monospace">@Model.Id</div>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-icon">✎</div>
+                    <div>
+                        <div class="info-label">AUDIT TYPE</div>
+                        <div class="info-value">
+                            <span class="status-badge" style="background:@typeBg;color:@typeText;padding:4px 10px;font-size:12px">@currentAuditType</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right: Data Change Sections -->
+    <div class="detail-sections">
+
+        <!-- Summary Section -->
+        <div class="detail-section">
+            <div class="detail-section-header">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="opacity:.6">
+                    <rect x="2" y="3" width="10" height="8" rx="1.5" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                    <path d="M5 2v2M9 2v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+                Change Summary
+            </div>
+            <div class="detail-section-body">
+                <div style="background:var(--bg2);padding:16px;border-radius:8px">
+                    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+                        <div>
+                            <span style="font-size:13px;color:var(--ink3)">Action performed on record</span>
+                            <span style="font-weight:600;color:var(--ink1);margin-left:4px">@Model.PrimaryKey</span>
+                            <span style="font-size:13px;color:var(--ink3);margin-left:4px">in table</span>
+                            <span style="font-weight:600;color:var(--ink1);margin-left:4px">@Model.TableName</span>
+                        </div>
+                        <div style="display:flex;gap:8px">
+                            @if (oldValuesDict != null)
+                            {
+                                <div class="audit-badge old">Old Values</div>
+                            }
+                            @if (newValuesDict != null)
+                            {
+                                <div class="audit-badge new">New Values</div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Old Values Section -->
+        @if (oldValuesDict != null && oldValuesDict.Any())
+        {
+            <div class="detail-section">
+                <div class="detail-section-header">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="opacity:.6">
+                        <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                        <path d="M7 4v3l2 2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                    </svg>
+                    Old Values
+                </div>
+                <div class="detail-section-body">
+                    <div style="background:#fdecea;border-radius:8px;padding:16px;border:1px solid rgba(192,57,43,0.2)">
+                        <div class="detail-grid-2">
+                            @foreach (var item in oldValuesDict)
+                            {
+                                <div>
+                                    <div class="detail-field-label" style="color:#c0392b">@item.Key</div>
+                                    <div class="detail-field-value" style="font-family:monospace;word-break:break-all">
+                                        @(item.Value?.ToString() ?? "<null>")
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- New Values Section -->
+        @if (newValuesDict != null && newValuesDict.Any())
+        {
+            <div class="detail-section">
+                <div class="detail-section-header">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="opacity:.6">
+                        <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                        <path d="M7 10V7L5 5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                    </svg>
+                    New Values
+                </div>
+                <div class="detail-section-body">
+                    <div style="background:#e8f5ee;border-radius:8px;padding:16px;border:1px solid rgba(26,122,74,0.2)">
+                        <div class="detail-grid-2">
+                            @foreach (var item in newValuesDict)
+                            {
+                                <div>
+                                    <div class="detail-field-label" style="color:#1a7a4a">@item.Key</div>
+                                    <div class="detail-field-value" style="font-family:monospace;word-break:break-all">
+                                        @(item.Value?.ToString() ?? "<null>")
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Raw Data Section (Expandable) -->
+        <div class="detail-section">
+            <div class="detail-section-header">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="opacity:.6">
+                    <path d="M4 2L2 4l2 2M10 2l2 2-2 2M4 10l-2 2 2 2M10 10l2 2-2 2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+                Raw Data
+            </div>
+            <div class="detail-section-body">
+                <div style="background:var(--bg2);border-radius:8px;padding:16px">
+                    <div style="display:flex;flex-direction:column;gap:16px">
+                        @if (!string.IsNullOrEmpty(Model.OldValues))
+                        {
+                            <div>
+                                <div style="font-size:12px;font-weight:600;color:var(--ink3);margin-bottom:6px">Old Values (JSON)</div>
+                                <pre style="background:var(--card-bg);padding:12px;border-radius:6px;font-size:11px;overflow-x:auto;white-space:pre-wrap;word-break:break-word;margin:0">@Model.OldValues</pre>
+                            </div>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.NewValues))
+                        {
+                            <div>
+                                <div style="font-size:12px;font-weight:600;color:var(--ink3);margin-bottom:6px">New Values (JSON)</div>
+                                <pre style="background:var(--card-bg);padding:12px;border-radius:6px;font-size:11px;overflow-x:auto;white-space:pre-wrap;word-break:break-word;margin:0">@Model.NewValues</pre>
+                            </div>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.AffectedColumns))
+                        {
+                            <div>
+                                <div style="font-size:12px;font-weight:600;color:var(--ink3);margin-bottom:6px">Affected Columns</div>
+                                <pre style="background:var(--card-bg);padding:12px;border-radius:6px;font-size:11px;overflow-x:auto;margin:0">@Model.AffectedColumns</pre>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Additional styles for audit details page */
+.status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.dept-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.audit-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.audit-badge.old {
+    background: #fdecea;
+    color: #c0392b;
+}
+
+.audit-badge.new {
+    background: #e8f5ee;
+    color: #1a7a4a;
+}
+
+.detail-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.detail-field-label {
+    font-size: 11px;
+    color: var(--ink4);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-bottom: 4px;
+}
+
+.detail-field-value {
+    font-size: 14px;
+    color: var(--ink1);
+    font-weight: 500;
+}
+
+pre {
+    font-family: 'SF Mono', 'Monaco', 'Menlo', 'Courier New', monospace;
+    font-size: 11px;
+    line-height: 1.5;
+    max-height: 300px;
+    overflow: auto;
+}
+
+/* Responsive adjustments */
+@@media (max-width: 768px) {
+    .detail-grid-2 {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .page-header > div:last-child {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+    
+    .profile-card-top .profile-avatar-lg {
+        width: 60px;
+        height: 60px;
+        font-size: 24px !important;
+    }
+    
+    pre {
+        max-height: 200px;
+    }
+}
+</style>

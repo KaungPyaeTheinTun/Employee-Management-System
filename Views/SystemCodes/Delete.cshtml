@@ -1,0 +1,348 @@
+@model EmployeesManagement.Models.SystemCode
+
+@{
+    ViewData["Title"] = "Delete System Code";
+    
+    // Generate consistent color based on code
+    var avatarColors = new[] {
+        ("#e8eefa","#1a4fa0"), ("#e8f5ee","#1a7a4a"), ("#fef3e0","#a05c00"),
+        ("#fdecea","#c0392b"), ("#f2f2ef","#3a3a38"), ("#f0eeff","#4a35c0")
+    };
+    int colorIdx = (Model.Code?.Length ?? 0) % avatarColors.Length;
+    var (bg, tc) = avatarColors[colorIdx];
+    
+    // Check if code is system critical or has references
+    bool isSystemCritical = ViewBag.IsSystemCritical ?? false;
+    bool hasReferences = ViewBag.HasReferences ?? false;
+    int referenceCount = ViewBag.ReferenceCount ?? 0;
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-header-title">Delete System Code</h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Dashboard</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index">System Codes</a></li>
+            <li class="breadcrumb-item active">Delete</li>
+        </ol>
+    </div>
+</div>
+
+<div class="delete-card">
+    <!-- Warning header - more severe if system critical or has references -->
+    <div class="delete-warning-header" style="@(isSystemCritical || hasReferences ? "background:#fdecea;border-bottom-color:rgba(192,57,43,0.3);" : "")">
+        <div class="delete-warning-icon" style="@(isSystemCritical || hasReferences ? "background:#c0392b;" : "")">⚠</div>
+        <div>
+            <div class="delete-warning-title">This action cannot be undone</div>
+            <div class="delete-warning-sub">
+                @if (isSystemCritical && hasReferences)
+                {
+                    <text>This is a <strong>system critical code</strong> with <strong>@referenceCount references</strong>. Deleting it may cause system instability.</text>
+                }
+                else if (isSystemCritical)
+                {
+                    <text>This is a <strong>system critical code</strong>. Deleting it may affect system functionality.</text>
+                }
+                else if (hasReferences)
+                {
+                    <text>This code has <strong>@referenceCount references</strong> in the system. Deleting it may affect dependent records.</text>
+                }
+                else
+                {
+                    <text>Deleting this system code will permanently remove it from the system.</text>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- System Code summary -->
+    <div style="padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px">
+        <div class="emp-avatar" style="width:48px;height:48px;border-radius:12px;background:@bg;color:@tc;border:1px solid var(--border);font-size:20px;font-weight:600">@(Model.Code?.Substring(0,1).ToUpper() ?? "C")</div>
+        <div>
+            <div style="font-size:17px;font-weight:700;font-family:monospace">@Model.Code</div>
+            <div style="font-size:13px;color:var(--ink3)">@Model.Description</div>
+        </div>
+        <span class="mono" style="margin-left:auto;font-size:12px;color:var(--ink4)">ID: @Model.Id</span>
+    </div>
+
+    <!-- Details -->
+    <dl class="delete-dl">
+        <dt>System Code</dt>
+        <dd class="mono" style="font-family:monospace">@Model.Code</dd>
+
+        <dt>Description</dt>
+        <dd>@Model.Description</dd>
+
+        <dt>Category</dt>
+        <dd>@(ViewBag.Category ?? "Uncategorized")</dd>
+
+        <dt>Display Order</dt>
+        <dd>@(ViewBag.DisplayOrder ?? "0")</dd>
+
+        <dt>Status</dt>
+        <dd>
+            @if (ViewBag.IsActive ?? true)
+            {
+                <span class="status-badge success">Active</span>
+            }
+            else
+            {
+                <span class="status-badge error">Inactive</span>
+            }
+            
+            @if (isSystemCritical)
+            {
+                <span class="status-badge warning" style="margin-left:8px">System Critical</span>
+            }
+        </dd>
+
+        <dt>Created On</dt>
+        <dd class="mono">@Model.CreatedOn.ToString("dd MMM yyyy HH:mm")</dd>
+
+        <dt>Created By</dt>
+        <dd>@(Model.CreatedById ?? "System")</dd>
+
+        <dt>Last Modified</dt>
+        <dd class="mono">@(Model.ModifiedOn.ToString("dd MMM yyyy HH:mm") ?? "—")</dd>
+
+        <dt>Modified By</dt>
+        <dd>@(Model.ModifiedById ?? "—")</dd>
+    </dl>
+
+    <!-- References Information (if code has references) -->
+    @if (hasReferences)
+    {
+        <div style="padding:16px 24px;background:var(--surface2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+            <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+                <div style="display:flex;align-items:center;gap:12px">
+                    <div style="background:var(--error-bg);border-radius:12px;padding:10px">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#c0392b">
+                            <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                            <path d="M10 6v4M10 14h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div style="font-size:12px;color:var(--ink4);margin-bottom:2px">REFERENCES FOUND</div>
+                        <div style="font-size:24px;font-weight:600;color:var(--error)">@referenceCount</div>
+                    </div>
+                </div>
+                <div style="flex:1">
+                    <div style="background:var(--error-bg);border-radius:8px;padding:12px;font-size:13px;color:var(--error);display:flex;align-items:center;gap:8px">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor">
+                            <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.3" fill="none"/>
+                            <path d="M8 5v4M8 12h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                        </svg>
+                        <span>This code is referenced in other records. Deleting it may break functionality.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sample of references (if available) -->
+            @if (ViewBag.ReferenceSamples != null)
+            {
+                <div style="margin-top:16px">
+                    <div style="font-size:12px;color:var(--ink4);margin-bottom:8px">SAMPLE REFERENCES:</div>
+                    <div style="display:flex;flex-direction:column;gap:6px;">
+                        @foreach (var reference in ViewBag.ReferenceSamples)
+                        {
+                            <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--bg2);border-radius:6px;font-size:12px;">
+                                <span class="dept-badge" style="background:#e8eefa;color:#1a4fa0;font-size:10px;">@reference.Type</span>
+                                <span style="flex:1">@reference.Name</span>
+                                <span class="mono" style="color:var(--ink4)">#@reference.Id</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    <!-- System Critical Warning (if applicable and no references) -->
+    @if (isSystemCritical && !hasReferences)
+    {
+        <div style="padding:16px 24px;background:var(--surface2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+            <div style="padding:12px;background:var(--warning-bg);border-radius:8px;font-size:13px;color:#a05c00;display:flex;align-items:center;gap:8px">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor">
+                    <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.3" fill="none"/>
+                    <path d="M8 5v4M8 12h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+                <span>This is a <strong>system critical code</strong>. Deleting it may affect system functionality even though no direct references were found.</span>
+            </div>
+        </div>
+    }
+
+    <!-- Actions -->
+    <div style="padding:16px 24px;background:var(--surface2);border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px">
+        <a asp-action="Index" class="btn-ghost">Cancel</a>
+        <a asp-action="Details" asp-route-id="@Model.Id" class="btn-ghost">View Details</a>
+        <form asp-action="Delete" method="post" style="display:inline" onsubmit="return confirmDeletion();">
+            <input type="hidden" asp-for="Id" />
+            <button type="submit" class="btn-danger-outline" @(hasReferences ? "disabled style=opacity:0.5;cursor:not-allowed" : "")>
+                <svg width="13" height="13" viewBox="0 0 13 13" fill="none" style="margin-right:6px;vertical-align:-2px">
+                    <path d="M2 4h9M5 4V3a1.5 1.5 0 0 1 3 0v1M10.5 4l-.7 7H3.2L2.5 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+                </svg>
+                @(hasReferences ? "Cannot Delete - Has References" : "Permanently Delete")
+            </button>
+        </form>
+    </div>
+</div>
+
+<style>
+/* Additional styles for delete confirmation */
+.delete-card {
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+    overflow: hidden;
+    border: 1px solid var(--border);
+}
+
+.delete-warning-header {
+    background: #fff2f0;
+    padding: 20px 24px;
+    border-bottom: 1px solid rgba(192,57,43,0.2);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.delete-warning-icon {
+    width: 36px;
+    height: 36px;
+    background: #c0392b;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.delete-warning-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #c0392b;
+    margin-bottom: 4px;
+}
+
+.delete-warning-sub {
+    font-size: 13px;
+    color: var(--ink3);
+}
+
+.delete-dl {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 8px 0;
+    padding: 24px;
+    margin: 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.delete-dl dt {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ink4);
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    padding: 8px 0;
+}
+
+.delete-dl dd {
+    font-size: 14px;
+    color: var(--ink1);
+    padding: 8px 0;
+    margin: 0;
+    border-bottom: 1px dashed var(--border);
+}
+
+.delete-dl dd:last-of-type {
+    border-bottom: none;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.status-badge.success {
+    background: rgba(26, 122, 74, 0.1);
+    color: #1a7a4a;
+}
+
+.status-badge.warning {
+    background: rgba(160, 92, 0, 0.1);
+    color: #a05c00;
+}
+
+.status-badge.error {
+    background: rgba(192, 57, 43, 0.1);
+    color: #c0392b;
+}
+
+/* Status background colors */
+:root {
+    --warning-bg: #fff0d9;
+    --error-bg: #fce8e6;
+    --error: #c0392b;
+}
+
+/* Responsive adjustments */
+@@media (max-width: 600px) {
+    .delete-card {
+        border-radius: 16px;
+    }
+    
+    .delete-warning-header {
+        padding: 16px;
+    }
+    
+    .delete-dl {
+        grid-template-columns: 1fr;
+        gap: 4px 0;
+        padding: 16px;
+    }
+    
+    .delete-dl dt {
+        padding: 8px 0 4px 0;
+    }
+    
+    .delete-dl dd {
+        padding: 4px 0 8px 0;
+    }
+    
+    div[style*="flex"] {
+        flex-direction: column;
+        align-items: stretch !important;
+    }
+    
+    .btn-ghost, .btn-danger-outline {
+        text-align: center;
+        justify-content: center;
+    }
+}
+</style>
+
+<script>
+function confirmDeletion() {
+    @if (isSystemCritical)
+    {
+        <text>
+        return confirm('WARNING: This is a system critical code. Are you absolutely sure you want to delete it? This action cannot be undone.');
+        </text>
+    }
+    else
+    {
+        <text>
+        return confirm('Are you absolutely sure you want to delete this system code? This action cannot be undone.');
+        </text>
+    }
+}
+</script>

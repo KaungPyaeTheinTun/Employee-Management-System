@@ -1,0 +1,386 @@
+@model EmployeesManagement.Models.SystemProfile
+
+@{
+    ViewData["Title"] = "Edit System Profile";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-header-title">Edit System Profile</h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Dashboard</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index">System Profiles</a></li>
+            <li class="breadcrumb-item active">Edit @Model.Name</li>
+        </ol>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <a asp-action="Index" class="btn-ghost">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin-right:6px">
+                <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            Back to List
+        </a>
+    </div>
+</div>
+
+<form asp-action="Edit" id="editForm" method="post">
+    <div asp-validation-summary="ModelOnly" class="field-error" style="padding:12px 16px;background:var(--red-bg);border-radius:9px;border:1px solid rgba(192,57,43,0.2);margin-bottom:20px;"></div>
+
+    <input type="hidden" asp-for="Id" />
+
+    <!-- Profile Information -->
+    <div class="form-card" style="margin-bottom:16px">
+        <div class="form-card-header">
+            <span class="section-badge blue">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                    <circle cx="6" cy="6" r="2" stroke="currentColor" stroke-width="1.2"/>
+                </svg>
+                Profile Information
+            </span>
+        </div>
+        <div class="form-card-body">
+            <div class="row g-3">
+                <div class="col-md-12">
+                    <label asp-for="Name" class="field-label">Profile Name <span class="field-required">*</span></label>
+                    <input asp-for="Name" class="field-control" placeholder="Enter profile name..." />
+                    <span asp-validation-for="Name" class="field-error"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="ProfileId" class="field-label">Profile Type <span class="field-required">*</span></label>
+                    <select asp-for="ProfileId" class="field-control" asp-items="ViewBag.ProfileId">
+                        <option value="">-- Select Profile Type --</option>
+                    </select>
+                    <span asp-validation-for="ProfileId" class="field-error"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Order" class="field-label">Display Order <span class="field-required">*</span></label>
+                    <input asp-for="Order" class="field-control" type="number" placeholder="e.g. 1, 2, 3..." />
+                    <span asp-validation-for="Order" class="field-error"></span>
+                    <span class="field-hint">Determines the order in which profiles are displayed</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="form-actions">
+        <a asp-action="Index" class="btn-ghost">Cancel</a>
+        <button type="submit" class="btn-primary" style="background-color: black;">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin-right:6px;vertical-align:-2px">
+                <path d="M2 7l3.5 3.5L12 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Update Profile
+        </button>
+    </div>
+</form>
+
+<style>
+    /* Page Header Styles */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 24px;
+        gap: 16px;
+    }
+
+    .page-header-title {
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--ink1);
+        margin: 0 0 8px 0;
+    }
+
+    .breadcrumb {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        gap: 8px;
+        font-size: 13px;
+    }
+
+    .breadcrumb-item {
+        color: var(--ink3);
+    }
+
+    .breadcrumb-item a {
+        color: var(--primary);
+        text-decoration: none;
+    }
+
+    .breadcrumb-item a:hover {
+        text-decoration: underline;
+    }
+
+    .breadcrumb-item.active {
+        color: var(--ink2);
+        font-weight: 500;
+    }
+
+    .breadcrumb-item + .breadcrumb-item::before {
+        content: "/";
+        margin-right: 8px;
+        color: var(--ink4);
+    }
+
+    /* Form field styles */
+    .field-label {
+        display: block;
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--ink2);
+        margin-bottom: 6px;
+    }
+
+    .field-required {
+        color: #c0392b;
+        font-size: 12px;
+    }
+
+    .field-control {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-size: 13px;
+        color: var(--ink1);
+        background: var(--card-bg);
+        transition: all 0.15s;
+    }
+
+    .field-control:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(26, 79, 160, 0.1);
+    }
+
+    select.field-control {
+        appearance: none;
+        -webkit-appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 5l3 3 3-3' stroke='%23666' stroke-width='1.2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        padding-right: 32px;
+    }
+
+    .field-control[readonly] {
+        background: var(--bg2);
+        cursor: not-allowed;
+        opacity: 0.8;
+    }
+
+    input[type="number"].field-control {
+        -moz-appearance: textfield;
+    }
+
+    input[type="number"].field-control::-webkit-inner-spin-button,
+    input[type="number"].field-control::-webkit-outer-spin-button {
+        opacity: 0.5;
+    }
+
+    .field-error {
+        font-size: 11px;
+        color: #c0392b;
+        margin-top: 4px;
+        display: block;
+    }
+
+    .field-hint {
+        display: block;
+        font-size: 11px;
+        color: var(--ink3);
+        margin-top: 4px;
+    }
+
+    /* Form card styles */
+    .form-card {
+        background: var(--card-bg);
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        overflow: hidden;
+    }
+
+    .form-card-header {
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+        background: var(--bg2);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .form-card-body {
+        padding: 20px;
+    }
+
+    .section-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .section-badge.blue {
+        background: #e8eefa;
+        color: #1a4fa0;
+    }
+
+    .section-badge.green {
+        background: #e8f5ee;
+        color: #1a7a4a;
+    }
+
+    .section-badge.amber {
+        background: #fef3e0;
+        color: #a05c00;
+    }
+
+    .section-badge.neutral {
+        background: var(--bg2);
+        color: var(--ink2);
+    }
+
+    /* Button styles */
+    .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        padding: 10px 20px;
+        background: var(--primary);
+        color: white;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        border: none;
+        cursor: pointer;
+        transition: all 0.15s;
+        text-decoration: none;
+    }
+
+    .btn-primary:hover {
+        background: #134080;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(26, 79, 160, 0.2);
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-ghost {
+        display: inline-flex;
+        align-items: center;
+        padding: 10px 20px;
+        background: var(--bg2);
+        color: var(--ink2);
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        text-decoration: none;
+        border: 1px solid var(--border);
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+
+    .btn-ghost:hover {
+        background: var(--border);
+        color: var(--ink1);
+        text-decoration: none;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+        padding: 20px 0;
+        border-top: 1px solid var(--border);
+        margin-top: 20px;
+    }
+
+    /* Grid system */
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin: -8px;
+    }
+
+    .g-3 {
+        margin: -8px;
+    }
+
+    .g-3 > [class*="col-"] {
+        padding: 8px;
+    }
+
+    .col-md-4 {
+        flex: 0 0 33.333333%;
+        max-width: 33.333333%;
+    }
+
+    .col-md-6 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+
+    .col-md-12 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    /* CSS Variables (if not defined globally) */
+    :root {
+        --ink1: #1a1a1a;
+        --ink2: #4a4a4a;
+        --ink3: #8a8a8a;
+        --ink4: #c0c0c0;
+        --border: #e5e5e5;
+        --bg2: #f8f8f8;
+        --card-bg: #ffffff;
+        --primary: #1a4fa0;
+        --primary-bg: rgba(26, 79, 160, 0.1);
+        --red-bg: rgba(192, 57, 43, 0.1);
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .col-md-4,
+        .col-md-6,
+        .col-md-12 {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+        
+        .form-actions {
+            flex-direction: column-reverse;
+        }
+        
+        .btn-primary,
+        .btn-ghost {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .form-card-body {
+            padding: 16px;
+        }
+        
+        .form-card-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+    }
+</style>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

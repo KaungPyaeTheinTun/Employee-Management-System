@@ -1,0 +1,551 @@
+@model IEnumerable<EmployeesManagement.Models.SystemCode>
+
+@{
+    ViewData["Title"] = "System Codes";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-header-title">System Codes</h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Dashboard</a></li>
+            <li class="breadcrumb-item active">System Codes</li>
+        </ol>
+    </div>
+    <a asp-action="Create" class="add-btn">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        Add System Code
+    </a>
+</div>
+
+<div class="table-card">
+    <!-- Toolbar -->
+    <div class="table-toolbar">
+        <span class="table-title">All System Codes</span>
+
+        <div class="filter-chips">
+            <div class="chip filter-chip active" data-filter="all">All <span style="opacity:.5;margin-left:2px">@Model.Count()</span></div>
+        </div>
+
+        <div class="table-search">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                <circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" stroke-width="1.2"/>
+                <path d="M9 9L12 12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+            <input id="tableSearch" type="text" placeholder="Search code, description..." />
+        </div>
+        
+        <!-- Items per page selector -->
+        <div class="items-per-page">
+            <select id="itemsPerPage" class="per-page-select">
+                <option value="10">10 per page</option>
+                <option value="25">25 per page</option>
+                <option value="50">50 per page</option>
+                <option value="100">100 per page</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Desktop table -->
+    <div class="table-wrap">
+        <table class="emp-table" id="systemCodeTable">
+            <thead>
+                <tr>
+                    <th data-sort="0">CODE</th>
+                    <th data-sort="1">DESCRIPTION</th>
+                    <th data-sort="2">CREATED BY</th>
+                    <th data-sort="3">CREATED ON</th>
+                    <th data-sort="4">MODIFIED BY</th>
+                    <th data-sort="5">MODIFIED ON</th>
+                    <th>ACTIONS</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                @{
+                    var avatarColors = new[] {
+                        ("#e8eefa","#1a4fa0"), ("#e8f5ee","#1a7a4a"), ("#fef3e0","#a05c00"),
+                        ("#fdecea","#c0392b"), ("#f2f2ef","#3a3a38"), ("#f0eeff","#4a35c0")
+                    };
+                    int colorIdx = 0;
+                }
+                @foreach (var item in Model)
+                {
+                    var (bg, tc) = avatarColors[colorIdx++ % avatarColors.Length];
+                    
+                    <tr data-id="@item.Id">
+                        <td>
+                            <div>
+                                <div class="emp-name" style="font-family:monospace">@item.Code</div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="dept-badge" style="background:@bg;color:@tc;max-width:250px;white-space:normal;line-height:1.3">@item.Description</span>
+                        </td>
+                        <td style="color:var(--ink2)">@item.CreatedById</td>
+                        <td style="color:var(--ink2)">
+                            <span class="date-badge">@item.CreatedOn.ToString("MMM dd, yyyy")</span>
+                        </td>
+                        <td style="color:var(--ink2)">@item.ModifiedById</td>
+                        <td style="color:var(--ink2)">
+                            <span class="date-badge">@(item.ModifiedOn.ToString("MMM dd, yyyy") ?? "—")</span>
+                        </td>
+                        <td>
+                            <div class="action-group">
+                                <a class="action-btn" asp-action="Details" asp-route-id="@item.Id" title="View">
+                                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                                        <circle cx="7" cy="7" r="2.5" fill="currentColor"/>
+                                        <path d="M1 7C2.5 3.5 4.5 2 7 2s4.5 1.5 6 5c-1.5 3.5-3.5 5-6 5S2.5 10.5 1 7z" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                                    </svg>
+                                </a>
+                                <a class="action-btn" asp-action="Edit" asp-route-id="@item.Id" title="Edit">
+                                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                                        <path d="M9.5 2.5l2 2-7 7H2.5v-2l7-7z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" fill="none"/>
+                                    </svg>
+                                </a>
+                                <a class="action-btn del" asp-action="Delete" asp-route-id="@item.Id" title="Delete">
+                                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                                        <path d="M2 4h10M5 4V2.5h4V4M11 4l-.75 8H3.75L3 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                                    </svg>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <!-- Mobile cards (injected by JS) -->
+        <div id="mobileSystemCodeCards" class="mobile-emp-cards"></div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="table-pagination">
+        <span class="pagination-info" id="paginationInfo"></span>
+        <div class="pagination-controls" id="tablePagination">
+            <button class="pagination-btn" id="prevPage" disabled>Previous</button>
+            <div class="page-numbers" id="pageNumbers"></div>
+            <button class="pagination-btn" id="nextPage">Next</button>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Additional styles specific to system codes */
+.code-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.date-badge {
+    background: var(--bg2);
+    padding: 4px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    color: var(--ink3);
+    white-space: nowrap;
+}
+
+.dept-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    max-width: 100%;
+    word-break: break-word;
+}
+
+/* Pagination styles */
+.table-pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.pagination-info {
+    font-size: 12px;
+    color: var(--ink3);
+}
+
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pagination-btn {
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    background: var(--card-bg);
+    border-radius: 6px;
+    font-size: 12px;
+    color: var(--ink2);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    background: var(--bg2);
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.pagination-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.page-numbers {
+    display: flex;
+    gap: 4px;
+}
+
+.page-number {
+    min-width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border);
+    background: var(--card-bg);
+    border-radius: 6px;
+    font-size: 12px;
+    color: var(--ink2);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.page-number:hover {
+    background: var(--bg2);
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.page-number.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+}
+
+/* Items per page selector */
+.items-per-page {
+    margin-left: auto;
+}
+
+.per-page-select {
+    padding: 6px 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 12px;
+    color: var(--ink2);
+    background: var(--card-bg);
+    cursor: pointer;
+}
+
+.per-page-select:hover {
+    border-color: var(--primary);
+}
+
+/* Responsive adjustments */
+@@media (max-width: 768px) {
+    .emp-table th:nth-child(2),
+    .emp-table td:nth-child(2),
+    .emp-table th:nth-child(3),
+    .emp-table td:nth-child(3),
+    .emp-table th:nth-child(4),
+    .emp-table td:nth-child(4),
+    .emp-table th:nth-child(5),
+    .emp-table td:nth-child(5),
+    .emp-table th:nth-child(6),
+    .emp-table td:nth-child(6) {
+        display: none;
+    }
+    
+    .emp-table th:first-child,
+    .emp-table td:first-child,
+    .emp-table th:last-child,
+    .emp-table td:last-child {
+        display: table-cell;
+    }
+    
+    .table-pagination {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .pagination-controls {
+        width: 100%;
+        justify-content: center;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get DOM elements
+    const searchInput = document.getElementById('tableSearch');
+    const table = document.getElementById('systemCodeTable');
+    const tableBody = document.getElementById('tableBody');
+    const rows = Array.from(tableBody.querySelectorAll('tr'));
+    const mobileContainer = document.getElementById('mobileSystemCodeCards');
+    const itemsPerPageSelect = document.getElementById('itemsPerPage');
+    const prevBtn = document.getElementById('prevPage');
+    const nextBtn = document.getElementById('nextPage');
+    const pageNumbersDiv = document.getElementById('pageNumbers');
+    const paginationInfo = document.getElementById('paginationInfo');
+
+    // Pagination state
+    let currentPage = 1;
+    let itemsPerPage = 10;
+    let filteredRows = rows;
+    let totalPages = 1;
+
+    // Initialize
+    function init() {
+        itemsPerPage = parseInt(itemsPerPageSelect.value);
+        filterRows();
+        updatePagination();
+        renderCurrentPage();
+        toggleMobileView();
+    }
+
+    // Filter rows based on search
+    function filterRows() {
+        const searchTerm = searchInput.value.toLowerCase();
+        
+        if (!searchTerm) {
+            filteredRows = rows;
+        } else {
+            filteredRows = rows.filter(row => {
+                const code = row.querySelector('.emp-name')?.textContent.toLowerCase() || '';
+                const description = row.querySelector('.dept-badge')?.textContent.toLowerCase() || '';
+                const createdBy = row.querySelector('td:nth-child(3)')?.textContent.toLowerCase() || '';
+                return code.includes(searchTerm) || description.includes(searchTerm) || createdBy.includes(searchTerm);
+            });
+        }
+        
+        totalPages = Math.ceil(filteredRows.length / itemsPerPage);
+        if (currentPage > totalPages) currentPage = totalPages || 1;
+    }
+
+    // Render current page
+    function renderCurrentPage() {
+        const start = (currentPage - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        const pageRows = filteredRows.slice(start, end);
+        
+        // Hide all rows first
+        rows.forEach(row => row.style.display = 'none');
+        
+        // Show only current page rows
+        pageRows.forEach(row => row.style.display = '');
+        
+        // Update mobile cards
+        generateMobileCards(pageRows);
+        
+        // Update pagination info
+        updatePaginationInfo();
+    }
+
+    // Update pagination controls
+    function updatePagination() {
+        // Update button states
+        prevBtn.disabled = currentPage === 1;
+        nextBtn.disabled = currentPage === totalPages || totalPages === 0;
+        
+        // Generate page numbers
+        generatePageNumbers();
+    }
+
+    // Generate page number buttons
+    function generatePageNumbers() {
+        pageNumbersDiv.innerHTML = '';
+        
+        if (totalPages <= 7) {
+            // Show all pages
+            for (let i = 1; i <= totalPages; i++) {
+                addPageButton(i);
+            }
+        } else {
+            // Show first page
+            addPageButton(1);
+            
+            if (currentPage > 3) {
+                addEllipsis();
+            }
+            
+            // Show pages around current page
+            let start = Math.max(2, currentPage - 1);
+            let end = Math.min(totalPages - 1, currentPage + 1);
+            
+            for (let i = start; i <= end; i++) {
+                addPageButton(i);
+            }
+            
+            if (currentPage < totalPages - 2) {
+                addEllipsis();
+            }
+            
+            // Show last page
+            addPageButton(totalPages);
+        }
+    }
+
+    function addPageButton(pageNum) {
+        const btn = document.createElement('button');
+        btn.className = `page-number ${pageNum === currentPage ? 'active' : ''}`;
+        btn.textContent = pageNum;
+        btn.addEventListener('click', () => {
+            currentPage = pageNum;
+            renderCurrentPage();
+            updatePagination();
+        });
+        pageNumbersDiv.appendChild(btn);
+    }
+
+    function addEllipsis() {
+        const span = document.createElement('span');
+        span.className = 'page-number';
+        span.textContent = '...';
+        span.style.cursor = 'default';
+        span.disabled = true;
+        pageNumbersDiv.appendChild(span);
+    }
+
+    // Update pagination info text
+    function updatePaginationInfo() {
+        const start = filteredRows.length ? (currentPage - 1) * itemsPerPage + 1 : 0;
+        const end = Math.min(currentPage * itemsPerPage, filteredRows.length);
+        paginationInfo.textContent = `Showing ${start}-${end} of ${filteredRows.length} system codes`;
+    }
+
+    // Generate mobile cards
+    function generateMobileCards(pageRows) {
+        if (!mobileContainer) return;
+        
+        mobileContainer.innerHTML = '';
+        
+        pageRows.forEach(row => {
+            const code = row.querySelector('.emp-name').textContent;
+            const description = row.querySelector('.dept-badge').textContent;
+            const createdBy = row.querySelector('td:nth-child(3)').textContent.trim();
+            const createdOn = row.querySelector('td:nth-child(4) .date-badge').textContent;
+            const modifiedBy = row.querySelector('td:nth-child(5)').textContent.trim();
+            const modifiedOn = row.querySelector('td:nth-child(6) .date-badge').textContent;
+            
+            // Get avatar colors
+            const deptBadge = row.querySelector('.dept-badge');
+            const bg = deptBadge.style.backgroundColor;
+            const tc = deptBadge.style.color;
+            
+            // Get links
+            const detailsLink = row.querySelector('.action-group a[title="View"]').href;
+            const editLink = row.querySelector('.action-group a[title="Edit"]').href;
+            const deleteLink = row.querySelector('.action-group a[title="Delete"]').href;
+            
+            // Create avatar text (first letter of code)
+            const avatarText = code.charAt(0).toUpperCase();
+            
+            const card = document.createElement('div');
+            card.className = 'mobile-emp-card';
+            card.innerHTML = `
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+                    <div class="emp-avatar" style="background:${bg};color:${tc};width:40px;height:40px;font-size:16px">${avatarText}</div>
+                    <div style="flex:1">
+                        <div class="emp-name" style="font-family:monospace;font-size:15px">${code}</div>
+                        <div style="display:flex;gap:6px;margin-top:4px">
+                            <span class="dept-badge" style="background:${bg};color:${tc};font-size:11px">${description}</span>
+                        </div>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+                    <div>
+                        <div style="font-size:10px;color:var(--ink3);margin-bottom:2px">CREATED</div>
+                        <div style="font-size:12px">${createdBy}</div>
+                        <div class="date-badge" style="background:none;padding:0;margin-top:2px">${createdOn}</div>
+                    </div>
+                    <div>
+                        <div style="font-size:10px;color:var(--ink3);margin-bottom:2px">MODIFIED</div>
+                        <div style="font-size:12px">${modifiedBy}</div>
+                        <div class="date-badge" style="background:none;padding:0;margin-top:2px">${modifiedOn}</div>
+                    </div>
+                </div>
+                <div class="action-group" style="justify-content:flex-end;margin-top:8px">
+                    <a class="action-btn" href="${detailsLink}" title="View">
+                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <circle cx="7" cy="7" r="2.5" fill="currentColor"/>
+                            <path d="M1 7C2.5 3.5 4.5 2 7 2s4.5 1.5 6 5c-1.5 3.5-3.5 5-6 5S2.5 10.5 1 7z" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                        </svg>
+                    </a>
+                    <a class="action-btn" href="${editLink}" title="Edit">
+                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path d="M9.5 2.5l2 2-7 7H2.5v-2l7-7z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" fill="none"/>
+                        </svg>
+                    </a>
+                    <a class="action-btn del" href="${deleteLink}" title="Delete">
+                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path d="M2 4h10M5 4V2.5h4V4M11 4l-.75 8H3.75L3 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                        </svg>
+                    </a>
+                </div>
+            `;
+            mobileContainer.appendChild(card);
+        });
+    }
+
+    // Toggle mobile/desktop view
+    function toggleMobileView() {
+        if (!mobileContainer) return;
+        
+        if (window.innerWidth <= 768) {
+            mobileContainer.style.display = 'block';
+        } else {
+            mobileContainer.style.display = 'none';
+        }
+    }
+
+    // Event Listeners
+    searchInput.addEventListener('input', function() {
+        currentPage = 1;
+        filterRows();
+        updatePagination();
+        renderCurrentPage();
+    });
+
+    itemsPerPageSelect.addEventListener('change', function() {
+        itemsPerPage = parseInt(this.value);
+        currentPage = 1;
+        filterRows();
+        updatePagination();
+        renderCurrentPage();
+    });
+
+    prevBtn.addEventListener('click', function() {
+        if (currentPage > 1) {
+            currentPage--;
+            renderCurrentPage();
+            updatePagination();
+        }
+    });
+
+    nextBtn.addEventListener('click', function() {
+        if (currentPage < totalPages) {
+            currentPage++;
+            renderCurrentPage();
+            updatePagination();
+        }
+    });
+
+    window.addEventListener('resize', toggleMobileView);
+
+    // Initialize
+    init();
+});
+</script>

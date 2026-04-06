@@ -1,0 +1,342 @@
+@model EmployeeManagement.ViewModels.UserViewModel
+
+@{
+    ViewData["Title"] = "Add New User";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-header-title">@ViewData["Title"]</h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Dashboard</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index">Users</a></li>
+            <li class="breadcrumb-item active">Add New</li>
+        </ol>
+    </div>
+    <a asp-action="Index" class="btn-ghost">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin-right:6px">
+            <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        Back to List
+    </a>
+</div>
+
+<div class="row" style="justify-content: center;">
+    <div class="col-md-8">
+        <!-- User Details Card -->
+        <div class="form-card" style="max-width:800px;margin:0 auto;">
+            <div class="form-card-header">
+                <span class="section-badge blue">
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                        <circle cx="6" cy="4" r="2.5" fill="currentColor"/>
+                        <path d="M1 11c0-2.76 2.24-5 5-5s5 2.24 5 5" stroke="currentColor" stroke-width="1.3" fill="none"/>
+                    </svg>
+                    User Information
+                </span>
+                <span class="field-hint" style="font-size:11px">Enter user details</span>
+            </div>
+
+            <div class="form-card-body">
+                <form asp-action="Create" id="createForm">
+                    <div asp-validation-summary="ModelOnly" class="field-error" style="padding:12px 16px;background:var(--red-bg);border-radius:9px;border:1px solid rgba(192,57,43,0.2);margin-bottom:20px;"></div>
+
+                    <!-- Personal Details Section -->
+                    <div style="margin-bottom:24px;">
+                        <h4 style="font-size:14px;font-weight:600;color:var(--ink2);margin-bottom:16px;">Personal Details</h4>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label asp-for="FirstName" class="field-label">FirstName</label>
+                                <div style="position:relative">
+                                    <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--ink3);">
+                                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                            <rect x="2" y="3" width="12" height="10" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                                            <path d="M3 5l5 4 5-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                        </svg>
+                                    </span>
+                                    <input asp-for="FirstName" class="field-control" style="padding-left:36px;" placeholder="e.g. john" />
+                                </div>
+                                <span asp-validation-for="FirstName" class="field-error"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="MiddleName" class="field-label">MiddleName</label>
+                                <div style="position:relative">
+                                    <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--ink3);">
+                                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                            <rect x="2" y="3" width="12" height="10" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                                            <path d="M3 5l5 4 5-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                        </svg>
+                                    </span>
+                                    <input asp-for="MiddleName" class="field-control" style="padding-left:36px;" placeholder="e.g. wise" />
+                                </div>
+                                <span asp-validation-for="MiddleName" class="field-error"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="LastName" class="field-label">LastName</label>
+                                <div style="position:relative">
+                                    <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--ink3);">
+                                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                            <rect x="2" y="3" width="12" height="10" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                                            <path d="M3 5l5 4 5-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                        </svg>
+                                    </span>
+                                    <input asp-for="LastName" class="field-control" style="padding-left:36px;" placeholder="e.g. doe" />
+                                </div>
+                                <span asp-validation-for="LastName" class="field-error"></span>
+                            </div>
+                
+                            <div class="col-md-6">
+                                <label asp-for="NationalId" class="field-label">NationalId</label>
+                                <div style="position:relative">
+                                    <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--ink3);">
+                                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                            <rect x="2" y="3" width="12" height="10" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                                            <path d="M3 5l5 4 5-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                        </svg>
+                                    </span>
+                                    <input asp-for="NationalId" class="field-control" style="padding-left:36px;" placeholder="e.g. Myanmar" />
+                                </div>
+                                <span asp-validation-for="NationalId" class="field-error"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Email" class="field-label">Email Address</label>
+                                <div style="position:relative">
+                                    <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--ink3);">
+                                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                            <rect x="2" y="3" width="12" height="10" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                                            <path d="M3 5l5 4 5-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                        </svg>
+                                    </span>
+                                    <input asp-for="Email" class="field-control" style="padding-left:36px;" placeholder="e.g. john.doe@company.com" />
+                                </div>
+                                <span asp-validation-for="Email" class="field-error"></span>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label asp-for="PhoneNumber" class="field-label">Phone Number</label>
+                                <div style="position:relative">
+                                    <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--ink3);">
+                                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                            <rect x="3" y="1" width="10" height="14" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                                            <path d="M6 12h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                        </svg>
+                                    </span>
+                                    <input asp-for="PhoneNumber" class="field-control" style="padding-left:36px;" placeholder="e.g. 09123456789" />
+                                </div>
+                                <span asp-validation-for="PhoneNumber" class="field-error"></span>
+                                <small class="field-hint" style="display:block;margin-top:4px;">For account recovery and notifications</small>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label asp-for="UserName" class="field-label">Username</label>
+                                <div style="position:relative">
+                                    <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--ink3);">
+                                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                            <circle cx="8" cy="5" r="3.5" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                                            <path d="M2 14c0-3.5 2.5-6 6-6s6 2.5 6 6" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                                        </svg>
+                                    </span>
+                                    <input asp-for="UserName" class="field-control" style="padding-left:36px;" placeholder="e.g. johndoe" />
+                                </div>
+                                <span asp-validation-for="UserName" class="field-error"></span>
+                                <small class="field-hint" style="display:block;margin-top:4px;">Used for login and display</small>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="RoleId" class="field-label">Role</label>
+                                <select asp-for="RoleId" class="field-control" asp-items="ViewBag.RoleId">
+                                    <option value="">— Select Role —</option>
+                                </select>
+                                <span asp-validation-for="RoleId" class="field-error"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Password Section -->
+                    <div style="border-top:1px solid var(--border);padding-top:24px;margin-bottom:24px;">
+                        <h4 style="font-size:14px;font-weight:600;color:var(--ink2);margin-bottom:16px;">Security</h4>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label asp-for="Password" class="field-label">Password</label>
+                                <div style="position:relative">
+                                    <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--ink3);z-index:1;">
+                                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                            <rect x="2" y="6" width="12" height="8" rx="1.5" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                                            <path d="M5 6V4C5 2.5 6 1 8 1s3 1.5 3 3v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                        </svg>
+                                    </span>
+                                    <input asp-for="Password" type="password" id="passwordField" class="field-control" style="padding-left:36px;padding-right:40px;" placeholder="••••••••" />
+                                    <button type="button" id="togglePassword" class="btn-icon" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;padding:6px;cursor:pointer;color:var(--ink3);display:flex;align-items:center;justify-content:center;border-radius:6px;" onclick="togglePasswordVisibility()">
+                                        <!-- Eye Icon (Visible) -->
+                                        <svg id="eyeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:block;">
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                            <circle cx="12" cy="12" r="3"></circle>
+                                        </svg>
+                                        <!-- Eye Off Icon (Hidden) -->
+                                        <svg id="eyeOffIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;">
+                                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                            <line x1="1" y1="1" x2="23" y2="23"></line>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <span asp-validation-for="Password" class="field-error"></span>
+                                <small class="field-hint" style="display:block;margin-top:4px;">Leave blank to auto-generate a secure password</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div style="border-top:1px solid var(--border);padding-top:20px;display:flex;gap:12px;justify-content:flex-end;">
+                        <a asp-action="Index" class="btn-ghost">Cancel</a>
+                        <button type="submit" class="btn-primary">
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin-right:6px;vertical-align:-2px">
+                                <path d="M2 7l3.5 3.5L12 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Create User
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Security Notice -->
+        <div style="max-width:800px;margin:20px auto 0;text-align:center;">
+            <div class="field-hint" style="font-size:12px;display:flex;align-items:center;justify-content:center;gap:8px;">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                    <rect x="2" y="5" width="10" height="7" rx="1.5" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                    <path d="M4 5V3.5C4 2 5.5 1 7 1s3 1 3 2.5V5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+                <span>All data is encrypted and securely stored</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Form element styles */
+.field-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+}
+
+.field-checkbox input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    cursor: pointer;
+}
+
+.field-checkbox label {
+    font-size: 14px;
+    color: var(--ink2);
+    cursor: pointer;
+    font-weight: normal;
+}
+
+/* Input icon positioning */
+input.field-control {
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input.field-control:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(26, 79, 160, 0.1);
+}
+
+/* Password toggle button styles */
+.btn-icon {
+    transition: color 0.2s, background-color 0.2s;
+    z-index: 2;
+}
+
+.btn-icon:hover {
+    background-color: var(--bg2) !important;
+    color: var(--blue) !important;
+}
+
+.btn-icon:active {
+    background-color: var(--bg3) !important;
+}
+
+/* Responsive adjustments */
+@@media (max-width: 768px) {
+    .form-card {
+        margin-left: 12px;
+        margin-right: 12px;
+    }
+    
+    .form-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+    
+    div[style*="justify-content: flex-end"] {
+        flex-direction: column;
+    }
+    
+    .btn-ghost, .btn-primary {
+        width: 100%;
+        justify-content: center !important;
+    }
+}
+
+/* Animation for submit button */
+.btn-primary {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(26, 79, 160, 0.2);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+/* Section headers */
+h4 {
+    letter-spacing: -0.01em;
+}
+</style>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Password show/hide functionality
+        function togglePasswordVisibility() {
+            const passwordField = document.getElementById('passwordField');
+            const eyeIcon = document.getElementById('eyeIcon');
+            const eyeOffIcon = document.getElementById('eyeOffIcon');
+            
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                eyeIcon.style.display = 'none';
+                eyeOffIcon.style.display = 'block';
+            } else {
+                passwordField.type = 'password';
+                eyeIcon.style.display = 'block';
+                eyeOffIcon.style.display = 'none';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const emailInput = document.getElementById('Email');
+            
+            // Focus on email field on page load
+            if (emailInput) {
+                emailInput.focus();
+            }
+            
+            // Optional: Add keyboard shortcut (Ctrl+Shift+P) to toggle password
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey && e.shiftKey && e.key === 'P') {
+                    e.preventDefault();
+                    togglePasswordVisibility();
+                }
+            });
+        });
+    </script>
+}

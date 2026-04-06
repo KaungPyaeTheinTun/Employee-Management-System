@@ -1,0 +1,346 @@
+@model EmployeesManagement.Models.LeaveApplication
+
+@{
+    ViewData["Title"] = "Delete Leave Application";
+    var statusColors = new Dictionary<string, (string bg, string text)>
+    {
+        ["Pending"] = ("#fef3e0", "#a05c00"),
+        ["Approved"] = ("#e8f5ee", "#1a7a4a"),
+        ["Rejected"] = ("#fdecea", "#c0392b"),
+        ["Cancelled"] = ("#f2f2ef", "#3a3a38")
+    };
+    var currentStatus = Model.Status?.Description ?? "Pending";
+    var (statusBg, statusText) = statusColors.ContainsKey(currentStatus) ? statusColors[currentStatus] : ("#f2f2ef", "#3a3a38");
+    
+    var employeeInitials = "";
+    if (!string.IsNullOrEmpty(Model.Employee?.FirstName) && !string.IsNullOrEmpty(Model.Employee?.LastName))
+    {
+        employeeInitials = $"{Model.Employee.FirstName.Substring(0,1)}{Model.Employee.LastName.Substring(0,1)}".ToUpper();
+    }
+    var avatarBg = "#fdecea";
+    var avatarText = "#c0392b";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-header-title">Delete Leave Application</h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Dashboard</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index">Leave Applications</a></li>
+            <li class="breadcrumb-item active">Delete</li>
+        </ol>
+    </div>
+</div>
+
+<div class="delete-card">
+    <!-- Warning header -->
+    <div class="delete-warning-header">
+        <div class="delete-warning-icon">⚠</div>
+        <div>
+            <div class="delete-warning-title">This action cannot be undone</div>
+            <div class="delete-warning-sub">Deleting this leave application will permanently remove it from the system.</div>
+        </div>
+    </div>
+
+    <!-- Application summary -->
+    <div style="padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px">
+        <div class="emp-avatar" style="width:48px;height:48px;border-radius:12px;background:@avatarBg;color:@avatarText;border:1px solid var(--border);font-size:20px;font-weight:600">@employeeInitials</div>
+        <div>
+            <div style="font-size:17px;font-weight:700">@(Model.Employee?.FullName ?? "Unknown Employee")</div>
+            <div style="font-size:13px;color:var(--ink3);display:flex;gap:8px;align-items:center;margin-top:2px">
+                <span class="dept-badge" style="background:@avatarBg;color:@avatarText">@(Model.Employee?.EmpNo ?? "")</span>
+                <span>·</span>
+                <span class="status-badge" style="background:@statusBg;color:@statusText;padding:4px 8px;font-size:11px">@currentStatus</span>
+            </div>
+        </div>
+        <span class="mono" style="margin-left:auto;font-size:12px;color:var(--ink4)">Application #@Model.Id</span>
+    </div>
+
+    <!-- Details -->
+    <dl class="delete-dl">
+        <dt>Employee</dt>
+        <dd>@(Model.Employee?.FullName ?? "—") (@(Model.Employee?.EmpNo ?? ""))</dd>
+
+        <dt>Leave Type</dt>
+        <dd><span class="dept-badge" style="background:#e8eefa;color:#1a4fa0">@(Model.LeaveType?.Name ?? "—")</span></dd>
+
+        <dt>Duration</dt>
+        <dd>@(Model.Duration?.Description ?? "—")</dd>
+
+        <dt>Date Range</dt>
+        <dd>@Model.StartDate.ToString("dd MMM yyyy") - @Model.EndDate.ToString("dd MMM yyyy")</dd>
+
+        <dt>Number of Days</dt>
+        <dd><strong>@Model.NoOfDays</strong> days</dd>
+
+        <dt>Description</dt>
+        <dd>@(!string.IsNullOrEmpty(Model.Description) ? Model.Description : "—")</dd>
+
+        @if (!string.IsNullOrEmpty(Model.Attachment))
+        {
+            <dt>Attachment</dt>
+            <dd>
+                <div style="display:flex;align-items:center;gap:6px">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                        <path d="M4 12L8 4L12 12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                        <circle cx="8" cy="12" r="1.5" fill="currentColor"/>
+                    </svg>
+                    @Model.Attachment
+                </div>
+            </dd>
+        }
+
+        <dt>Created On</dt>
+        <dd class="mono">@Model.CreatedOn.ToString("dd MMM yyyy HH:mm")</dd>
+
+        <dt>Created By</dt>
+        <dd>@(Model.CreatedById ?? "System")</dd>
+    </dl>
+
+    <!-- Approval/Rejection Information (if applicable) -->
+    @if (currentStatus == "Approved" || currentStatus == "Rejected")
+    {
+        <div style="padding:16px 24px;background:var(--surface2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+            <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+                @if (currentStatus == "Approved" && Model.ApprovedOn != null)
+                {
+                    <div style="display:flex;align-items:center;gap:12px">
+                        <div style="background:var(--success-bg);border-radius:12px;padding:10px">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#1a7a4a">
+                                <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                                <path d="M6 10l3 3 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div style="font-size:12px;color:var(--ink4);margin-bottom:2px">APPROVED BY</div>
+                            <div style="font-size:14px;font-weight:500;color:var(--ink1)">@Model.ApprovedById</div>
+                            <div style="font-size:11px;color:var(--ink4)">@Model.ApprovedOn.ToString("dd MMM yyyy HH:mm")</div>
+                        </div>
+                    </div>
+                }
+                @if (currentStatus == "Rejected" && Model.RejectedOn != null)
+                {
+                    <div style="display:flex;align-items:center;gap:12px">
+                        <div style="background:var(--error-bg);border-radius:12px;padding:10px">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#c0392b">
+                                <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                                <path d="M7 13l6-6M13 13L7 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div style="font-size:12px;color:var(--ink4);margin-bottom:2px">REJECTED BY</div>
+                            <div style="font-size:14px;font-weight:500;color:var(--ink1)">@Model.RejectedById</div>
+                            <div style="font-size:11px;color:var(--ink4)">@Model.RejectedOn.ToString("dd MMM yyyy HH:mm")</div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- Impact Information -->
+    <div style="padding:16px 24px;background:var(--surface2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+            <div style="display:flex;align-items:center;gap:12px">
+                <div style="background:var(--warning-bg);border-radius:12px;padding:10px">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#a05c00">
+                        <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                        <path d="M10 6v4M10 14h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div>
+                    <div style="font-size:12px;color:var(--ink4);margin-bottom:2px">LEAVE BALANCE IMPACT</div>
+                    <div style="font-size:16px;font-weight:600;color:var(--ink1)">@Model.NoOfDays days</div>
+                </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px">
+                <div style="background:var(--info-bg);border-radius:12px;padding:10px">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#1a4fa0">
+                        <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                        <path d="M10 6v4l2 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div>
+                    <div style="font-size:12px;color:var(--ink4);margin-bottom:2px">APPLICATION AGE</div>
+                    <div style="font-size:16px;font-weight:600;color:var(--ink1)">
+                        @{
+                            var daysSinceCreation = (DateTime.Now - Model.CreatedOn).Days;
+                            @(daysSinceCreation == 0 ? "Today" : daysSinceCreation == 1 ? "Yesterday" : $"{daysSinceCreation} days ago")
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        @if (currentStatus != "Pending")
+        {
+            <div style="margin-top:16px;padding:12px;background:var(--warning-bg);border-radius:8px;font-size:13px;color:#a05c00;display:flex;align-items:center;gap:8px">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor">
+                    <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.3" fill="none"/>
+                    <path d="M8 5v4M8 12h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+                <span>This application has been <strong>@currentStatus.ToLower()</strong>. Deleting it will not affect the leave balance.</span>
+            </div>
+        }
+        else
+        {
+            <div style="margin-top:16px;padding:12px;background:var(--error-bg);border-radius:8px;font-size:13px;color:var(--error);display:flex;align-items:center;gap:8px">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor">
+                    <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.3" fill="none"/>
+                    <path d="M8 5v4M8 12h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+                <span>This is a <strong>pending application</strong>. Deleting it will free up <strong>@Model.NoOfDays days</strong> in the employee's leave balance.</span>
+            </div>
+        }
+    </div>
+
+    <!-- Actions -->
+    <div style="padding:16px 24px;background:var(--surface2);border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px">
+        <a asp-action="Index" class="btn-ghost">Cancel</a>
+        <a asp-action="Details" asp-route-id="@Model.Id" class="btn-ghost">View Details</a>
+        <form asp-action="Delete" method="post" style="display:inline">
+            <input type="hidden" asp-for="Id" />
+            <button type="submit" class="btn-danger-outline")>
+                <svg width="13" height="13" viewBox="0 0 13 13" fill="none" style="margin-right:6px;vertical-align:-2px">
+                    <path d="M2 4h9M5 4V3a1.5 1.5 0 0 1 3 0v1M10.5 4l-.7 7H3.2L2.5 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+                </svg>
+                Delete
+            </button>
+        </form>
+    </div>
+</div>
+
+<style>
+/* Additional styles for delete confirmation */
+.delete-card {
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+    overflow: hidden;
+    border: 1px solid var(--border);
+}
+
+.delete-warning-header {
+    background: #fff2f0;
+    padding: 20px 24px;
+    border-bottom: 1px solid rgba(192,57,43,0.2);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.delete-warning-icon {
+    width: 36px;
+    height: 36px;
+    background: #c0392b;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.delete-warning-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #c0392b;
+    margin-bottom: 4px;
+}
+
+.delete-warning-sub {
+    font-size: 13px;
+    color: var(--ink3);
+}
+
+.delete-dl {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 8px 0;
+    padding: 24px;
+    margin: 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.delete-dl dt {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ink4);
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    padding: 8px 0;
+}
+
+.delete-dl dd {
+    font-size: 14px;
+    color: var(--ink1);
+    padding: 8px 0;
+    margin: 0;
+    border-bottom: 1px dashed var(--border);
+}
+
+.delete-dl dd:last-of-type {
+    border-bottom: none;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+/* Status background colors */
+:root {
+    --warning-bg: #fff0d9;
+    --success-bg: #e0f2e9;
+    --error-bg: #fce8e6;
+    --info-bg: #e8eefa;
+    --error: #c0392b;
+}
+
+/* Responsive adjustments */
+@@media (max-width: 600px) {
+    .delete-card {
+        border-radius: 16px;
+    }
+    
+    .delete-warning-header {
+        padding: 16px;
+    }
+    
+    .delete-dl {
+        grid-template-columns: 1fr;
+        gap: 4px 0;
+        padding: 16px;
+    }
+    
+    .delete-dl dt {
+        padding: 8px 0 4px 0;
+    }
+    
+    .delete-dl dd {
+        padding: 4px 0 8px 0;
+    }
+    
+    div[style*="flex"] {
+        flex-direction: column;
+        align-items: stretch !important;
+    }
+    
+    .btn-ghost, .btn-danger-outline {
+        text-align: center;
+        justify-content: center;
+    }
+}
+</style>
+
+<script>
+function confirmDeletion() {
+    return confirm('Are you absolutely sure you want to delete this leave application? This action cannot be undone.');
+}
+</script>

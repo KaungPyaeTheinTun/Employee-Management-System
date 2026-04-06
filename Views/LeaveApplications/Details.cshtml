@@ -1,0 +1,369 @@
+@model EmployeesManagement.Models.LeaveApplication
+
+@{
+    ViewData["Title"] = "Leave Application Details";
+    var statusColors = new Dictionary<string, (string bg, string text)>
+    {
+        ["Pending"] = ("#fef3e0", "#a05c00"),
+        ["Approved"] = ("#e8f5ee", "#1a7a4a"),
+        ["Rejected"] = ("#fdecea", "#c0392b"),
+        ["Cancelled"] = ("#f2f2ef", "#3a3a38")
+    };
+    var currentStatus = Model.Status?.Description ?? "Pending";
+    var (statusBg, statusText) = statusColors.ContainsKey(currentStatus) ? statusColors[currentStatus] : ("#f2f2ef", "#3a3a38");
+    
+    var employeeInitials = "";
+    if (!string.IsNullOrEmpty(Model.Employee?.FirstName) && !string.IsNullOrEmpty(Model.Employee?.LastName))
+    {
+        employeeInitials = $"{Model.Employee.FirstName.Substring(0,1)}{Model.Employee.LastName.Substring(0,1)}".ToUpper();
+    }
+    var avatarBg = "#e8eefa";
+    var avatarText = "#1a4fa0";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-header-title">Leave Application Details</h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Dashboard</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index">Leave Applications</a></li>
+            <li class="breadcrumb-item active">Application #@Model.Id</li>
+        </ol>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <span class="status-badge" style="background:@statusBg;color:@statusText;padding:8px 16px;font-size:13px;font-weight:600">@currentStatus</span>
+        @if (currentStatus == "Pending")
+        {
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="add-btn">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                    <path d="M9.5 2.5l2 2-7 7H2.5v-2l7-7z" stroke="currentColor" stroke-width="1.3" fill="none"/>
+                </svg>
+                Edit Application
+            </a>
+        }
+        <a asp-action="Index" class="btn-ghost">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin-right:6px">
+                <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            Back to List
+        </a>
+    </div>
+</div>
+
+<div class="detail-grid">
+    <!-- Left: Employee profile card -->
+    <div>
+        <div class="profile-card">
+            <div class="profile-card-top">
+                <div class="profile-avatar-lg" style="background:@avatarBg;color:@avatarText;font-size:32px;">@employeeInitials</div>
+                <div class="profile-name">@(Model.Employee?.FullName ?? "—")</div>
+                <div class="profile-role">
+                    <span class="dept-badge" style="background:@avatarBg;color:@avatarText;font-size:12px;padding:4px 10px;">@(Model.Employee?.EmpNo ?? "")</span>
+                </div>
+            </div>
+            <div class="profile-card-body">
+                <div class="info-row">
+                    <div class="info-icon">🏢</div>
+                    <div>
+                        <div class="info-label">DEPARTMENT</div>
+                        <div class="info-value">@(Model.Employee?.Department)</div>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-icon">👔</div>
+                    <div>
+                        <div class="info-label">DESIGNATION</div>
+                        <div class="info-value">@(Model.Employee?.Designation)</div>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-icon">✉</div>
+                    <div>
+                        <div class="info-label">EMAIL</div>
+                        <div class="info-value" style="word-break:break-all;font-size:12px">@(Model.Employee?.EmailAddress ?? "—")</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Approval/Rejection Details Card (if applicable) -->
+        @if (currentStatus == "Approved" || currentStatus == "Rejected")
+        {
+            <div class="profile-card" style="margin-top:16px">
+                <div class="detail-section-header" style="border-radius:var(--r-lg) var(--r-lg) 0 0;background:rgba(26,79,160,0.05)">
+                    @(currentStatus) Details
+                </div>
+                <div class="profile-card-body">
+                    @if (currentStatus == "Approved")
+                    {
+                        <div class="info-row">
+                            <div class="info-icon">✅</div>
+                            <div>
+                                <div class="info-label">APPROVED BY</div>
+                                <div class="info-value">@(Model.ApprovedById ?? "—")</div>
+                                @if (Model.ApprovedOn != null)
+                                {
+                                    <div class="mono" style="font-size:11px;color:var(--ink4)">@Model.ApprovedOn.ToString("dd MMM yyyy, HH:mm")</div>
+                                }
+                            </div>
+                        </div>
+                    }
+                    @if (currentStatus == "Rejected")
+                    {
+                        <div class="info-row">
+                            <div class="info-icon">❌</div>
+                            <div>
+                                <div class="info-label">REJECTED BY</div>
+                                <div class="info-value">@(Model.RejectedById ?? "—")</div>
+                                @if (Model.RejectedOn != null)
+                                {
+                                    <div class="mono" style="font-size:11px;color:var(--ink4)">@Model.RejectedOn.ToString("dd MMM yyyy, HH:mm")</div>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+        <!-- Audit card -->
+        <div class="profile-card" style="margin-top:16px">
+            <div class="detail-section-header" style="border-radius:var(--r-lg) var(--r-lg) 0 0">
+                Audit Information
+            </div>
+            <div class="profile-card-body">
+                <div class="info-row">
+                    <div class="info-icon">⊕</div>
+                    <div>
+                        <div class="info-label">CREATED BY</div>
+                        <div class="info-value">@(Model.CreatedById ?? "System")</div>
+                        <div class="mono" style="font-size:11px;color:var(--ink4)">@Model.CreatedOn.ToString("dd MMM yyyy, HH:mm")</div>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-icon">✎</div>
+                    <div>
+                        <div class="info-label">LAST MODIFIED</div>
+                        <div class="info-value">@(Model.ModifiedById ?? "Not modified")</div>
+                        @if (!string.IsNullOrEmpty(Model.ModifiedById) && Model.ModifiedOn != null)
+                        {
+                            <div class="mono" style="font-size:11px;color:var(--ink4)">@Model.ModifiedOn.ToString("dd MMM yyyy, HH:mm")</div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right: Application details sections -->
+    <div class="detail-sections">
+
+        <!-- Leave Details Section -->
+        <div class="detail-section">
+            <div class="detail-section-header">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="opacity:.6">
+                    <rect x="2" y="3" width="10" height="8" rx="1.5" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                    <path d="M5 2v2M9 2v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+                Leave Details
+            </div>
+            <div class="detail-section-body">
+                <div class="detail-grid-2">
+                    <div>
+                        <div class="detail-field-label">LEAVE TYPE</div>
+                        <div class="detail-field-value">
+                            <span class="dept-badge" style="background:@avatarBg;color:@avatarText">@(Model.LeaveType?.Name ?? "—")</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="detail-field-label">DURATION</div>
+                        <div class="detail-field-value">@(Model.Duration?.Description ?? "—")</div>
+                    </div>
+                    <div>
+                        <div class="detail-field-label">START DATE</div>
+                        <div class="detail-field-value">@Model.StartDate.ToString("dd MMMM yyyy")</div>
+                    </div>
+                    <div>
+                        <div class="detail-field-label">END DATE</div>
+                        <div class="detail-field-value">@Model.EndDate.ToString("dd MMMM yyyy")</div>
+                    </div>
+                    <div>
+                        <div class="detail-field-label">NUMBER OF DAYS</div>
+                        <div class="detail-field-value"><strong>@Model.NoOfDays</strong> days</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reason/Description Section -->
+        <div class="detail-section">
+            <div class="detail-section-header">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="opacity:.6">
+                    <rect x="2" y="2" width="10" height="10" rx="1.5" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                    <path d="M4 5h6M4 8h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+                Reason / Description
+            </div>
+            <div class="detail-section-body">
+                <div style="background:var(--bg2);padding:16px;border-radius:8px;color:var(--ink2);line-height:1.5">
+                    @if (!string.IsNullOrEmpty(Model.Description))
+                    {
+                        @Model.Description
+                    }
+                    else
+                    {
+                        <span style="color:var(--ink4);font-style:italic">No description provided</span>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Attachment Section -->
+        @if (!string.IsNullOrEmpty(Model.Attachment))
+        {
+            <div class="detail-section">
+                <div class="detail-section-header">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="opacity:.6">
+                        <path d="M4 12L8 4L12 12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                        <circle cx="8" cy="12" r="1.5" fill="currentColor"/>
+                    </svg>
+                    Attachment
+                </div>
+                <div class="detail-section-body">
+                    <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--bg2);border-radius:8px">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color:var(--primary)">
+                            <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" stroke-width="1.5" fill="none"/>
+                            <polyline points="13 2 13 9 20 9" stroke-width="1.5" fill="none"/>
+                        </svg>
+                        <div style="flex:1">
+                            <div style="font-weight:500">@Model.Attachment</div>
+                            <div style="font-size:11px;color:var(--ink4)">Uploaded attachment</div>
+                        </div>
+                        <a href="#" class="btn-ghost" style="padding:6px 12px">
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                                <path d="M2 10v2h10v-2M7 2v8M4 7l3 3 3-3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                            </svg>
+                            Download
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Status Timeline (Optional) -->
+        <div class="detail-section">
+            <div class="detail-section-header">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="opacity:.6">
+                    <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                    <path d="M7 4v3l2 2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+                Application Timeline
+            </div>
+            <div class="detail-section-body">
+                <div style="display:flex;flex-direction:column;gap:12px">
+                    <div style="display:flex;gap:12px;align-items:flex-start">
+                        <div style="width:20px;height:20px;border-radius:50%;background:#e8f5ee;color:#1a7a4a;display:flex;align-items:center;justify-content:center;font-size:12px">✓</div>
+                        <div>
+                            <div style="font-weight:500">Application Submitted</div>
+                            <div class="mono" style="font-size:11px;color:var(--ink4)">@Model.CreatedOn.ToString("dd MMM yyyy, HH:mm")</div>
+                            <div style="font-size:12px;color:var(--ink3)">By @(Model.CreatedById ?? "System")</div>
+                        </div>
+                    </div>
+                    
+                    @if (currentStatus == "Approved" && Model.ApprovedOn != null)
+                    {
+                        <div style="display:flex;gap:12px;align-items:flex-start">
+                            <div style="width:20px;height:20px;border-radius:50%;background:#e8f5ee;color:#1a7a4a;display:flex;align-items:center;justify-content:center;font-size:12px">✓</div>
+                            <div>
+                                <div style="font-weight:500">Application Approved</div>
+                                <div class="mono" style="font-size:11px;color:var(--ink4)">@Model.ApprovedOn.ToString("dd MMM yyyy, HH:mm")</div>
+                                <div style="font-size:12px;color:var(--ink3)">By @(Model.ApprovedById ?? "—")</div>
+                            </div>
+                        </div>
+                    }
+                    
+                    @if (currentStatus == "Rejected" && Model.RejectedOn != null)
+                    {
+                        <div style="display:flex;gap:12px;align-items:flex-start">
+                            <div style="width:20px;height:20px;border-radius:50%;background:#fdecea;color:#c0392b;display:flex;align-items:center;justify-content:center;font-size:12px">✗</div>
+                            <div>
+                                <div style="font-weight:500">Application Rejected</div>
+                                <div class="mono" style="font-size:11px;color:var(--ink4)">@Model.RejectedOn.ToString("dd MMM yyyy, HH:mm")</div>
+                                <div style="font-size:12px;color:var(--ink3)">By @(Model.RejectedById ?? "—")</div>
+                            </div>
+                        </div>
+                    }
+                    
+                    @if (Model.ModifiedOn != null && Model.ModifiedOn != Model.CreatedOn)
+                    {
+                        <div style="display:flex;gap:12px;align-items:flex-start">
+                            <div style="width:20px;height:20px;border-radius:50%;background:#f2f2ef;color:#3a3a38;display:flex;align-items:center;justify-content:center;font-size:12px">✎</div>
+                            <div>
+                                <div style="font-weight:500">Last Modified</div>
+                                <div class="mono" style="font-size:11px;color:var(--ink4)">@Model.ModifiedOn.ToString("dd MMM yyyy, HH:mm")</div>
+                                <div style="font-size:12px;color:var(--ink3)">By @(Model.ModifiedById ?? "—")</div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Additional styles for details page */
+.status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.detail-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.detail-field-label {
+    font-size: 11px;
+    color: var(--ink4);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-bottom: 4px;
+}
+
+.detail-field-value {
+    font-size: 14px;
+    color: var(--ink1);
+    font-weight: 500;
+}
+
+/* Responsive adjustments */
+@@media (max-width: 768px) {
+    .detail-grid-2 {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .page-header > div:last-child {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+    
+    .profile-card-top .profile-avatar-lg {
+        width: 60px;
+        height: 60px;
+        font-size: 24px !important;
+    }
+}
+</style>

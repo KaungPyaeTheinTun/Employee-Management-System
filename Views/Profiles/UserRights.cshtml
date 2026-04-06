@@ -1,0 +1,732 @@
+@model EmployeeManagement.ViewModels.ProfileViewModel
+@{
+    ViewData["Title"] = "User Rights";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-header-title">User Rights</h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Dashboard</a></li>
+            <li class="breadcrumb-item active">User Rights</li>
+        </ol>
+    </div>
+</div>
+
+<form asp-action="UserGroupRights" method="post">
+    <div class="table-card">
+        <!-- Toolbar -->
+        <div class="table-toolbar">
+            <span class="table-title">Assign User Rights</span>
+
+            <div class="table-search">
+                <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                    <circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" stroke-width="1.2" />
+                    <path d="M9 9L12 12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" />
+                </svg>
+                <input id="tableSearch" type="text" placeholder="Search modules, submodules, actions..." />
+            </div>
+
+            <!-- Items per page selector -->
+            <div class="items-per-page">
+                <select id="itemsPerPage" class="per-page-select">
+                    <option value="10">10 per page</option>
+                    <option value="25">25 per page</option>
+                    <option value="50">50 per page</option>
+                    <option value="100">100 per page</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Desktop table -->
+        <div class="table-wrap">
+            <input type="hidden" name="RoleId" value="@Model.RoleId" />
+            <table class="emp-table" id="rightsTable">
+                <thead>
+                    <tr>
+                        <th data-sort="0">Module</th>
+                        <th data-sort="1">SubModule</th>
+                        <th data-sort="2">Action</th>
+                        <th data-sort="3">Assign</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    @{
+                        var avatarColors = new[] {
+                            ("#e8eefa","#1a4fa0"), ("#e8f5ee","#1a7a4a"), ("#fef3e0","#a05c00"),
+                            ("#fdecea","#c0392b"), ("#f2f2ef","#3a3a38"), ("#f0eeff","#4a35c0")
+                        };
+                        int colorIdx = 0;
+                    }
+                    @if (Model.Profiles != null)
+                    {
+                        foreach (var module in Model.Profiles.Where(x => x.ProfileId == null))
+                        {
+                            var (bg, tc) = avatarColors[colorIdx++ % avatarColors.Length];
+                            
+                            <!-- MODULE -->
+                            <tr class="module-row" data-type="module" data-module-id="@module.Id">
+                                <td colspan="4" style="background: rgb(233, 231, 231);">
+                                    <div style="display: flex; align-items: center; gap: 8px; padding: 8px 12px;">
+                                        <span style="font-weight: 600; color: var(--primary);">@module.Name</span>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            if (module.Children != null && module.Children.Any())
+                            {
+                                foreach (var submodule in module.Children)
+                                {
+                                    <!-- SUBMODULE -->
+                                    <tr class="submodule-row" data-type="submodule" data-module-id="@module.Id" data-submodule-id="@submodule.Id">
+                                        <td></td>
+                                        <td colspan="3" style="background: var(--bg-hover);">
+                                            <div style="display: flex; align-items: center; gap: 8px; padding: 6px 12px;">
+                                                <input type="hidden" name="RolesProfilesIds[]" value="@submodule.Id" />
+                                                <span style="font-weight: 500; color: var(--ink2);">@submodule.Name</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    @if (submodule.Children != null && submodule.Children.Any())
+                                    {
+                                        foreach (var action in submodule.Children)
+                                        {
+                                            <tr class="action-row" data-type="action" data-module-id="@module.Id" data-submodule-id="@submodule.Id" data-action-id="@action.Id">
+                                                <td></td>
+                                                <td></td>
+                                                <td style="padding: 8px 12px;">
+                                                    <div style="display: flex; align-items: center; gap: 6px;">
+                                                        <span style="font-size: 13px; color: var(--ink1);">@action.Name</span>
+                                                    </div>
+                                                </td>
+                                                <td style="padding: 8px 12px; text-align: center;">
+                                                    <label class="checkbox-container">
+                                                        <input type="checkbox" name="Ids" value="@action.Id" class="action-checkbox"
+                                                        @(Model.RoleRightsIds != null && Model.RoleRightsIds.Contains(action.Id) ? "checked" : "") />
+                                                        <span class="checkmark"></span>
+                                                    </label>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                </tbody>
+            </table>
+
+            <!-- Mobile cards (injected by JS) -->
+            <div id="mobileRightsCards" class="mobile-emp-cards"></div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="table-pagination">
+            <span class="pagination-info" id="paginationInfo"></span>
+            <div class="pagination-controls" id="tablePagination">
+                <button class="pagination-btn" id="prevPage" disabled>Previous</button>
+                <div class="page-numbers" id="pageNumbers"></div>
+                <button class="pagination-btn" id="nextPage">Next</button>
+            </div>
+        </div>
+    </div>
+    
+    <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 20px;">
+        <a asp-action="Index" class="btn-ghost">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin-right:6px">
+                <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            Cancel
+        </a>
+        <button type="submit" class="btn-primary" style="background-color:black; color:white;">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin-right:6px;vertical-align:-2px">
+                <path d="M2 7l3.5 3.5L12 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            Assign Rights
+        </button>
+    </div>
+</form>
+
+<style>
+    /* Custom checkbox styles */
+    .checkbox-container {
+        display: inline-block;
+        position: relative;
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .checkbox-container input {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+        height: 0;
+        width: 0;
+    }
+
+    .checkmark {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 18px;
+        width: 18px;
+        background-color: var(--card-bg);
+        border: 2px solid var(--border);
+        border-radius: 4px;
+        transition: all 0.15s;
+    }
+
+    .checkbox-container:hover input ~ .checkmark {
+        border-color: var(--primary);
+    }
+
+    .checkbox-container input:checked ~ .checkmark {
+        background-color: blue;
+        border-color: var(--primary);
+    }
+
+    .checkmark:after {
+        content: "";
+        position: absolute;
+        display: none;
+    }
+
+    .checkbox-container input:checked ~ .checkmark:after {
+        display: block;
+    }
+
+    .checkbox-container .checkmark:after {
+        left: 5px;
+        top: 2px;
+        width: 4px;
+        height: 8px;
+        border: solid white;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+    }
+
+    /* Table row styles */
+    .module-row td {
+        padding: 0 !important;
+    }
+    
+    .submodule-row td {
+        padding: 0 !important;
+    }
+    
+    .action-row:hover {
+        background: var(--bg-hover);
+    }
+
+    .emp-avatar {
+        width: 24px;
+        height: 24px;
+        border-radius: 24px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 11px;
+        flex-shrink: 0;
+    }
+
+    /* Button styles */
+    .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        padding: 10px 20px;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.15s;
+        text-decoration: none;
+    }
+
+    .btn-primary:hover {
+        background: #134080;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(26, 79, 160, 0.2);
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-ghost {
+        display: inline-flex;
+        align-items: center;
+        padding: 10px 20px;
+        background: var(--bg2);
+        color: var(--ink2);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.15s;
+        text-decoration: none;
+    }
+
+    .btn-ghost:hover {
+        background: var(--border);
+        color: var(--ink1);
+        text-decoration: none;
+    }
+
+    /* Pagination styles */
+    .table-pagination {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 20px;
+        border-top: 1px solid var(--border);
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .pagination-info {
+        font-size: 12px;
+        color: var(--ink3);
+    }
+
+    .pagination-controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .pagination-btn {
+        padding: 6px 12px;
+        border: 1px solid var(--border);
+        background: var(--card-bg);
+        border-radius: 6px;
+        font-size: 12px;
+        color: var(--ink2);
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .pagination-btn:hover:not(:disabled) {
+        background: var(--bg2);
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    .pagination-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .page-numbers {
+        display: flex;
+        gap: 4px;
+    }
+
+    .page-number {
+        min-width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--border);
+        background: var(--card-bg);
+        border-radius: 6px;
+        font-size: 12px;
+        color: var(--ink2);
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .page-number:hover {
+        background: var(--bg2);
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    .page-number.active {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: white;
+    }
+
+    /* Items per page selector */
+    .items-per-page {
+        margin-left: auto;
+    }
+
+    .per-page-select {
+        padding: 6px 10px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        font-size: 12px;
+        color: var(--ink2);
+        background: var(--card-bg);
+        cursor: pointer;
+    }
+
+    .per-page-select:hover {
+        border-color: var(--primary);
+    }
+
+    /* Mobile card styles */
+    .mobile-emp-card {
+        background: var(--card-bg);
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+        border: 1px solid var(--border);
+    }
+
+    .mobile-module {
+        font-weight: 600;
+        color: var(--primary);
+        margin-bottom: 8px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .mobile-submodule {
+        font-weight: 500;
+        color: var(--ink2);
+        margin: 8px 0 4px 0;
+    }
+
+    .mobile-action {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px dashed var(--border);
+    }
+
+    .mobile-action:last-child {
+        border-bottom: none;
+    }
+
+    /* Responsive adjustments */
+    @@media (max-width: 768px) {
+        .emp-table {
+            display: none;
+        }
+        
+        .table-pagination {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .pagination-controls {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .items-per-page {
+            margin-left: 0;
+            width: 100%;
+        }
+
+        .per-page-select {
+            width: 100%;
+        }
+        
+        .btn-primary, .btn-ghost {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        div[style*="justify-content: flex-end"] {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Get DOM elements
+        const searchInput = document.getElementById('tableSearch');
+        const table = document.getElementById('rightsTable');
+        const tableBody = document.getElementById('tableBody');
+        const rows = Array.from(tableBody.querySelectorAll('tr'));
+        const mobileContainer = document.getElementById('mobileRightsCards');
+        const itemsPerPageSelect = document.getElementById('itemsPerPage');
+        const prevBtn = document.getElementById('prevPage');
+        const nextBtn = document.getElementById('nextPage');
+        const pageNumbersDiv = document.getElementById('pageNumbers');
+        const paginationInfo = document.getElementById('paginationInfo');
+
+        // Pagination state
+        let currentPage = 1;
+        let itemsPerPage = 10;
+        let filteredRows = [];
+        let totalPages = 1;
+
+        // Initialize
+        function init() {
+            itemsPerPage = parseInt(itemsPerPageSelect.value);
+            filterRows();
+            updatePagination();
+            renderCurrentPage();
+            toggleMobileView();
+        }
+
+        // Filter rows based on search
+        function filterRows() {
+            const searchTerm = searchInput.value.toLowerCase();
+
+            filteredRows = rows.filter(row => {
+                // Skip module and submodule rows that don't contain searchable content
+                if (row.classList.contains('module-row')) {
+                    const moduleText = row.querySelector('span')?.textContent.toLowerCase() || '';
+                    return !searchTerm || moduleText.includes(searchTerm);
+                } else if (row.classList.contains('submodule-row')) {
+                    const submoduleText = row.querySelector('span')?.textContent.toLowerCase() || '';
+                    return !searchTerm || submoduleText.includes(searchTerm);
+                } else {
+                    // Action rows
+                    const actionText = row.querySelector('td:nth-child(3) span')?.textContent.toLowerCase() || '';
+                    return !searchTerm || actionText.includes(searchTerm);
+                }
+            });
+
+            totalPages = Math.ceil(filteredRows.length / itemsPerPage);
+            if (currentPage > totalPages) currentPage = totalPages || 1;
+        }
+
+        // Render current page
+        function renderCurrentPage() {
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const pageRows = filteredRows.slice(start, end);
+
+            // Hide all rows first
+            rows.forEach(row => row.style.display = 'none');
+
+            // Show only current page rows
+            pageRows.forEach(row => row.style.display = '');
+
+            // Update mobile cards
+            generateMobileCards(pageRows);
+
+            // Update pagination info
+            updatePaginationInfo();
+        }
+
+        // Update pagination controls
+        function updatePagination() {
+            // Update button states
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages || totalPages === 0;
+
+            // Generate page numbers
+            generatePageNumbers();
+        }
+
+        // Generate page number buttons
+        function generatePageNumbers() {
+            pageNumbersDiv.innerHTML = '';
+
+            if (totalPages <= 7) {
+                // Show all pages
+                for (let i = 1; i <= totalPages; i++) {
+                    addPageButton(i);
+                }
+            } else {
+                // Show first page
+                addPageButton(1);
+
+                if (currentPage > 3) {
+                    addEllipsis();
+                }
+
+                // Show pages around current page
+                let start = Math.max(2, currentPage - 1);
+                let end = Math.min(totalPages - 1, currentPage + 1);
+
+                for (let i = start; i <= end; i++) {
+                    addPageButton(i);
+                }
+
+                if (currentPage < totalPages - 2) {
+                    addEllipsis();
+                }
+
+                // Show last page
+                addPageButton(totalPages);
+            }
+        }
+
+        function addPageButton(pageNum) {
+            const btn = document.createElement('button');
+            btn.className = `page-number ${pageNum === currentPage ? 'active' : ''}`;
+            btn.textContent = pageNum;
+            btn.addEventListener('click', () => {
+                currentPage = pageNum;
+                renderCurrentPage();
+                updatePagination();
+            });
+            pageNumbersDiv.appendChild(btn);
+        }
+
+        function addEllipsis() {
+            const span = document.createElement('span');
+            span.className = 'page-number';
+            span.textContent = '...';
+            span.style.cursor = 'default';
+            pageNumbersDiv.appendChild(span);
+        }
+
+        // Update pagination info text
+        function updatePaginationInfo() {
+            const start = filteredRows.length ? (currentPage - 1) * itemsPerPage + 1 : 0;
+            const end = Math.min(currentPage * itemsPerPage, filteredRows.length);
+            paginationInfo.textContent = `Showing ${start}-${end} of ${filteredRows.length} items`;
+        }
+
+        // Generate mobile cards
+        function generateMobileCards(pageRows) {
+            if (!mobileContainer) return;
+
+            mobileContainer.innerHTML = '';
+
+            // Group rows by module for mobile display
+            const moduleMap = new Map();
+
+            pageRows.forEach(row => {
+                if (row.classList.contains('module-row')) {
+                    const moduleName = row.querySelector('span')?.textContent || 'Module';
+                    const moduleId = row.dataset.moduleId;
+                    if (!moduleMap.has(moduleId)) {
+                        moduleMap.set(moduleId, {
+                            name: moduleName,
+                            submodules: new Map()
+                        });
+                    }
+                } else if (row.classList.contains('submodule-row')) {
+                    const moduleId = row.dataset.moduleId;
+                    const submoduleName = row.querySelector('span')?.textContent || 'Submodule';
+                    const submoduleId = row.dataset.submoduleId;
+                    
+                    if (moduleMap.has(moduleId)) {
+                        const module = moduleMap.get(moduleId);
+                        if (!module.submodules.has(submoduleId)) {
+                            module.submodules.set(submoduleId, {
+                                name: submoduleName,
+                                actions: []
+                            });
+                        }
+                    }
+                } else if (row.classList.contains('action-row')) {
+                    const moduleId = row.dataset.moduleId;
+                    const submoduleId = row.dataset.submoduleId;
+                    const actionName = row.querySelector('td:nth-child(3) span')?.textContent || 'Action';
+                    const actionId = row.dataset.actionId;
+                    const isChecked = row.querySelector('.action-checkbox')?.checked || false;
+
+                    if (moduleMap.has(moduleId)) {
+                        const module = moduleMap.get(moduleId);
+                        if (module.submodules.has(submoduleId)) {
+                            module.submodules.get(submoduleId).actions.push({
+                                name: actionName,
+                                id: actionId,
+                                checked: isChecked
+                            });
+                        }
+                    }
+                }
+            });
+
+            // Generate cards
+            moduleMap.forEach((module, moduleId) => {
+                const card = document.createElement('div');
+                card.className = 'mobile-emp-card';
+                
+                let submodulesHtml = '';
+                module.submodules.forEach((submodule, submoduleId) => {
+                    let actionsHtml = '';
+                    submodule.actions.forEach(action => {
+                        actionsHtml += `
+                            <div class="mobile-action">
+                                <span style="font-size: 13px;">${action.name}</span>
+                                <label class="checkbox-container">
+                                    <input type="checkbox" name="Ids" value="${action.id}" class="action-checkbox" ${action.checked ? 'checked' : ''} />
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                        `;
+                    });
+
+                    submodulesHtml += `
+                        <div class="mobile-submodule">
+                            <div style="margin-bottom: 4px;">${submodule.name}</div>
+                            <div style="margin-left: 12px;">
+                                ${actionsHtml}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                card.innerHTML = `
+                    <div class="mobile-module">
+                        ${module.name}
+                    </div>
+                    ${submodulesHtml}
+                `;
+                
+                mobileContainer.appendChild(card);
+            });
+        }
+
+        // Toggle mobile/desktop view
+        function toggleMobileView() {
+            if (!mobileContainer) return;
+
+            if (window.innerWidth <= 768) {
+                mobileContainer.style.display = 'block';
+            } else {
+                mobileContainer.style.display = 'none';
+            }
+        }
+
+        // Event Listeners
+        searchInput.addEventListener('input', function () {
+            currentPage = 1;
+            filterRows();
+            updatePagination();
+            renderCurrentPage();
+        });
+
+        itemsPerPageSelect.addEventListener('change', function () {
+            itemsPerPage = parseInt(this.value);
+            currentPage = 1;
+            filterRows();
+            updatePagination();
+            renderCurrentPage();
+        });
+
+        prevBtn.addEventListener('click', function () {
+            if (currentPage > 1) {
+                currentPage--;
+                renderCurrentPage();
+                updatePagination();
+            }
+        });
+
+        nextBtn.addEventListener('click', function () {
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderCurrentPage();
+                updatePagination();
+            }
+        });
+
+        window.addEventListener('resize', toggleMobileView);
+
+        // Initialize
+        init();
+    });
+</script>

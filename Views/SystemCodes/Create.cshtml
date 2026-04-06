@@ -1,0 +1,274 @@
+@model EmployeesManagement.Models.SystemCode
+
+@{
+    ViewData["Title"] = "Add New System Code";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-header-title">Add New System Code</h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Dashboard</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index">System Codes</a></li>
+            <li class="breadcrumb-item active">Add New</li>
+        </ol>
+    </div>
+    <a asp-action="Index" class="btn-ghost">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin-right:6px">
+            <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        Back to List
+    </a>
+</div>
+
+<form asp-action="Create" id="createForm">
+    <div asp-validation-summary="ModelOnly" class="field-error" style="padding:12px 16px;background:var(--red-bg);border-radius:9px;border:1px solid rgba(192,57,43,0.2);margin-bottom:20px;"></div>
+
+    <!-- System Code Details -->
+    <div class="form-card" style="margin-bottom:16px">
+        <div class="form-card-header">
+            <span class="section-badge blue">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <rect x="2" y="3" width="8" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                    <path d="M4 2v2M8 2v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+                System Code Information
+            </span>
+        </div>
+        <div class="form-card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="Code" class="field-label">System Code</label>
+                    <input asp-for="Code" class="field-control" placeholder="e.g. EMP_STATUS, LEAVE_TYPE, DOC_CAT" />
+                    <span asp-validation-for="Code" class="field-error"></span>
+                    <small class="field-hint" style="display:block;margin-top:4px">Unique identifier for the system code (uppercase, no spaces)</small>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Description" class="field-label">Description</label>
+                    <input asp-for="Description" class="field-control" placeholder="e.g. Employee Status, Leave Type, Document Category" />
+                    <span asp-validation-for="Description" class="field-error"></span>
+                    <small class="field-hint" style="display:block;margin-top:4px">Clear description of what this system code represents</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- System Information (Read-only/Auto-populated) -->
+    <div class="form-card" style="margin-bottom:16px;opacity:0.8">
+        <div class="form-card-header">
+            <span class="section-badge green">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <circle cx="6" cy="6" r="4" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                    <path d="M6 3v3l2 1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+                System Information
+            </span>
+            <span class="field-hint" style="font-size:11px">Auto-populated by system</span>
+        </div>
+        <div class="form-card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="CreatedById" class="field-label">Created By</label>
+                    <input asp-for="CreatedById" class="field-control" placeholder="Will be set automatically" readonly disabled />
+                    <span asp-validation-for="CreatedById" class="field-error"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="CreatedOn" class="field-label">Created On</label>
+                    <input asp-for="CreatedOn" class="field-control" type="date" readonly disabled />
+                    <span asp-validation-for="CreatedOn" class="field-error"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="ModifiedById" class="field-label">Modified By</label>
+                    <input asp-for="ModifiedById" class="field-control" placeholder="Will be set on update" readonly disabled />
+                    <span asp-validation-for="ModifiedById" class="field-error"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="ModifiedOn" class="field-label">Modified On</label>
+                    <input asp-for="ModifiedOn" class="field-control" type="date" readonly disabled />
+                    <span asp-validation-for="ModifiedOn" class="field-error"></span>
+                </div>
+            </div>
+            <div class="field-hint" style="margin-top:12px;padding:8px 12px;background:var(--bg2);border-radius:6px">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="display:inline;margin-right:4px;vertical-align:-2px">
+                    <circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                    <path d="M7 4v4M7 10h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                <span>System fields are automatically populated when the record is created</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Additional Settings (Optional - can be extended later) -->
+    @* <div class="form-card" style="margin-bottom:16px">
+        <div class="form-card-header">
+            <span class="section-badge amber">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <circle cx="6" cy="6" r="4.5" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                    <path d="M6 3v3l2 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+                Additional Settings
+            </span>
+            <span class="field-hint" style="font-size:11px">Optional configuration</span>
+        </div>
+        <div class="form-card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="field-checkbox">
+                        <input type="checkbox" id="IsActive" name="IsActive" value="true" checked />
+                        <label for="IsActive">Active</label>
+                    </div>
+                    <small class="field-hint">Inactive codes won't be available for selection</small>
+                </div>
+                <div class="col-md-6">
+                    <div class="field-checkbox">
+                        <input type="checkbox" id="IsSystem" name="IsSystem" value="true" />
+                        <label for="IsSystem">System Critical</label>
+                    </div>
+                    <small class="field-hint">System codes should be modified with caution</small>
+                </div>
+                <div class="col-md-4">
+                    <label for="DisplayOrder" class="field-label">Display Order</label>
+                    <input type="number" id="DisplayOrder" name="DisplayOrder" class="field-control" value="0" min="0" max="999" />
+                    <small class="field-hint">Order in dropdown lists</small>
+                </div>
+                <div class="col-md-8">
+                    <label for="Category" class="field-label">Category (Optional)</label>
+                    <input type="text" id="Category" name="Category" class="field-control" placeholder="e.g. Employee, Leave, Document" />
+                    <small class="field-hint">Group related system codes together</small>
+                </div>
+            </div>
+        </div>
+    </div> *@
+
+
+    <!-- Actions -->
+    <div class="form-actions" style="border-top:none;padding-top:0">
+        <a asp-action="Index" class="btn-ghost">Cancel</a>
+        <button type="submit" class="btn-primary">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin-right:6px;vertical-align:-2px">
+                <path d="M2 7l3.5 3.5L12 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Create System Code
+        </button>
+    </div>
+</form>
+
+<style>
+/* Additional styles for checkboxes and form elements */
+.field-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+}
+
+.field-checkbox input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    cursor: pointer;
+}
+
+.field-checkbox label {
+    font-size: 14px;
+    color: var(--ink2);
+    cursor: pointer;
+    font-weight: normal;
+}
+
+input[readonly], 
+input[disabled] {
+    background-color: var(--bg2);
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Responsive adjustments */
+@@media (max-width: 768px) {
+    .field-hint {
+        font-size: 11px;
+    }
+    
+    .form-card-body .row.g-3 > [class*="col-"] {
+        margin-bottom: 8px;
+    }
+}
+</style>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        // Live preview of code and description
+        document.addEventListener('DOMContentLoaded', function() {
+            const codeInput = document.querySelector('input[name="Code"]');
+            const descInput = document.querySelector('input[name="Description"]');
+            const previewCode = document.getElementById('previewCode');
+            const previewDesc = document.getElementById('previewDesc');
+            const previewBadge = document.getElementById('previewBadge');
+            const previewAvatar = document.getElementById('previewAvatar');
+            
+            // Avatar colors array matching index page
+            const avatarColors = [
+                { bg: "#e8eefa", text: "#1a4fa0" },
+                { bg: "#e8f5ee", text: "#1a7a4a" },
+                { bg: "#fef3e0", text: "#a05c00" },
+                { bg: "#fdecea", text: "#c0392b" },
+                { bg: "#f2f2ef", text: "#3a3a38" },
+                { bg: "#f0eeff", text: "#4a35c0" }
+            ];
+            
+            function updatePreview() {
+                let code = codeInput.value.trim();
+                let desc = descInput.value.trim();
+                
+                // Use random color based on code length for consistency
+                let colorIndex = code.length % avatarColors.length;
+                let colors = avatarColors[colorIndex];
+                
+                previewCode.textContent = code || "CODE";
+                previewDesc.textContent = desc || "Description will appear here";
+                previewBadge.textContent = code || "CODE";
+                previewBadge.style.backgroundColor = colors.bg;
+                previewBadge.style.color = colors.text;
+                
+                // Update avatar
+                let avatarLetter = code ? code.substring(0,1).toUpperCase() : "C";
+                previewAvatar.textContent = avatarLetter;
+                previewAvatar.style.backgroundColor = colors.bg;
+                previewAvatar.style.color = colors.text;
+            }
+            
+            if (codeInput) codeInput.addEventListener('input', updatePreview);
+            if (descInput) descInput.addEventListener('input', updatePreview);
+            
+            // Auto-fill system fields for demo
+            const today = new Date().toISOString().split('T')[0];
+            const createdById = document.querySelector('input[name="CreatedById"]');
+            const createdOn = document.querySelector('input[name="CreatedOn"]');
+            const modifiedById = document.querySelector('input[name="ModifiedById"]');
+            const modifiedOn = document.querySelector('input[name="ModifiedOn"]');
+            
+            if (createdById) {
+                createdById.value = "Current User"; // This would come from server
+            }
+            if (createdOn) {
+                createdOn.value = today;
+            }
+            if (modifiedById) {
+                modifiedById.value = ""; // Will be set on update
+            }
+            if (modifiedOn) {
+                modifiedOn.value = ""; // Will be set on update
+            }
+            
+            // Format code input to uppercase and replace spaces with underscores
+            if (codeInput) {
+                codeInput.addEventListener('blur', function() {
+                    let value = this.value.trim().toUpperCase().replace(/\s+/g, '_');
+                    this.value = value;
+                    updatePreview();
+                });
+            }
+        });
+    </script>
+}

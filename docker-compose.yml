@@ -1,0 +1,27 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    platform: linux/amd64          # Important on Mac M1/M4
+    container_name: employees_sqlserver
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "Kptt@081355"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sql_data:/var/opt/mssql
+
+  app:
+    build: .
+    container_name: employees_app
+    ports:
+      - "5050:8080"
+    depends_on:
+      - sqlserver
+    env_file:
+      - .env
+    volumes:
+      - ./:/app       # safer relative path
+
+volumes:
+  sql_data:

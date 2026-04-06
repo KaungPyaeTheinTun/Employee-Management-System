@@ -1,0 +1,113 @@
+﻿@page
+@model ResendEmailConfirmationModel
+@{
+    ViewData["Title"] = "Resend confirmation";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-header-title">@ViewData["Title"]</h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-page="./Login">Log in</a></li>
+            <li class="breadcrumb-item active">Resend confirmation</li>
+        </ol>
+    </div>
+</div>
+
+<div class="row" style="justify-content: center;">
+    <div class="col-md-5">
+        <!-- Resend Confirmation Card -->
+        <div class="form-card" style="max-width:450px;margin:0 auto;">
+            <div class="form-card-header">
+                <span class="section-badge blue">
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                        <circle cx="6" cy="6" r="4" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                        <path d="M6 3v3l2 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                        <path d="M4 8l2 1 2-1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                    </svg>
+                    Email Confirmation
+                </span>
+            </div>
+
+            <div class="form-card-body">
+                <!-- Info Message -->
+                <div style="margin-bottom:20px;padding:12px;background:var(--blue-bg, #e8eefa);border-radius:9px;font-size:13px;color:var(--ink3);">
+                    <span>Didn't receive the confirmation email? Enter your email and we'll send a new one.</span>
+                </div>
+
+                <form method="post">
+                    <div asp-validation-summary="All" class="field-error" style="margin-bottom:20px;" role="alert"></div>
+
+                    <!-- Email Field -->
+                    <div style="margin-bottom:20px">
+                        <label asp-for="Input.Email" class="field-label">Email</label>
+                        <input asp-for="Input.Email" class="field-control" autocomplete="username" placeholder="name@company.com" />
+                        <span asp-validation-for="Input.Email" class="field-error"></span>
+                    </div>
+
+                    <!-- Actions -->
+                    <div style="display:flex;gap:12px;">
+                        <a asp-page="./Login" class="btn-ghost" style="flex:1;justify-content:center;">Cancel</a>
+                        <button type="submit" class="btn-primary" style="flex:2;justify-content:center;">
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin-right:6px;">
+                                <path d="M1 7l3-3 3 3M4 4v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                <path d="M3 10h8M11 7l2 3-2 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Resend Email
+                        </button>
+                    </div>
+
+                    <!-- Mobile Back Link -->
+                    <div style="margin-top:16px;text-align:center;display:none;" class="mobile-only">
+                        <a asp-page="./Login" style="font-size:13px;color:var(--blue);">← Back to login</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Simple Help Text -->
+        <div style="max-width:450px;margin:12px auto 0;text-align:center;">
+            <span class="field-hint" style="font-size:12px;">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="display:inline;margin-right:4px;">
+                    <rect x="2" y="4" width="8" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                    <path d="M4 2v2M8 2v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+                Check your spam folder. The email should arrive within a few minutes.
+            </span>
+        </div>
+    </div>
+</div>
+
+<!-- Success Message (Optional - shown after submission) -->
+@if (ViewData["Success"] != null)
+{
+    <div style="position:fixed;bottom:20px;right:20px;z-index:1000;">
+        <div class="form-card" style="background:var(--green-bg, #e8f5ee);border-color:var(--green);max-width:350px;">
+            <div class="form-card-body" style="display:flex;align-items:center;gap:12px;">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" style="color:var(--green);">
+                    <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                    <path d="M6 10l3 3 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+                <span style="font-size:13px;color:var(--ink2);">Confirmation email sent! Check your inbox.</span>
+            </div>
+        </div>
+    </div>
+}
+
+<style>
+/* Mobile adjustments */
+@@media (max-width: 576px) {
+    .mobile-only {
+        display: block !important;
+    }
+    
+    .form-card {
+        margin-left: 12px;
+        margin-right: 12px;
+    }
+}
+</style>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

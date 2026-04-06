@@ -1,0 +1,234 @@
+@model EmployeesManagement.Models.LeaveType
+
+@{
+    ViewData["Title"] = "Edit Leave Type";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-header-title">Edit Leave Type</h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Dashboard</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index">Leave Types</a></li>
+            <li class="breadcrumb-item active">Edit @Model.Name</li>
+        </ol>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <a asp-action="Details" asp-route-id="@Model.Id" class="btn-ghost">View Details</a>
+        <a asp-action="Index" class="btn-ghost">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin-right:6px">
+                <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            Back to List
+        </a>
+    </div>
+</div>
+
+<form asp-action="Edit" id="editForm">
+    <div asp-validation-summary="ModelOnly" class="field-error" style="padding:12px 16px;background:var(--red-bg);border-radius:9px;border:1px solid rgba(192,57,43,0.2);margin-bottom:20px;"></div>
+
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="CreatedById" />
+    <input type="hidden" asp-for="CreatedOn" />
+
+    <!-- Leave Type Details -->
+    <div class="form-card" style="margin-bottom:16px">
+        <div class="form-card-header">
+            <span class="section-badge blue">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <rect x="2" y="3" width="8" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                    <path d="M4 2v2M8 2v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+                Leave Type Information
+            </span>
+            <span class="mono" style="margin-left:auto;font-size:11px;color:var(--ink4)">@Model.Code</span>
+        </div>
+        <div class="form-card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="Name" class="field-label">Leave Type Name</label>
+                    <input asp-for="Name" class="field-control" placeholder="e.g. Annual Leave, Sick Leave" />
+                    <span asp-validation-for="Name" class="field-error"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Code" class="field-label">Leave Code</label>
+                    <input asp-for="Code" class="field-control" placeholder="e.g. AL, SL, CL" />
+                    <span asp-validation-for="Code" class="field-error"></span>
+                    <small class="field-hint">Unique code to identify this leave type</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audit Trail -->
+    <div class="form-card" style="margin-bottom:16px">
+        <div class="form-card-header">
+            <span class="section-badge neutral">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <circle cx="6" cy="6" r="4" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                    <path d="M6 3v3l2 1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+                Audit Trail
+            </span>
+        </div>
+        <div class="form-card-body">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label asp-for="CreatedById" class="field-label">Created By</label>
+                    <input asp-for="CreatedById" class="field-control" value="@(Model.CreatedById ?? "System")" />
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="CreatedOn" class="field-label">Created On</label>
+                    <input asp-for="CreatedOn" class="field-control" readonly disabled value="@Model.CreatedOn.ToString("yyyy-MM-dd HH:mm")" />
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="ModifiedById" class="field-label">Modified By</label>
+                    <input asp-for="ModifiedById" class="field-control" value="@(Model.ModifiedById ?? "—")" />
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="ModifiedOn" class="field-label">Modified On</label>
+                    <input asp-for="ModifiedOn" class="field-control" value="@(Model.ModifiedOn.ToString("yyyy-MM-dd HH:mm") ?? "—")" />
+                </div>
+            </div>
+            <div class="field-hint" style="margin-top:12px;padding:8px 12px;background:var(--bg2);border-radius:6px">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="display:inline;margin-right:4px;vertical-align:-2px">
+                    <circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                    <path d="M7 4v4M7 10h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                <span>System fields are automatically tracked and cannot be modified</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="form-actions" style="border-top:none;padding-top:0">
+        <a asp-action="Index" class="btn-ghost">Cancel</a>
+        <button type="submit" class="btn-primary">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin-right:6px;vertical-align:-2px">
+                <path d="M2 7l3.5 3.5L12 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Update Leave Type
+        </button>
+    </div>
+</form>
+
+<style>
+/* Additional styles for checkboxes and form elements */
+.field-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0;
+}
+
+.field-checkbox input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    cursor: pointer;
+}
+
+.field-checkbox label {
+    font-size: 14px;
+    color: var(--ink2);
+    cursor: pointer;
+    font-weight: normal;
+}
+
+.audit-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 16px;
+    margin-bottom: 8px;
+}
+
+.audit-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.audit-cell-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    color: var(--ink4);
+    text-transform: uppercase;
+}
+
+.audit-cell-value {
+    font-size: 13px;
+    color: var(--ink1);
+    font-weight: 500;
+}
+
+/* Responsive adjustments */
+@@media (max-width: 768px) {
+    .audit-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+    
+    .field-hint {
+        font-size: 11px;
+    }
+    
+    .form-card-body .row.g-3 > [class*="col-"] {
+        margin-bottom: 8px;
+    }
+    
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .page-header > div:last-child {
+        width: 100%;
+        justify-content: flex-start;
+    }
+}
+</style>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        // Optional: Add confirmation for cancel if there are unsaved changes
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('editForm');
+            const cancelBtn = document.querySelector('.btn-ghost[asp-action="Index"]');
+            let formChanged = false;
+            
+            // Track form changes
+            form.addEventListener('input', function() {
+                formChanged = true;
+            });
+            
+            // Warn on cancel if changes were made
+            if (cancelBtn) {
+                cancelBtn.addEventListener('click', function(e) {
+                    if (formChanged) {
+                        if (!confirm('You have unsaved changes. Are you sure you want to leave?')) {
+                            e.preventDefault();
+                        }
+                    }
+                });
+            }
+            
+            // Auto-format for numeric inputs
+            const numericInputs = document.querySelectorAll('input[type="number"]');
+            numericInputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    const min = parseInt(this.min) || 0;
+                    const max = parseInt(this.max) || 365;
+                    let value = parseInt(this.value) || min;
+                    
+                    if (value < min) value = min;
+                    if (value > max) value = max;
+                    
+                    this.value = value;
+                });
+            });
+        });
+    </script>
+}

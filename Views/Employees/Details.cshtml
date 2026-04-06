@@ -1,0 +1,203 @@
+@model EmployeesManagement.Models.Employee
+
+@{
+    ViewData["Title"] = "Employee Profile";
+    var initials = $"{Model.FirstName?.Substring(0, 1)}{Model.LastName?.Substring(0, 1)}".ToUpper();
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-header-title">Employee Profile</h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Dashboard</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index">Employees</a></li>
+            <li class="breadcrumb-item active">@Model.FirstName @Model.LastName</li>
+        </ol>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="add-btn">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path d="M9.5 2.5l2 2-7 7H2.5v-2l7-7z" stroke="currentColor" stroke-width="1.3" fill="none" />
+            </svg>
+            Edit Profile
+        </a>
+        <a asp-action="Index" class="btn-ghost">Back to List</a>
+    </div>
+</div>
+
+<div class="detail-grid">
+    <!-- Left: Profile card -->
+    <div>
+        <div class="profile-card">
+            <div class="profile-card-top">
+                <div class="profile-avatar-lg" style="width: 100%; height:100%;border-radius:20%;">
+                    @if (!string.IsNullOrEmpty(Model.Photo))
+                    {
+                        <img src="~/uploads/@Model.Photo" alt="Employee Photo"
+                             style="width:100%;height:100%;object-fit:cover;border-radius:10%;" />
+                    }
+                    else
+                    {
+                        @initials
+                    }
+                </div>
+                <div class="profile-name">@Model.FirstName @Model.MiddleName @Model.LastName</div>
+                <div class="profile-role">@Model.Designation · @Model.Department</div>
+            </div>
+            <div class="profile-card-body">
+                <div class="info-row">
+                    <div class="info-icon">🪪</div>
+                    <div>
+                        <div class="info-label">EMPLOYEE ID</div>
+                        <div class="info-value mono">@Model.EmpNo</div>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-icon">✉</div>
+                    <div>
+                        <div class="info-label">EMAIL</div>
+                        <div class="info-value" style="word-break:break-all">@Model.EmailAddress</div>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-icon">☎</div>
+                    <div>
+                        <div class="info-label">PHONE</div>
+                        <div class="info-value">@Model.PhoneNumber</div>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-icon">◎</div>
+                    <div>
+                        <div class="info-label">LOCATION</div>
+                        <div class="info-value">@Model.Country</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Audit card -->
+        <div class="profile-card" style="margin-top:16px">
+            <div class="detail-section-header" style="border-radius:var(--r-lg) var(--r-lg) 0 0">
+                Audit Information
+            </div>
+            <div class="profile-card-body">
+                <div class="info-row">
+                    <div class="info-icon">⊕</div>
+                    <div>
+                        <div class="info-label">CREATED BY</div>
+                        <div class="info-value">@(Model.CreatedById ?? "System")</div>
+                        <div class="mono" style="font-size:11px;color:var(--ink4)">@Model.CreatedOn.ToString("dd MMM                            yyyy, HH:mm")</div>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-icon">✎</div>
+                    <div>
+                        <div class="info-label">LAST MODIFIED</div>
+                        <div class="info-value">@(Model.ModifiedById ?? "Not modified")</div>
+                        @if (!string.IsNullOrEmpty(Model.ModifiedById))
+                        {
+                            <div class="mono" style="font-size:11px;color:var(--ink4)">@Model.ModifiedOn.ToString("dd MMM                            yyyy, HH:mm")</div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right: Detail sections -->
+    <div class="detail-sections">
+
+        <div class="detail-section">
+            <div class="detail-section-header">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="opacity:.6">
+                    <circle cx="7" cy="5" r="3" fill="currentColor" />
+                    <path d="M1 13c0-3.31 2.69-6 6-6s6 2.69 6 6" stroke="currentColor" stroke-width="1.3" fill="none" />
+                </svg>
+                Personal Information
+            </div>
+            <div class="detail-section-body">
+                <div class="detail-grid-2">
+                    <div>
+                        <div class="detail-field-label">FIRST NAME</div>
+                        <div class="detail-field-value">@Model.FirstName</div>
+                    </div>
+                    <div>
+                        <div class="detail-field-label">MIDDLE NAME</div>
+                        <div class="detail-field-value">@(string.IsNullOrEmpty(Model.MiddleName) ? "—" :
+                                                        Model.MiddleName)</div>
+                        </div>
+                        <div>
+                            <div class="detail-field-label">LAST NAME</div>
+                            <div class="detail-field-value">@Model.LastName</div>
+                        </div>
+                        <div>
+                            <div class="detail-field-label">DATE OF BIRTH</div>
+                            <div class="detail-field-value">@Model.DateOfBirth.ToString("dd MMMM yyyy")</div>
+                        </div>
+                        <div>
+                            <div class="detail-field-label">AGE</div>
+                            <div class="detail-field-value">@(DateTime.Now.Year - Model.DateOfBirth.Year) years</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <div class="detail-section-header">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="opacity:.6">
+                        <rect x="1" y="2" width="12" height="10" rx="1.5" stroke="currentColor" stroke-width="1.2"
+                              fill="none" />
+                        <path d="M1 5l6 4.5L13 5" stroke="currentColor" stroke-width="1.2" fill="none" />
+                    </svg>
+                    Contact Information
+                </div>
+                <div class="detail-section-body">
+                    <div class="detail-grid-2">
+                        <div>
+                            <div class="detail-field-label">PHONE NUMBER</div>
+                            <div class="detail-field-value">@Model.PhoneNumber</div>
+                        </div>
+                        <div>
+                            <div class="detail-field-label">EMAIL ADDRESS</div>
+                            <div class="detail-field-value" style="word-break:break-all">@Model.EmailAddress</div>
+                        </div>
+                        <div>
+                            <div class="detail-field-label">COUNTRY</div>
+                            <div class="detail-field-value">@Model.Country</div>
+                        </div>
+                        <div>
+                            <div class="detail-field-label">ADDRESS</div>
+                            <div class="detail-field-value">@Model.Address</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <div class="detail-section-header">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="opacity:.6">
+                        <rect x="2" y="4" width="10" height="9" rx="1.5" stroke="currentColor" stroke-width="1.2"
+                              fill="none" />
+                        <path d="M5 4V3a2 2 0 0 1 4 0v1" stroke="currentColor" stroke-width="1.2" fill="none" />
+                    </svg>
+                    Employment Details
+                </div>
+                <div class="detail-section-body">
+                    <div class="detail-grid-2">
+                        <div>
+                            <div class="detail-field-label">DEPARTMENT</div>
+                            <div class="detail-field-value">
+                                <span class="dept-badge">@Model.Department</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="detail-field-label">DESIGNATION</div>
+                            <div class="detail-field-value">@Model.Designation</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
