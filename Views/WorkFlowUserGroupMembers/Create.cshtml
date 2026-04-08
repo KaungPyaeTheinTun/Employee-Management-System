@@ -1,0 +1,565 @@
+@model EmployeesManagement.Models.WorkFlowUserGroupMember
+
+@{
+    ViewData["Title"] = "Add User Group Member";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-header-title">Add User Group Member</h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Dashboard</a></li>
+            <li class="breadcrumb-item"><a asp-controller="WorkFlowUserGroups" asp-action="Index">WorkFlow User Groups</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index">User Group Members</a></li>
+            <li class="breadcrumb-item active">Add New</li>
+        </ol>
+    </div>
+    <a asp-action="Index" class="btn-ghost">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin-right:6px">
+            <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        Back to List
+    </a>
+</div>
+
+<form asp-action="Create" id="createForm">
+    <div asp-validation-summary="ModelOnly" class="field-error" style="padding:12px 16px;background:var(--red-bg);border-radius:9px;border:1px solid rgba(192,57,43,0.2);margin-bottom:20px;"></div>
+
+    <!-- User Group Member Information -->
+    <div class="form-card" style="margin-bottom:16px">
+        <div class="form-card-header">
+            <span class="section-badge blue">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <rect x="2" y="3" width="8" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                    <path d="M4 2v2M8 2v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+                User Group Member Information
+            </span>
+        </div>
+        <div class="form-card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="WorkFlowUserGroupId" class="field-label">WorkFlow User Group <span class="field-required">*</span></label>
+                    <select asp-for="WorkFlowUserGroupId" class="field-control" asp-items="ViewBag.WorkFlowUserGroupId">
+                        <option value="">— Select User Group —</option>
+                    </select>
+                    <span asp-validation-for="WorkFlowUserGroupId" class="field-error"></span>
+                    <span class="field-hint">Select the workflow user group this member belongs to</span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="SequenceNo" class="field-label">Sequence Number <span class="field-required">*</span></label>
+                    <input asp-for="SequenceNo" class="field-control" type="number" placeholder="e.g. 1, 2, 3..." />
+                    <span asp-validation-for="SequenceNo" class="field-error"></span>
+                    <span class="field-hint">Determines the approval order (lower numbers go first)</span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="SenderId" class="field-label">Sender <span class="field-required">*</span></label>
+                    <select asp-for="SenderId" class="field-control" asp-items="ViewBag.SenderId">
+                        <option value="">— Select Sender —</option>
+                    </select>
+                    <span asp-validation-for="SenderId" class="field-error"></span>
+                    <span class="field-hint">User who initiates the approval request</span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="ApproverId" class="field-label">Approver <span class="field-required">*</span></label>
+                    <select asp-for="ApproverId" class="field-control" asp-items="ViewBag.ApproverId">
+                        <option value="">— Select Approver —</option>
+                    </select>
+                    <span asp-validation-for="ApproverId" class="field-error"></span>
+                    <span class="field-hint">User who approves the request</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Preview Card -->
+    <div class="form-card" style="margin-bottom:16px;background:var(--bg2);" id="previewCard">
+        <div class="form-card-header">
+            <span class="section-badge neutral">Live Preview</span>
+        </div>
+        <div class="form-card-body">
+            <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <div id="previewGroupAvatar" class="emp-avatar" style="width:48px;height:48px;background:#e8eefa;color:#1a4fa0;font-size:18px">G</div>
+                    <div>
+                        <div style="font-size:11px;color:var(--ink3);margin-bottom:2px;">USER GROUP</div>
+                        <div>
+                            <span id="previewGroupBadge" class="dept-badge" style="background:#e8eefa;color:#1a4fa0">Not selected</span>
+                        </div>
+                    </div>
+                </div>
+                <div style="flex:1">
+                    <div style="font-size:11px;color:var(--ink3);margin-bottom:2px;">SEQUENCE</div>
+                    <div id="previewSequence" class="sequence-badge" style="display:inline-block">Step 1</div>
+                </div>
+            </div>
+            <div style="margin-top:16px;display:flex;gap:16px;flex-wrap:wrap;">
+                <div style="flex:1">
+                    <div style="font-size:11px;color:var(--ink3);margin-bottom:2px;">SENDER</div>
+                    <div id="previewSender" style="display:flex;align-items:center;gap:8px;">
+                        <div id="previewSenderAvatar" class="emp-avatar" style="width:32px;height:32px;background:#e8eefa;color:#1a4fa0;font-size:12px">S</div>
+                        <span style="font-size:13px;color:var(--ink1);">Not selected</span>
+                    </div>
+                </div>
+                <div style="flex:1">
+                    <div style="font-size:11px;color:var(--ink3);margin-bottom:2px;">APPROVER</div>
+                    <div id="previewApprover" style="display:flex;align-items:center;gap:8px;">
+                        <div id="previewApproverAvatar" class="emp-avatar" style="width:32px;height:32px;background:#e8f5ee;color:#1a7a4a;font-size:12px">A</div>
+                        <span style="font-size:13px;color:var(--ink1);">Not selected</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="form-actions" style="border-top:none;padding-top:0">
+        <a asp-action="Index" class="btn-ghost">Cancel</a>
+        <button type="submit" class="btn-primary" style="background-color: black;">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin-right:6px;vertical-align:-2px">
+                <path d="M2 7l3.5 3.5L12 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Create User Group Member
+        </button>
+    </div>
+</form>
+
+<style>
+    /* Form field styles */
+    .field-label {
+        display: block;
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--ink2);
+        margin-bottom: 6px;
+    }
+
+    .field-required {
+        color: #c0392b;
+        font-size: 12px;
+    }
+
+    .field-control {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-size: 13px;
+        color: var(--ink1);
+        background: var(--card-bg);
+        transition: all 0.15s;
+    }
+
+    .field-control:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(26, 79, 160, 0.1);
+    }
+
+    /* Select field specific styles */
+    select.field-control {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 12 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2 4L6 8L10 4' stroke='%23666' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        padding-right: 32px;
+        cursor: pointer;
+    }
+
+    select.field-control:hover {
+        border-color: var(--primary);
+    }
+
+    select.field-control option {
+        padding: 8px;
+        font-size: 13px;
+    }
+
+    input[type="number"].field-control {
+        -moz-appearance: textfield;
+    }
+
+    input[type="number"].field-control::-webkit-inner-spin-button,
+    input[type="number"].field-control::-webkit-outer-spin-button {
+        opacity: 0.5;
+    }
+
+    .field-error {
+        font-size: 11px;
+        color: #c0392b;
+        margin-top: 4px;
+        display: block;
+    }
+
+    .field-hint {
+        display: block;
+        font-size: 11px;
+        color: var(--ink3);
+        margin-top: 4px;
+    }
+
+    /* Form card styles */
+    .form-card {
+        background: var(--card-bg);
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        overflow: hidden;
+    }
+
+    .form-card-header {
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+        background: var(--bg2);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .form-card-body {
+        padding: 20px;
+    }
+
+    .section-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .section-badge.blue {
+        background: #e8eefa;
+        color: #1a4fa0;
+    }
+
+    .section-badge.neutral {
+        background: var(--bg2);
+        color: var(--ink2);
+    }
+
+    /* Badge styles */
+    .dept-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    .sequence-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        white-space: nowrap;
+        background: var(--bg2);
+        color: var(--ink2);
+        border: 1px solid var(--border);
+    }
+
+    .emp-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 12px;
+        flex-shrink: 0;
+    }
+
+    /* Button styles */
+    .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        padding: 10px 20px;
+        background: var(--primary);
+        color: white;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        border: none;
+        cursor: pointer;
+        transition: all 0.15s;
+        text-decoration: none;
+    }
+
+    .btn-primary:hover {
+        background: #134080;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(26, 79, 160, 0.2);
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-ghost {
+        display: inline-flex;
+        align-items: center;
+        padding: 10px 20px;
+        background: var(--bg2);
+        color: var(--ink2);
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        text-decoration: none;
+        border: 1px solid var(--border);
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+
+    .btn-ghost:hover {
+        background: var(--border);
+        color: var(--ink1);
+        text-decoration: none;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+        padding: 20px 0;
+        border-top: 1px solid var(--border);
+        margin-top: 20px;
+    }
+
+    /* Page Header */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 24px;
+        gap: 16px;
+    }
+
+    .page-header-title {
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--ink1);
+        margin: 0 0 8px 0;
+    }
+
+    .breadcrumb {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        gap: 8px;
+        font-size: 13px;
+    }
+
+    .breadcrumb-item {
+        color: var(--ink3);
+    }
+
+    .breadcrumb-item a {
+        color: var(--primary);
+        text-decoration: none;
+    }
+
+    .breadcrumb-item a:hover {
+        text-decoration: underline;
+    }
+
+    .breadcrumb-item.active {
+        color: var(--ink2);
+        font-weight: 500;
+    }
+
+    .breadcrumb-item + .breadcrumb-item::before {
+        content: "/";
+        margin-right: 8px;
+        color: var(--ink4);
+    }
+
+    /* Grid system */
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin: -8px;
+    }
+
+    .g-3 {
+        margin: -8px;
+    }
+
+    .g-3 > [class*="col-"] {
+        padding: 8px;
+    }
+
+    .col-md-4 {
+        flex: 0 0 33.333333%;
+        max-width: 33.333333%;
+    }
+
+    .col-md-6 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+
+    .col-md-12 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    /* CSS Variables */
+    :root {
+        --ink1: #1a1a1a;
+        --ink2: #4a4a4a;
+        --ink3: #8a8a8a;
+        --ink4: #c0c0c0;
+        --border: #e5e5e5;
+        --bg2: #f8f8f8;
+        --card-bg: #ffffff;
+        --primary: #1a4fa0;
+        --red-bg: rgba(192, 57, 43, 0.1);
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .col-md-4,
+        .col-md-6,
+        .col-md-12 {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+        
+        .form-actions {
+            flex-direction: column-reverse;
+        }
+        
+        .btn-primary,
+        .btn-ghost {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .form-card-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get form elements
+        const userGroupSelect = document.getElementById('WorkFlowUserGroupId');
+        const sequenceInput = document.getElementById('SequenceNo');
+        const senderSelect = document.getElementById('SenderId');
+        const approverSelect = document.getElementById('ApproverId');
+        
+        // Preview elements
+        const previewGroupBadge = document.getElementById('previewGroupBadge');
+        const previewGroupAvatar = document.getElementById('previewGroupAvatar');
+        const previewSequence = document.getElementById('previewSequence');
+        const previewSenderSpan = document.querySelector('#previewSender span');
+        const previewSenderAvatar = document.getElementById('previewSenderAvatar');
+        const previewApproverSpan = document.querySelector('#previewApprover span');
+        const previewApproverAvatar = document.getElementById('previewApproverAvatar');
+
+        // Avatar colors
+        const avatarColors = [
+            { bg: "#e8eefa", text: "#1a4fa0" },
+            { bg: "#e8f5ee", text: "#1a7a4a" },
+            { bg: "#fef3e0", text: "#a05c00" },
+            { bg: "#fdecea", text: "#c0392b" },
+            { bg: "#f2f2ef", text: "#3a3a38" },
+            { bg: "#f0eeff", text: "#4a35c0" }
+        ];
+
+        // Get select options data
+        function getUserGroupText(select) {
+            const selectedOption = select?.options[select.selectedIndex];
+            return selectedOption ? selectedOption.text : 'Not selected';
+        }
+
+        function getUserGroupValue(select) {
+            return select?.value || '';
+        }
+
+        function updatePreview() {
+            // Update User Group preview
+            const userGroupText = getUserGroupText(userGroupSelect);
+            const userGroupValue = getUserGroupValue(userGroupSelect);
+            let colorIndex = userGroupValue.length % avatarColors.length;
+            let colors = avatarColors[colorIndex];
+            
+            if (previewGroupBadge) {
+                previewGroupBadge.textContent = userGroupText || 'Not selected';
+                previewGroupBadge.style.backgroundColor = colors.bg;
+                previewGroupBadge.style.color = colors.text;
+            }
+            
+            if (previewGroupAvatar) {
+                let avatarLetter = userGroupText && userGroupText !== 'Not selected' ? userGroupText.substring(0, 1).toUpperCase() : 'G';
+                previewGroupAvatar.textContent = avatarLetter;
+                previewGroupAvatar.style.backgroundColor = colors.bg;
+                previewGroupAvatar.style.color = colors.text;
+            }
+            
+            // Update Sequence preview
+            const sequence = sequenceInput?.value || '1';
+            if (previewSequence) {
+                previewSequence.textContent = `Step ${sequence}`;
+            }
+            
+            // Update Sender preview
+            const senderText = getUserGroupText(senderSelect);
+            const senderValue = getUserGroupValue(senderSelect);
+            let senderColorIndex = senderValue.length % avatarColors.length;
+            let senderColors = avatarColors[senderColorIndex];
+            
+            if (previewSenderSpan) {
+                previewSenderSpan.textContent = senderText || 'Not selected';
+            }
+            if (previewSenderAvatar) {
+                let senderLetter = senderText && senderText !== 'Not selected' ? senderText.substring(0, 1).toUpperCase() : 'S';
+                previewSenderAvatar.textContent = senderLetter;
+                previewSenderAvatar.style.backgroundColor = senderColors.bg;
+                previewSenderAvatar.style.color = senderColors.text;
+            }
+            
+            // Update Approver preview
+            const approverText = getUserGroupText(approverSelect);
+            const approverValue = getUserGroupValue(approverSelect);
+            let approverColorIndex = approverValue.length % avatarColors.length;
+            let approverColors = avatarColors[approverColorIndex];
+            
+            if (previewApproverSpan) {
+                previewApproverSpan.textContent = approverText || 'Not selected';
+            }
+            if (previewApproverAvatar) {
+                let approverLetter = approverText && approverText !== 'Not selected' ? approverText.substring(0, 1).toUpperCase() : 'A';
+                previewApproverAvatar.textContent = approverLetter;
+                previewApproverAvatar.style.backgroundColor = approverColors.bg;
+                previewApproverAvatar.style.color = approverColors.text;
+            }
+        }
+
+        // Add event listeners
+        if (userGroupSelect) userGroupSelect.addEventListener('change', updatePreview);
+        if (sequenceInput) sequenceInput.addEventListener('input', updatePreview);
+        if (senderSelect) senderSelect.addEventListener('change', updatePreview);
+        if (approverSelect) approverSelect.addEventListener('change', updatePreview);
+        
+        // Initialize preview
+        updatePreview();
+    });
+</script>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

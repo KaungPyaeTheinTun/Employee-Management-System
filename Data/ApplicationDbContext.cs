@@ -27,6 +27,60 @@ namespace EmployeeManagement.Data
                 .WithMany()
                 .HasForeignKey(l => l.StatusId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<CompanyInformation>()
+                .HasOne(c => c.Country)
+                .WithMany()
+                .HasForeignKey(c => c.CountryId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<CompanyInformation>()
+                .HasOne(c => c.City)
+                .WithMany()
+                .HasForeignKey(c => c.CityId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ApprovalEntry>()
+                .HasOne(a => a.Approver)
+                .WithMany()
+                .HasForeignKey(a => a.ApproverId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ApprovalEntry>()
+                .HasOne(a => a.LastModifiedBy)
+                .WithMany()
+                .HasForeignKey(a => a.LastModifiedById)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ApprovalEntry>()
+                .HasOne(a => a.DocumentType)
+                .WithMany()
+                .HasForeignKey(a => a.DocumentTypeId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ApprovalEntry>()
+                .HasOne(a => a.Status)
+                .WithMany()
+                .HasForeignKey(a => a.StatusId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<WorkFlowUserGroupMember>()
+                .HasOne(w => w.Sender)
+                .WithMany()
+                .HasForeignKey(w => w.SenderId)
+                .OnDelete(DeleteBehavior.Restrict); 
+
+            modelBuilder.Entity<WorkFlowUserGroupMember>()
+                .HasOne(w => w.Approver)
+                .WithMany()
+                .HasForeignKey(w => w.ApproverId)
+                .OnDelete(DeleteBehavior.Restrict); 
+
+            modelBuilder.Entity<WorkFlowUserGroupMember>()
+                .HasOne(w => w.WorkFlowUserGroup)
+                .WithMany()
+                .HasForeignKey(w => w.WorkFlowUserGroupId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Department> Departments { get; set; }
@@ -44,6 +98,10 @@ namespace EmployeeManagement.Data
         public DbSet<Holiday> Holidays { get; set; }
         public DbSet<LeaveAdjustmentEntry> LeaveAdjustmentEntries { get; set; }
         public DbSet<LeavePeriod> LeavePeriods { get; set; }
+        public DbSet<CompanyInformation> CompanyInformations { get; set; }
+        public DbSet<ApprovalEntry> ApprovalEntries { get; set; }
+        public DbSet<WorkFlowUserGroup> WorkFlowUserGroups { get; set; }
+        public DbSet<WorkFlowUserGroupMember> WorkFlowUserGroupMembers { get; set; }
         public virtual async Task<int> SaveChangesAsync(string userId)
         {
             OnBeforeSavingChanges(userId);

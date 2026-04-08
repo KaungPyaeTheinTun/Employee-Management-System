@@ -1,0 +1,500 @@
+@model EmployeesManagement.Models.CompanyInformation
+
+@{
+    ViewData["Title"] = "Company Details";
+    var logoPath = !string.IsNullOrEmpty(Model.Logo) ? Url.Content("~/uploads/" + Model.Logo) : null;
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-header-title">Company Details</h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Dashboard</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index">Company Information</a></li>
+            <li class="breadcrumb-item active">@Model.Name</li>
+        </ol>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="add-btn">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path d="M9.5 2.5l2 2-7 7H2.5v-2l7-7z" stroke="currentColor" stroke-width="1.3" fill="none" />
+            </svg>
+            Edit Company
+        </a>
+        <a asp-action="Index" class="btn-ghost">Back to List</a>
+    </div>
+</div>
+
+<div class="detail-grid">
+    <!-- Left: Company Profile Card -->
+    <div>
+        <div class="profile-card">
+            <div class="profile-card-top">
+                <div class="profile-avatar-lg" style="width:100%;height:100%;border-radius:20%;">
+                    @if (!string.IsNullOrEmpty(Model.Logo))
+                    {
+                        <img src="@logoPath" alt="Company Logo"
+                             style="width:100%;height:100%;object-fit:cover;border-radius:10%;" />
+                    }
+                    else
+                    {
+                        @(Model.Name?.Substring(0, 1).ToUpper() ?? "C")
+                    }
+                </div>
+                <div class="profile-name">@Model.Name</div>
+                <div class="profile-role">@Model.City?.Name, @Model.Country?.Name</div>
+            </div>
+            <div class="profile-card-body">
+                <div class="info-row">
+                    <div class="info-icon">🏢</div>
+                    <div>
+                        <div class="info-label">COMPANY NAME</div>
+                        <div class="info-value">@Model.Name</div>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-icon">📞</div>
+                    <div>
+                        <div class="info-label">PHONE NUMBER</div>
+                        <div class="info-value">@Model.PhoneNo</div>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-icon">👤</div>
+                    <div>
+                        <div class="info-label">CONTACT PERSON</div>
+                        <div class="info-value">@Model.ContactPerson</div>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-icon">📍</div>
+                    <div>
+                        <div class="info-label">POSTAL CODE</div>
+                        <div class="info-value">@(string.IsNullOrEmpty(Model.PostalCode) ? "—" : Model.PostalCode)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right: Detail sections -->
+    <div class="detail-sections">
+        <!-- Company Information -->
+        <div class="detail-section">
+            <div class="detail-section-header">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="opacity:.6">
+                    <rect x="1.5" y="2.5" width="11" height="9" rx="1.5" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                    <path d="M3 5h8M3 7h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+                Company Information
+            </div>
+            <div class="detail-section-body">
+                <div class="detail-grid-2">
+                    <div>
+                        <div class="detail-field-label">COMPANY NAME</div>
+                        <div class="detail-field-value">@Model.Name</div>
+                    </div>
+                    <div>
+                        <div class="detail-field-label">CONTACT PERSON</div>
+                        <div class="detail-field-value">@Model.ContactPerson</div>
+                    </div>
+                    <div>
+                        <div class="detail-field-label">PHONE NUMBER</div>
+                        <div class="detail-field-value">@Model.PhoneNo</div>
+                    </div>
+                    <div>
+                        <div class="detail-field-label">POSTAL CODE</div>
+                        <div class="detail-field-value">@(string.IsNullOrEmpty(Model.PostalCode) ? "—" : Model.PostalCode)</div>
+                    </div>
+                    <div>
+                        <div class="detail-field-label">PHYSICAL ADDRESS</div>
+                        <div class="detail-field-value">@Model.Address</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statutory Information -->
+        <div class="detail-section">
+            <div class="detail-section-header">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="opacity:.6">
+                    <path d="M2 4h10v8H2V4z" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                    <path d="M4 2v2M10 2v2M2 7h10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+                Statutory Information
+            </div>
+            <div class="detail-section-body">
+                <div class="detail-grid-2">
+                    <div>
+                        <div class="detail-field-label">NSSF NUMBER</div>
+                        <div class="detail-field-value">@(string.IsNullOrEmpty(Model.NSSFNO) ? "—" : Model.NSSFNO)</div>
+                        <div class="field-hint">National Social Security Fund</div>
+                    </div>
+                    <div>
+                        <div class="detail-field-label">NHIF NUMBER</div>
+                        <div class="detail-field-value">@(string.IsNullOrEmpty(Model.NHIFNO) ? "—" : Model.NHIFNO)</div>
+                        <div class="field-hint">National Hospital Insurance Fund</div>
+                    </div>
+                    <div>
+                        <div class="detail-field-label">KRA PIN</div>
+                        <div class="detail-field-value">@(string.IsNullOrEmpty(Model.KRAPIN) ? "—" : Model.KRAPIN)</div>
+                        <div class="field-hint">Kenya Revenue Authority PIN</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Location Information -->
+        <div class="detail-section">
+            <div class="detail-section-header">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="opacity:.6">
+                    <circle cx="7" cy="7" r="2" stroke="currentColor" stroke-width="1.2"/>
+                    <path d="M7 2v1.5M7 10.5V12M2 7h1.5M10.5 7H12M3.5 3.5l1 1M9.5 9.5l1 1M3.5 10.5l1-1M9.5 4.5l1-1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+                Location Information
+            </div>
+            <div class="detail-section-body">
+                <div class="detail-grid-2">
+                    <div>
+                        <div class="detail-field-label">COUNTRY</div>
+                        <div class="detail-field-value">@(Model.Country?.Name ?? "—")</div>
+                    </div>
+                    <div>
+                        <div class="detail-field-label">CITY / TOWN</div>
+                        <div class="detail-field-value">@(Model.City?.Name ?? "—")</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Company Logo (if exists) -->
+        @if (!string.IsNullOrEmpty(Model.Logo))
+        {
+            <div class="detail-section">
+                <div class="detail-section-header">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="opacity:.6">
+                        <rect x="1.5" y="2.5" width="11" height="9" rx="1.5" stroke="currentColor" stroke-width="1.2"/>
+                        <circle cx="5" cy="6" r="1" fill="currentColor"/>
+                        <path d="M1.5 10l2.5-2.5 2.5 2.5 3.5-3.5 2.5 2.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                    </svg>
+                    Company Logo
+                </div>
+                <div class="detail-section-body">
+                    <div style="text-align:center;padding:16px;">
+                        <img src="@logoPath" alt="Company Logo" style="max-width:200px;max-height:200px;border-radius:12px;border:1px solid var(--border);padding:8px;background:white;" />
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    /* Detail Grid Layout */
+    .detail-grid {
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        gap: 20px;
+    }
+
+    /* Profile Card Styles */
+    .profile-card {
+        background: var(--card-bg);
+        border-radius: 16px;
+        border: 1px solid var(--border);
+        overflow: hidden;
+        position: sticky;
+        top: 20px;
+    }
+
+    .profile-card-top {
+        text-align: center;
+        padding: 24px 20px 16px;
+        background: linear-gradient(135deg, var(--bg2) 0%, var(--card-bg) 100%);
+        border-bottom: 1px solid var(--border);
+    }
+
+    .profile-avatar-lg {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 16px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 48px;
+        font-weight: 600;
+        border-radius: 50%;
+        overflow: hidden;
+    }
+
+    .profile-name {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--ink1);
+        margin-bottom: 4px;
+    }
+
+    .profile-role {
+        font-size: 12px;
+        color: var(--ink3);
+    }
+
+    .profile-card-body {
+        padding: 16px;
+    }
+
+    .info-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .info-row:last-child {
+        border-bottom: none;
+    }
+
+    .info-icon {
+        width: 32px;
+        height: 32px;
+        background: var(--bg2);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        flex-shrink: 0;
+    }
+
+    .info-label {
+        font-size: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--ink4);
+        margin-bottom: 2px;
+    }
+
+    .info-value {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--ink1);
+    }
+
+    /* Detail Sections Styles */
+    .detail-sections {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .detail-section {
+        background: var(--card-bg);
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        overflow: hidden;
+    }
+
+    .detail-section-header {
+        padding: 14px 20px;
+        background: var(--bg2);
+        border-bottom: 1px solid var(--border);
+        font-weight: 600;
+        font-size: 13px;
+        color: var(--ink2);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .detail-section-body {
+        padding: 20px;
+    }
+
+    .detail-grid-2 {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .detail-field-label {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--ink4);
+        margin-bottom: 6px;
+    }
+
+    .detail-field-value {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--ink1);
+        word-break: break-word;
+    }
+
+    .field-hint {
+        font-size: 10px;
+        color: var(--ink3);
+        margin-top: 4px;
+    }
+
+    .mono {
+        font-family: monospace;
+        font-size: 11px;
+    }
+
+    /* Button Styles */
+    .add-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        background: var(--primary);
+        color: white;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.15s;
+    }
+
+    .add-btn:hover {
+        background: #134080;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(26, 79, 160, 0.2);
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-ghost {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 16px;
+        background: var(--bg2);
+        color: var(--ink2);
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        text-decoration: none;
+        border: 1px solid var(--border);
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+
+    .btn-ghost:hover {
+        background: var(--border);
+        color: var(--ink1);
+        text-decoration: none;
+    }
+
+    /* Page Header */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 24px;
+        gap: 16px;
+    }
+
+    .page-header-title {
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--ink1);
+        margin: 0 0 8px 0;
+    }
+
+    .breadcrumb {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        gap: 8px;
+        font-size: 13px;
+    }
+
+    .breadcrumb-item {
+        color: var(--ink3);
+    }
+
+    .breadcrumb-item a {
+        color: var(--primary);
+        text-decoration: none;
+    }
+
+    .breadcrumb-item a:hover {
+        text-decoration: underline;
+    }
+
+    .breadcrumb-item.active {
+        color: var(--ink2);
+        font-weight: 500;
+    }
+
+    .breadcrumb-item + .breadcrumb-item::before {
+        content: "/";
+        margin-right: 8px;
+        color: var(--ink4);
+    }
+
+    /* CSS Variables */
+    :root {
+        --ink1: #1a1a1a;
+        --ink2: #4a4a4a;
+        --ink3: #8a8a8a;
+        --ink4: #c0c0c0;
+        --border: #e5e5e5;
+        --bg2: #f8f8f8;
+        --card-bg: #ffffff;
+        --primary: #1a4fa0;
+    }
+
+    /* Responsive */
+    @@media (max-width: 900px) {
+        .detail-grid {
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        .profile-card {
+            position: static;
+        }
+
+        .detail-grid-2 {
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .add-btn,
+        .btn-ghost {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .detail-section-body {
+            padding: 16px;
+        }
+
+        .profile-avatar-lg {
+            width: 100px;
+            height: 100px;
+            font-size: 40px;
+        }
+
+        .profile-name {
+            font-size: 16px;
+        }
+    }
+</style>

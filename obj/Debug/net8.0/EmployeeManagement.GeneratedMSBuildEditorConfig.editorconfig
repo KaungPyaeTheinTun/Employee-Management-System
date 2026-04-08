@@ -1,11 +1,19 @@
 is_global = true
 build_property.TargetFramework = net8.0
+build_property.TargetFramework = net8.0
+build_property.TargetPlatformMinVersion = 
 build_property.TargetPlatformMinVersion = 
 build_property.UsingMicrosoftNETSdkWeb = true
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
 build_property.ProjectTypeGuids = 
 build_property.InvariantGlobalization = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
 build_property.PlatformNeutralAssembly = 
 build_property.EnforceExtendedAnalyzerRules = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = EmployeeManagement
 build_property.RootNamespace = EmployeeManagement
@@ -178,6 +186,26 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = QXJlYXMvSWRlbnRpdHkvUGFnZXMvX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[/Users/kaungpyaetheintun/EmployeeManagement/Views/ApprovalEntries/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQXBwcm92YWxFbnRyaWVzL0NyZWF0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/kaungpyaetheintun/EmployeeManagement/Views/ApprovalEntries/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQXBwcm92YWxFbnRyaWVzL0RlbGV0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/kaungpyaetheintun/EmployeeManagement/Views/ApprovalEntries/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQXBwcm92YWxFbnRyaWVzL0RldGFpbHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/kaungpyaetheintun/EmployeeManagement/Views/ApprovalEntries/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQXBwcm92YWxFbnRyaWVzL0VkaXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/kaungpyaetheintun/EmployeeManagement/Views/ApprovalEntries/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQXBwcm92YWxFbnRyaWVzL0luZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [/Users/kaungpyaetheintun/EmployeeManagement/Views/Audits/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQXVkaXRzL0NyZWF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
@@ -236,6 +264,26 @@ build_metadata.AdditionalFiles.CssScope =
 
 [/Users/kaungpyaetheintun/EmployeeManagement/Views/Cities/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQ2l0aWVzL0luZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/kaungpyaetheintun/EmployeeManagement/Views/CompanyInformations/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQ29tcGFueUluZm9ybWF0aW9ucy9DcmVhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/kaungpyaetheintun/EmployeeManagement/Views/CompanyInformations/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQ29tcGFueUluZm9ybWF0aW9ucy9EZWxldGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/kaungpyaetheintun/EmployeeManagement/Views/CompanyInformations/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQ29tcGFueUluZm9ybWF0aW9ucy9EZXRhaWxzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/kaungpyaetheintun/EmployeeManagement/Views/CompanyInformations/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQ29tcGFueUluZm9ybWF0aW9ucy9FZGl0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/kaungpyaetheintun/EmployeeManagement/Views/CompanyInformations/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQ29tcGFueUluZm9ybWF0aW9ucy9JbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/kaungpyaetheintun/EmployeeManagement/Views/Countries/Create.cshtml]
@@ -536,6 +584,46 @@ build_metadata.AdditionalFiles.CssScope =
 
 [/Users/kaungpyaetheintun/EmployeeManagement/Views/Users/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVXNlcnMvSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/kaungpyaetheintun/EmployeeManagement/Views/WorkFlowUserGroupMembers/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvV29ya0Zsb3dVc2VyR3JvdXBNZW1iZXJzL0NyZWF0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/kaungpyaetheintun/EmployeeManagement/Views/WorkFlowUserGroupMembers/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvV29ya0Zsb3dVc2VyR3JvdXBNZW1iZXJzL0RlbGV0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/kaungpyaetheintun/EmployeeManagement/Views/WorkFlowUserGroupMembers/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvV29ya0Zsb3dVc2VyR3JvdXBNZW1iZXJzL0RldGFpbHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/kaungpyaetheintun/EmployeeManagement/Views/WorkFlowUserGroupMembers/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvV29ya0Zsb3dVc2VyR3JvdXBNZW1iZXJzL0VkaXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/kaungpyaetheintun/EmployeeManagement/Views/WorkFlowUserGroupMembers/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvV29ya0Zsb3dVc2VyR3JvdXBNZW1iZXJzL0luZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/kaungpyaetheintun/EmployeeManagement/Views/WorkFlowUserGroups/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvV29ya0Zsb3dVc2VyR3JvdXBzL0NyZWF0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/kaungpyaetheintun/EmployeeManagement/Views/WorkFlowUserGroups/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvV29ya0Zsb3dVc2VyR3JvdXBzL0RlbGV0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/kaungpyaetheintun/EmployeeManagement/Views/WorkFlowUserGroups/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvV29ya0Zsb3dVc2VyR3JvdXBzL0RldGFpbHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/kaungpyaetheintun/EmployeeManagement/Views/WorkFlowUserGroups/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvV29ya0Zsb3dVc2VyR3JvdXBzL0VkaXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/kaungpyaetheintun/EmployeeManagement/Views/WorkFlowUserGroups/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvV29ya0Zsb3dVc2VyR3JvdXBzL0luZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/kaungpyaetheintun/EmployeeManagement/Views/_ViewImports.cshtml]

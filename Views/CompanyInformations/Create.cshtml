@@ -1,0 +1,669 @@
+@model EmployeesManagement.Models.CompanyInformation
+
+@{
+    ViewData["Title"] = "Add Company Information";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-header-title">Add Company Information</h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Dashboard</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index">Company Information</a></li>
+            <li class="breadcrumb-item active">Add New</li>
+        </ol>
+    </div>
+    <a asp-action="Index" class="btn-ghost">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin-right:6px">
+            <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        Back to List
+    </a>
+</div>
+
+<form asp-action="Create" id="createForm" method="post" enctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly" class="field-error" style="padding:12px 16px;background:var(--red-bg);border-radius:9px;border:1px solid rgba(192,57,43,0.2);margin-bottom:20px;"></div>
+
+    <!-- Company Basic Information -->
+    <div class="form-card" style="margin-bottom:16px">
+        <div class="form-card-header">
+            <span class="section-badge blue">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <rect x="1.5" y="2.5" width="9" height="7" rx="1.5" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                    <path d="M3 5h6M3 7h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+                Company Basic Information
+            </span>
+        </div>
+        <div class="form-card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="Name" class="field-label">Company Name <span class="field-required">*</span></label>
+                    <input asp-for="Name" class="field-control" placeholder="Enter company name" />
+                    <span asp-validation-for="Name" class="field-error"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="ContactPerson" class="field-label">Contact Person <span class="field-required">*</span></label>
+                    <input asp-for="ContactPerson" class="field-control" placeholder="Enter contact person name" />
+                    <span asp-validation-for="ContactPerson" class="field-error"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="PhoneNo" class="field-label">Phone Number <span class="field-required">*</span></label>
+                    <input asp-for="PhoneNo" class="field-control" placeholder="e.g. +254 712 345 678" />
+                    <span asp-validation-for="PhoneNo" class="field-error"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="PostalCode" class="field-label">Postal Code</label>
+                    <input asp-for="PostalCode" class="field-control" placeholder="e.g. 00100" />
+                    <span asp-validation-for="PostalCode" class="field-error"></span>
+                </div>
+                <div class="col-md-12">
+                    <label asp-for="Address" class="field-label">Physical Address <span class="field-required">*</span></label>
+                    <textarea asp-for="Address" class="field-control" placeholder="Enter company physical address" rows="3"></textarea>
+                    <span asp-validation-for="Address" class="field-error"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statutory Information -->
+    <div class="form-card" style="margin-bottom:16px">
+        <div class="form-card-header">
+            <span class="section-badge green">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <path d="M2 3h8v7H2V3z" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                    <path d="M4 1v2M8 1v2M2 6h8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+                Statutory Information
+            </span>
+        </div>
+        <div class="form-card-body">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label asp-for="NSSFNO" class="field-label">NSSF Number</label>
+                    <input asp-for="NSSFNO" class="field-control" placeholder="Enter NSSF number" />
+                    <span asp-validation-for="NSSFNO" class="field-error"></span>
+                    <span class="field-hint">National Social Security Fund Number</span>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="NHIFNO" class="field-label">NHIF Number</label>
+                    <input asp-for="NHIFNO" class="field-control" placeholder="Enter NHIF number" />
+                    <span asp-validation-for="NHIFNO" class="field-error"></span>
+                    <span class="field-hint">National Hospital Insurance Fund Number</span>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="KRAPIN" class="field-label">KRA PIN</label>
+                    <input asp-for="KRAPIN" class="field-control" placeholder="Enter KRA PIN" />
+                    <span asp-validation-for="KRAPIN" class="field-error"></span>
+                    <span class="field-hint">Kenya Revenue Authority PIN</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Location Information -->
+    <div class="form-card" style="margin-bottom:16px">
+        <div class="form-card-header">
+            <span class="section-badge amber">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <circle cx="6" cy="6" r="1.5" stroke="currentColor" stroke-width="1.2"/>
+                    <path d="M6 1v1.5M6 9.5V11M1 6h1.5M9.5 6H11M2.7 2.7l1 1M8.3 8.3l1 1M2.7 9.3l1-1M8.3 3.7l1-1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+                Location Information
+            </span>
+        </div>
+        <div class="form-card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="CountryId" class="field-label">Country <span class="field-required">*</span></label>
+                    <select asp-for="CountryId" class="field-control" asp-items="ViewBag.CountryId">
+                        <option value="">— Select Country —</option>
+                    </select>
+                    <span asp-validation-for="CountryId" class="field-error"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="CityId" class="field-label">City / Town <span class="field-required">*</span></label>
+                    <select asp-for="CityId" class="field-control" asp-items="ViewBag.CityId">
+                        <option value="">— Select City —</option>
+                    </select>
+                    <span asp-validation-for="CityId" class="field-error"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Company Logo -->
+    <div class="form-card" style="margin-bottom:16px">
+        <div class="form-card-header">
+            <span class="section-badge neutral">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <rect x="1.5" y="2.5" width="9" height="7" rx="1.5" stroke="currentColor" stroke-width="1.2"/>
+                    <circle cx="4.5" cy="5.5" r="1" fill="currentColor"/>
+                    <path d="M1.5 9l2-2 2 2 3-3 2 2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+                Company Logo
+            </span>
+        </div>
+        <div class="form-card-body">
+            <div class="row g-3">
+                <div class="col-md-12">
+                    <div class="logo-upload-area" id="logoUploadArea">
+                        <div class="logo-preview" id="logoPreview" style="display: none;">
+                            <img id="previewImage" src="#" alt="Company Logo" />
+                            <button type="button" class="remove-logo" id="removeLogo">×</button>
+                        </div>
+                        <div class="upload-placeholder" id="uploadPlaceholder">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M12 16V4M8 8l4-4 4 4" stroke="currentColor" stroke-linecap="round"/>
+                                <path d="M4 14v3a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-3" stroke="currentColor" stroke-linecap="round"/>
+                            </svg>
+                            <p class="upload-text">Click or drag to upload company logo</p>
+                            <p class="upload-hint">PNG, JPG, JPEG up to 2MB</p>
+                            <input type="file" name="logo" id="logoInput" class="logo-input" accept=".png,.jpg,.jpeg" />
+                        </div>
+                    </div>
+                    <span class="field-hint">Recommended size: 200x200px. Square images work best.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="form-actions">
+        <a asp-action="Index" class="btn-ghost">Cancel</a>
+        <button type="submit" class="btn-primary" style="background-color: black;">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin-right:6px;vertical-align:-2px">
+                <path d="M2 7l3.5 3.5L12 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Create Company
+        </button>
+    </div>
+</form>
+
+<style>
+    /* Form field styles */
+    .field-label {
+        display: block;
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--ink2);
+        margin-bottom: 6px;
+    }
+
+    .field-required {
+        color: #c0392b;
+        font-size: 12px;
+    }
+
+    .field-control {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-size: 13px;
+        color: var(--ink1);
+        background: var(--card-bg);
+        transition: all 0.15s;
+    }
+
+    .field-control:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(26, 79, 160, 0.1);
+    }
+
+    /* Select field specific styles */
+    select.field-control {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 12 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2 4L6 8L10 4' stroke='%23666' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        padding-right: 32px;
+        cursor: pointer;
+    }
+
+    select.field-control:hover {
+        border-color: var(--primary);
+    }
+
+    select.field-control option {
+        padding: 8px;
+        font-size: 13px;
+    }
+
+    textarea.field-control {
+        resize: vertical;
+        min-height: 80px;
+    }
+
+    .field-error {
+        font-size: 11px;
+        color: #c0392b;
+        margin-top: 4px;
+        display: block;
+    }
+
+    .field-hint {
+        display: block;
+        font-size: 11px;
+        color: var(--ink3);
+        margin-top: 4px;
+    }
+
+    /* Form card styles */
+    .form-card {
+        background: var(--card-bg);
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        overflow: hidden;
+    }
+
+    .form-card-header {
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+        background: var(--bg2);
+    }
+
+    .form-card-body {
+        padding: 20px;
+    }
+
+    .section-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .section-badge.blue {
+        background: #e8eefa;
+        color: #1a4fa0;
+    }
+
+    .section-badge.green {
+        background: #e8f5ee;
+        color: #1a7a4a;
+    }
+
+    .section-badge.amber {
+        background: #fef3e0;
+        color: #a05c00;
+    }
+
+    .section-badge.neutral {
+        background: var(--bg2);
+        color: var(--ink2);
+    }
+
+    /* Logo Upload Area Styles */
+    .logo-upload-area {
+        border: 2px dashed var(--border);
+        border-radius: 12px;
+        background: var(--bg2);
+        transition: all 0.2s;
+        cursor: pointer;
+        overflow: hidden;
+    }
+
+    .logo-upload-area:hover {
+        border-color: var(--primary);
+        background: rgba(26, 79, 160, 0.02);
+    }
+
+    .upload-placeholder {
+        padding: 40px 20px;
+        text-align: center;
+        position: relative;
+    }
+
+    .upload-placeholder svg {
+        color: var(--ink3);
+        margin-bottom: 12px;
+    }
+
+    .upload-text {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--ink2);
+        margin: 0 0 4px 0;
+    }
+
+    .upload-hint {
+        font-size: 11px;
+        color: var(--ink3);
+        margin: 0;
+    }
+
+    .logo-input {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .logo-preview {
+        position: relative;
+        padding: 20px;
+        text-align: center;
+        background: var(--card-bg);
+    }
+
+    .logo-preview img {
+        max-width: 150px;
+        max-height: 150px;
+        border-radius: 12px;
+        object-fit: contain;
+        border: 1px solid var(--border);
+        background: white;
+        padding: 8px;
+    }
+
+    .remove-logo {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: #c0392b;
+        color: white;
+        border: none;
+        font-size: 18px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+    }
+
+    .remove-logo:hover {
+        background: #a0281a;
+        transform: scale(1.05);
+    }
+
+    /* Button styles */
+    .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        padding: 10px 20px;
+        background: var(--primary);
+        color: white;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        border: none;
+        cursor: pointer;
+        transition: all 0.15s;
+        text-decoration: none;
+    }
+
+    .btn-primary:hover {
+        background: #134080;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(26, 79, 160, 0.2);
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-ghost {
+        display: inline-flex;
+        align-items: center;
+        padding: 10px 20px;
+        background: var(--bg2);
+        color: var(--ink2);
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        text-decoration: none;
+        border: 1px solid var(--border);
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+
+    .btn-ghost:hover {
+        background: var(--border);
+        color: var(--ink1);
+        text-decoration: none;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+        padding: 20px 0;
+        border-top: 1px solid var(--border);
+        margin-top: 20px;
+    }
+
+    /* Page Header */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 24px;
+        gap: 16px;
+    }
+
+    .page-header-title {
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--ink1);
+        margin: 0 0 8px 0;
+    }
+
+    .breadcrumb {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        gap: 8px;
+        font-size: 13px;
+    }
+
+    .breadcrumb-item {
+        color: var(--ink3);
+    }
+
+    .breadcrumb-item a {
+        color: var(--primary);
+        text-decoration: none;
+    }
+
+    .breadcrumb-item a:hover {
+        text-decoration: underline;
+    }
+
+    .breadcrumb-item.active {
+        color: var(--ink2);
+        font-weight: 500;
+    }
+
+    .breadcrumb-item + .breadcrumb-item::before {
+        content: "/";
+        margin-right: 8px;
+        color: var(--ink4);
+    }
+
+    /* Grid system */
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin: -8px;
+    }
+
+    .g-3 {
+        margin: -8px;
+    }
+
+    .g-3 > [class*="col-"] {
+        padding: 8px;
+    }
+
+    .col-md-4 {
+        flex: 0 0 33.333333%;
+        max-width: 33.333333%;
+    }
+
+    .col-md-6 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+
+    .col-md-12 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    /* CSS Variables */
+    :root {
+        --ink1: #1a1a1a;
+        --ink2: #4a4a4a;
+        --ink3: #8a8a8a;
+        --ink4: #c0c0c0;
+        --border: #e5e5e5;
+        --bg2: #f8f8f8;
+        --card-bg: #ffffff;
+        --primary: #1a4fa0;
+        --red-bg: rgba(192, 57, 43, 0.1);
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .col-md-4,
+        .col-md-6,
+        .col-md-12 {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+        
+        .form-actions {
+            flex-direction: column-reverse;
+        }
+        
+        .btn-primary,
+        .btn-ghost {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .logo-preview img {
+            max-width: 120px;
+            max-height: 120px;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const logoInput = document.getElementById('logoInput');
+        const logoPreview = document.getElementById('logoPreview');
+        const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+        const previewImage = document.getElementById('previewImage');
+        const removeLogoBtn = document.getElementById('removeLogo');
+        const uploadArea = document.getElementById('logoUploadArea');
+
+        // Handle file selection
+        logoInput.addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                // Validate file type
+                const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+                if (!allowedTypes.includes(file.type)) {
+                    alert('Please upload only PNG, JPG, or JPEG files.');
+                    logoInput.value = '';
+                    return;
+                }
+
+                // Validate file size (2MB max)
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('File size must be less than 2MB.');
+                    logoInput.value = '';
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    previewImage.src = event.target.result;
+                    uploadPlaceholder.style.display = 'none';
+                    logoPreview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Handle remove logo
+        removeLogoBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            logoInput.value = '';
+            previewImage.src = '#';
+            logoPreview.style.display = 'none';
+            uploadPlaceholder.style.display = 'block';
+        });
+
+        // Click on upload area triggers file input
+        uploadArea.addEventListener('click', function (e) {
+            if (e.target !== removeLogoBtn && !removeLogoBtn.contains(e.target)) {
+                logoInput.click();
+            }
+        });
+
+        // Drag and drop functionality
+        uploadArea.addEventListener('dragover', function (e) {
+            e.preventDefault();
+            uploadArea.style.borderColor = 'var(--primary)';
+            uploadArea.style.background = 'rgba(26, 79, 160, 0.05)';
+        });
+
+        uploadArea.addEventListener('dragleave', function (e) {
+            e.preventDefault();
+            uploadArea.style.borderColor = 'var(--border)';
+            uploadArea.style.background = 'var(--bg2)';
+        });
+
+        uploadArea.addEventListener('drop', function (e) {
+            e.preventDefault();
+            uploadArea.style.borderColor = 'var(--border)';
+            uploadArea.style.background = 'var(--bg2)';
+            
+            const file = e.dataTransfer.files[0];
+            if (file) {
+                const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+                if (!allowedTypes.includes(file.type)) {
+                    alert('Please upload only PNG, JPG, or JPEG files.');
+                    return;
+                }
+                
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('File size must be less than 2MB.');
+                    return;
+                }
+                
+                logoInput.files = e.dataTransfer.files;
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    previewImage.src = event.target.result;
+                    uploadPlaceholder.style.display = 'none';
+                    logoPreview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    });
+</script>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

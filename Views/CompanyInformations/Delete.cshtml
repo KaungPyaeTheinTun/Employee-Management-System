@@ -1,0 +1,361 @@
+@model EmployeesManagement.Models.CompanyInformation
+
+@{
+    ViewData["Title"] = "Delete Company";
+    var logoPath = !string.IsNullOrEmpty(Model.Logo) ? Url.Content("~/uploads/" + Model.Logo) : null;
+    var initials = !string.IsNullOrEmpty(Model.Name) ? Model.Name.Substring(0, 1).ToUpper() : "C";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-header-title">Delete Company</h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Dashboard</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index">Company Information</a></li>
+            <li class="breadcrumb-item active">Delete</li>
+        </ol>
+    </div>
+</div>
+
+<div class="delete-card">
+    <!-- Warning header -->
+    <div class="delete-warning-header">
+        <div class="delete-warning-icon">⚠</div>
+        <div>
+            <div class="delete-warning-title">This action cannot be undone</div>
+            <div class="delete-warning-sub">Deleting this company will permanently remove all associated records and data.</div>
+        </div>
+    </div>
+
+    <!-- Company summary -->
+    <div style="padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px">
+        @if (!string.IsNullOrEmpty(Model.Logo))
+        {
+            <img src="@logoPath" alt="Company Logo" style="width:48px;height:48px;border-radius:12px;object-fit:cover;border:1px solid var(--border);" />
+        }
+        else
+        {
+            <div class="emp-avatar" style="width:48px;height:48px;border-radius:12px;background:var(--bg2);border:1px solid var(--border);font-size:16px;display:flex;align-items:center;justify-content:center;">@initials</div>
+        }
+        <div>
+            <div style="font-size:17px;font-weight:700">@Model.Name</div>
+            <div style="font-size:13px;color:var(--ink3)">@(Model.City?.Name ?? "—") · @(Model.Country?.Name ?? "—")</div>
+        </div>
+        <span class="mono" style="margin-left:auto;font-size:12px;color:var(--ink4)">ID: @Model.Id</span>
+    </div>
+
+    <!-- Details -->
+    <dl class="delete-dl">
+        <dt>Company Name</dt>
+        <dd>@Model.Name</dd>
+
+        <dt>Contact Person</dt>
+        <dd>@Model.ContactPerson</dd>
+
+        <dt>Phone Number</dt>
+        <dd>@Model.PhoneNo</dd>
+
+        <dt>Email / Website</dt>
+        <dd>—</dd>
+
+        <dt>Physical Address</dt>
+        <dd>@Model.Address</dd>
+
+        <dt>Postal Code</dt>
+        <dd>@(string.IsNullOrEmpty(Model.PostalCode) ? "—" : Model.PostalCode)</dd>
+
+        <dt>Country</dt>
+        <dd>@(Model.Country?.Name ?? "—")</dd>
+
+        <dt>City / Town</dt>
+        <dd>@(Model.City?.Name ?? "—")</dd>
+
+        <dt>NSSF Number</dt>
+        <dd>@(string.IsNullOrEmpty(Model.NSSFNO) ? "—" : Model.NSSFNO)</dd>
+
+        <dt>NHIF Number</dt>
+        <dd>@(string.IsNullOrEmpty(Model.NHIFNO) ? "—" : Model.NHIFNO)</dd>
+
+        <dt>KRA PIN</dt>
+        <dd>@(string.IsNullOrEmpty(Model.KRAPIN) ? "—" : Model.KRAPIN)</dd>
+    </dl>
+
+    <!-- Actions -->
+    <div style="padding:16px 24px;background:var(--bg2);border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap">
+        <a asp-action="Index" class="btn-ghost">Cancel</a>
+        <a asp-action="Details" asp-route-id="@Model.Id" class="btn-ghost">View Details</a>
+        <form asp-action="Delete" method="post" style="display:inline">
+            <input type="hidden" asp-for="Id" />
+            <button type="submit" class="btn-danger-outline">
+                <svg width="13" height="13" viewBox="0 0 13 13" fill="none" style="margin-right:6px;vertical-align:-2px">
+                    <path d="M2 4h9M5 4V3a1.5 1.5 0 0 1 3 0v1M10.5 4l-.7 7H3.2L2.5 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+                </svg>
+                Confirm Delete
+            </button>
+        </form>
+    </div>
+</div>
+
+<style>
+    /* Delete Card Styles */
+    .delete-card {
+        background: var(--card-bg);
+        border-radius: 16px;
+        border: 1px solid var(--border);
+        overflow: hidden;
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    /* Warning Header */
+    .delete-warning-header {
+        background: rgba(192, 57, 43, 0.08);
+        border-bottom: 1px solid rgba(192, 57, 43, 0.2);
+        padding: 20px 24px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .delete-warning-icon {
+        width: 40px;
+        height: 40px;
+        background: #c0392b;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        font-weight: bold;
+        flex-shrink: 0;
+    }
+
+    .delete-warning-title {
+        font-weight: 700;
+        font-size: 15px;
+        color: #c0392b;
+        margin-bottom: 4px;
+    }
+
+    .delete-warning-sub {
+        font-size: 12px;
+        color: var(--ink3);
+    }
+
+    /* Definition List Styles */
+    .delete-dl {
+        display: grid;
+        grid-template-columns: 140px 1fr;
+        gap: 12px 16px;
+        padding: 20px 24px;
+        margin: 0;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .delete-dl dt {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--ink4);
+        margin: 0;
+    }
+
+    .delete-dl dd {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--ink1);
+        margin: 0;
+        word-break: break-word;
+    }
+
+    /* Page Header */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 24px;
+        gap: 16px;
+    }
+
+    .page-header-title {
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--ink1);
+        margin: 0 0 8px 0;
+    }
+
+    .breadcrumb {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        gap: 8px;
+        font-size: 13px;
+    }
+
+    .breadcrumb-item {
+        color: var(--ink3);
+    }
+
+    .breadcrumb-item a {
+        color: var(--primary);
+        text-decoration: none;
+    }
+
+    .breadcrumb-item a:hover {
+        text-decoration: underline;
+    }
+
+    .breadcrumb-item.active {
+        color: var(--ink2);
+        font-weight: 500;
+    }
+
+    .breadcrumb-item + .breadcrumb-item::before {
+        content: "/";
+        margin-right: 8px;
+        color: var(--ink4);
+    }
+
+    /* Button Styles */
+    .btn-ghost {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 16px;
+        background: var(--bg2);
+        color: var(--ink2);
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        text-decoration: none;
+        border: 1px solid var(--border);
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+
+    .btn-ghost:hover {
+        background: var(--border);
+        color: var(--ink1);
+        text-decoration: none;
+    }
+
+    .btn-danger-outline {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 20px;
+        background: transparent;
+        color: #c0392b;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        text-decoration: none;
+        border: 1px solid #c0392b;
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+
+    .btn-danger-outline:hover {
+        background: #c0392b;
+        color: white;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(192, 57, 43, 0.2);
+    }
+
+    .mono {
+        font-family: monospace;
+        font-size: 11px;
+        color: var(--ink3);
+    }
+
+    .emp-avatar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 14px;
+        flex-shrink: 0;
+    }
+
+    /* CSS Variables */
+    :root {
+        --ink1: #1a1a1a;
+        --ink2: #4a4a4a;
+        --ink3: #8a8a8a;
+        --ink4: #c0c0c0;
+        --border: #e5e5e5;
+        --bg2: #f8f8f8;
+        --card-bg: #ffffff;
+        --primary: #1a4fa0;
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .delete-card {
+            margin: 0;
+            border-radius: 12px;
+        }
+
+        .delete-warning-header {
+            padding: 16px;
+        }
+
+        .delete-warning-icon {
+            width: 36px;
+            height: 36px;
+            font-size: 18px;
+        }
+
+        .delete-warning-title {
+            font-size: 14px;
+        }
+
+        .delete-warning-sub {
+            font-size: 11px;
+        }
+
+        .delete-dl {
+            grid-template-columns: 1fr;
+            gap: 8px 0;
+            padding: 16px;
+        }
+
+        .delete-dl dt {
+            margin-bottom: 2px;
+        }
+
+        .delete-dl dd {
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .delete-dl dd:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        div[style*="padding:16px 24px"] {
+            flex-direction: column;
+        }
+
+        .btn-ghost,
+        .btn-danger-outline {
+            width: 100%;
+            justify-content: center;
+        }
+
+        div[style*="display:flex;justify-content:flex-end;gap:10px"] {
+            flex-direction: column;
+        }
+    }
+</style>

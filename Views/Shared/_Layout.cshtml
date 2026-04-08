@@ -176,7 +176,7 @@
         }
 
         .nav-item:hover {
-            color:black;
+            color: black;
             background: #d3d5d7;
         }
 
@@ -202,7 +202,7 @@
         }
 
         .ni-text {
-            color:black;
+            color: black;
             flex: 1;
             font-size: 0.875rem;
             font-weight: 500;
@@ -271,12 +271,12 @@
         .user-name {
             font-size: 0.875rem;
             font-weight: 500;
-            color: #111827;
+            color: #ffffff;
         }
 
         .user-role {
             font-size: 0.75rem;
-            color: #9ca3af;
+            color: #c9cdd5;
         }
 
         /* Mobile Content */
@@ -503,7 +503,7 @@
             <div class="sb-nav">
                 <div class="nav-label">Main Menu</div>
 
-                <div class="nav-item active" onclick="handleMobileNavClick(this, 'dashboard')">
+                <div class="nav-item" onclick="handleMobileNavClick(this, 'dashboard')">
                     <div class="ni-icon">
                         <svg viewBox="0 0 16 16">
                             <rect x="1" y="1" width="6" height="6" rx="1"/>
@@ -515,7 +515,8 @@
                     <span class="ni-text">Dashboard</span>
                 </div>
 
-                <div class="nav-item nav-dropdown-toggle" onclick="toggleMobileSubMenu(this, 'hrSub')">
+                <!-- HR & Payroll -->
+                <div class="nav-item nav-dropdown-toggle" onclick="toggleMobileSubMenu(this, 'hrPayrollSub')">
                     <div class="ni-icon">
                         <svg viewBox="0 0 16 16">
                             <rect x="2" y="4" width="12" height="10" rx="1.5"/>
@@ -528,14 +529,16 @@
                         <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.3"/>
                     </svg>
                 </div>
-                <div class="nav-sub" id="hrSub">
-                    <div class="sub-item" onclick="handleMobileSubItemClick('Employee List')">Employee List</div>
+                <div class="nav-sub" id="hrPayrollSub">
+                    <div class="sub-item" onclick="handleMobileSubItemClick('Employees')">Employee List</div>
                     <div class="sub-item" onclick="handleMobileSubItemClick('Holidays')">Holidays</div>
-                    <div class="sub-item" onclick="handleMobileSubItemClick('Leave Balances')">Leave Balances</div>
-                    <div class="sub-item" onclick="handleMobileSubItemClick('Leave Balances')">Leave Period</div>
+                    <div class="sub-item" onclick="handleMobileSubItemClick('LeaveAdjustment')">Leave Adjustment</div>
+                    <div class="sub-item" onclick="handleMobileSubItemClick('LeaveBalances')">Leave Balances</div>
+                    <div class="sub-item" onclick="handleMobileSubItemClick('LeavePeriods')">Leave Period</div>
                 </div>
 
-                <div class="nav-item nav-dropdown-toggle" onclick="toggleMobileSubMenu(this, 'hrSub')">
+                <!-- Leave Management -->
+                <div class="nav-item nav-dropdown-toggle" onclick="toggleMobileSubMenu(this, 'leaveMgmtSub')">
                     <div class="ni-icon">
                         <svg viewBox="0 0 16 16">
                             <rect x="2" y="3" width="12" height="11" rx="1.5"/>
@@ -547,11 +550,12 @@
                         <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.3"/>
                     </svg>
                 </div>
-                <div class="nav-sub" id="hrSub">
-                    <div class="sub-item" onclick="handleMobileSubItemClick('Leave Types')">Leave Types</div>
-                    <div class="sub-item" onclick="handleMobileSubItemClick('Leave Applications')">Leave Applications</div>
+                <div class="nav-sub" id="leaveMgmtSub">
+                    <div class="sub-item" onclick="handleMobileSubItemClick('LeaveTypes')">Leave Types</div>
+                    <div class="sub-item" onclick="handleMobileSubItemClick('LeaveApplications')">Leave Applications</div>
                 </div>
 
+                <!-- System Security -->
                 <div class="nav-item nav-dropdown-toggle" onclick="toggleMobileSubMenu(this, 'sysSecSub')">
                     <div class="ni-icon">
                         <svg viewBox="0 0 16 16">
@@ -566,28 +570,51 @@
                 <div class="nav-sub" id="sysSecSub">
                     <div class="sub-item" onclick="handleMobileSubItemClick('Users')">Users</div>
                     <div class="sub-item" onclick="handleMobileSubItemClick('Roles')">Roles</div>
-                    <div class="sub-item" onclick="handleMobileSubItemClick('User Roles')">User Roles</div>
-                    <div class="sub-item" onclick="handleMobileSubItemClick('Audit Logs')">Audit Logs</div>
+                    <div class="sub-item" onclick="handleMobileSubItemClick('Profiles')">User Roles</div>
+                    <div class="sub-item" onclick="handleMobileSubItemClick('SystemProfiles')">System Profile</div>
+                    <div class="sub-item" onclick="handleMobileSubItemClick('Audits')">Audit Logs</div>
                 </div>
 
-                <div class="nav-item nav-dropdown-toggle" onclick="toggleMobileSubMenu(this, 'sysSub')">
+                <!-- System Administration -->
+                <div class="nav-item nav-dropdown-toggle" onclick="toggleMobileSubMenu(this, 'sysAdminSub')">
                     <div class="ni-icon">
                         <svg viewBox="0 0 16 16">
                             <circle cx="8" cy="8" r="2"/>
                             <path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.2 3.2l1.4 1.4M11.4 11.4l1.4 1.4M3.2 12.8l1.4-1.4M11.4 4.6l1.4-1.4"/>
                         </svg>
                     </div>
-                    <span class="ni-text">System Admin</span>
+                    <span class="ni-text">System Administration</span>
                     <svg class="arrow-ic" viewBox="0 0 12 12">
                         <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.3"/>
                     </svg>
                 </div>
-                <div class="nav-sub" id="sysSub">
+                <div class="nav-sub" id="sysAdminSub">
                     <div class="sub-item" onclick="handleMobileSubItemClick('Designations')">Designations</div>
                     <div class="sub-item" onclick="handleMobileSubItemClick('Departments')">Departments</div>
                     <div class="sub-item" onclick="handleMobileSubItemClick('Banks')">Banks</div>
                     <div class="sub-item" onclick="handleMobileSubItemClick('Countries')">Countries</div>
-                    <div class="sub-item" onclick="handleMobileSubItemClick('System Codes')">System Codes</div>
+                    <div class="sub-item" onclick="handleMobileSubItemClick('Cities')">Towns/Cities</div>
+                    <div class="sub-item" onclick="handleMobileSubItemClick('SystemCodes')">SystemCode</div>
+                    <div class="sub-item" onclick="handleMobileSubItemClick('SystemCodeDetails')">SystemCodeDetails</div>
+                </div>
+
+                <!-- Setting Dropdown -->
+                <div class="nav-item nav-dropdown-toggle" onclick="toggleMobileSubMenu(this, 'settingSub')">
+                    <div class="ni-icon">
+                        <svg viewBox="0 0 16 16">
+                            <circle cx="8" cy="8" r="2.5"/>
+                            <path d="M8 1.5v2M8 12.5v2M1.5 8h2M12.5 8h2M3.8 3.8l1.4 1.4M10.8 10.8l1.4 1.4M3.8 12.2l1.4-1.4M10.8 5.2l1.4-1.4"/>
+                        </svg>
+                    </div>
+                    <span class="ni-text">Setting</span>
+                    <svg class="arrow-ic" viewBox="0 0 12 12">
+                        <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.3"/>
+                    </svg>
+                </div>
+                <div class="nav-sub" id="settingSub">
+                    <div class="sub-item" onclick="handleMobileSubItemClick('CompanyInformation')">Company Information</div>
+                    <div class="sub-item" onclick="handleMobileSubItemClick('EmailSettings')">Email Settings</div>
+                    <div class="sub-item" onclick="handleMobileSubItemClick('GeneralSettings')">General Settings</div>
                 </div>
 
                 <div class="nav-item" onclick="handleMobileNavClick(this, 'attendance')">
@@ -657,8 +684,7 @@
                 </a>
 
                 <!-- HR & PayRoll dropdown -->
-                <div class="nav-item nav-dropdown-toggle @(ViewContext.RouteData.Values["controller"]?.ToString() == "Leave" ? "active" : "")"
-                     id="HRToggle">
+                <div class="nav-item nav-dropdown-toggle" id="HRToggle">
                     <div class="nav-icon">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M20 7H4C2.9 7 2 7.9 2 9V19C2 20.1 2.9 21 4 21H20C21.1 21 22 20.1 22 19V9C22 7.9 21.1 7 20 7Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
@@ -682,9 +708,8 @@
                     <a class="nav-sub-item" asp-area="" asp-controller="LeavePeriods" asp-action="Index">Leave Period</a>
                 </div>
                 
-                <!-- System User dropdown -->
-                <div class="nav-item nav-dropdown-toggle @(ViewContext.RouteData.Values["controller"]?.ToString() == "Leave" ? "active" : "")"
-                     id="UserToggle">
+                <!-- System Security dropdown -->
+                <div class="nav-item nav-dropdown-toggle" id="UserToggle">
                     <div class="nav-icon">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M12 2L3 6V12C3 16.97 7.03 21 12 21C16.97 21 21 16.97 21 12V6L12 2Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
@@ -705,9 +730,8 @@
                     <a class="nav-sub-item" asp-area="" asp-controller="Audits" asp-action="Index">Audit Logs</a>
                 </div>
 
-                <!-- Leave dropdown -->
-                <div class="nav-item nav-dropdown-toggle @(ViewContext.RouteData.Values["controller"]?.ToString() == "Leave" ? "active" : "")"
-                     id="leaveToggle">
+                <!-- Leave Management dropdown -->
+                <div class="nav-item nav-dropdown-toggle" id="leaveToggle">
                     <div class="nav-icon">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M12 2V4M12 4C8.1 4 5 7.1 5 11V13H19V11C19 7.1 15.9 4 12 4Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
@@ -727,8 +751,7 @@
                 </div>
 
                 <!-- System Administration dropdown -->
-                <div class="nav-item nav-dropdown-toggle @(ViewContext.RouteData.Values["controller"]?.ToString() == "Leave" ? "active" : "")"
-                     id="SystemToggle">
+                <div class="nav-item nav-dropdown-toggle" id="SystemToggle">
                     <div class="nav-icon">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                             <rect x="2" y="3" width="12" height="11" rx="1.5" stroke="currentColor" stroke-width="1.3"/>
@@ -741,6 +764,8 @@
                     </svg>
                 </div>
                 <div class="nav-sub" id="SystemSub">
+                    <a class="nav-sub-item" asp-area="" asp-controller="WorkFlowUserGroups" asp-action="Index">WorkFlow User Groups</a>
+                    <a class="nav-sub-item" asp-area="" asp-controller="ApprovalEntries" asp-action="Index">Approval Entry</a>
                     <a class="nav-sub-item" asp-area="" asp-controller="Designations" asp-action="Index">Designations</a>
                     <a class="nav-sub-item" asp-area="" asp-controller="Departments" asp-action="Index">Departments</a>
                     <a class="nav-sub-item" asp-area="" asp-controller="Banks" asp-action="Index">Banks</a>
@@ -750,15 +775,24 @@
                     <a class="nav-sub-item" asp-area="" asp-controller="SystemCodeDetails" asp-action="Index">SystemCodeDetails</a>
                 </div>
 
-                <a class="nav-item" href="#">
+                <!-- Setting dropdown (FIXED) -->
+                <div class="nav-item nav-dropdown-toggle" id="setToggle">
                     <div class="nav-icon">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                            <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.3"/>
-                            <path d="M8 4.5V8L10.5 10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.5"/>
+                            <path d="M19.4 15.1L18.3 14.2C18.1 14 18 13.8 18 13.5V10.5C18 10.2 18.1 10 18.3 9.8L19.4 8.9C19.9 8.5 20 7.8 19.7 7.3L17.7 3.8C17.4 3.3 16.8 3.2 16.3 3.5L15.2 4.2C15 4.3 14.7 4.3 14.5 4.2L12 2.8C11.7 2.6 11.3 2.6 11 2.8L8.5 4.2C8.3 4.3 8 4.3 7.8 4.2L6.7 3.5C6.2 3.2 5.6 3.3 5.3 3.8L3.3 7.3C3 7.8 3.1 8.4 3.6 8.8L4.7 9.7C4.9 9.9 5 10.1 5 10.4V13.4C5 13.7 4.9 13.9 4.7 14.1L3.6 15C3.1 15.4 3 16.1 3.3 16.6L5.3 20.1C5.6 20.6 6.2 20.7 6.7 20.4L7.8 19.7C8 19.6 8.3 19.6 8.5 19.7L11 21.1C11.3 21.3 11.7 21.3 12 21.1L14.5 19.7C14.7 19.6 15 19.6 15.2 19.7L16.3 20.4C16.8 20.7 17.4 20.6 17.7 20.1L19.7 16.6C20 16.1 19.9 15.5 19.4 15.1Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                         </svg>
                     </div>
-                    <span class="nav-text">Attendance</span>
-                </a>
+                    <span class="nav-text">Setting</span>
+                    <svg class="dropdown-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                        <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div class="nav-sub" id="setSub">
+                    <a class="nav-sub-item" asp-area="" asp-controller="CompanyInformations" asp-action="Index">Company Information</a>
+                    <a class="nav-sub-item" asp-area="" asp-controller="EmailSettings" asp-action="Index">Email Settings</a>
+                    <a class="nav-sub-item" asp-area="" asp-controller="GeneralSettings" asp-action="Index">General Settings</a>
+                </div>
 
             </nav>
 
@@ -906,21 +940,23 @@
             var isOpen = sub.classList.contains('open');
             
             // Close all other submenus
-            document.querySelectorAll('.nav-sub').forEach(function(submenu) {
+            document.querySelectorAll('.mob-sidebar .nav-sub').forEach(function(submenu) {
                 if (submenu.id !== subId) {
                     submenu.classList.remove('open');
                 }
             });
             
-            document.querySelectorAll('.nav-dropdown-toggle').forEach(function(item) {
+            document.querySelectorAll('.mob-sidebar .nav-dropdown-toggle').forEach(function(item) {
                 if (item !== element) {
                     item.classList.remove('expanded');
                 }
             });
             
             // Toggle current submenu
-            sub.classList.toggle('open');
-            element.classList.toggle('expanded');
+            if (sub) {
+                sub.classList.toggle('open');
+                element.classList.toggle('expanded');
+            }
         }
         
         function handleMobileNavClick(element, page) {
@@ -937,16 +973,12 @@
                 closeMobileSidebar();
             }, 300);
             
-            // You can add navigation logic here
             console.log('Navigating to:', page);
-            // window.location.href = '/Home/' + page;
         }
         
         function handleMobileSubItemClick(itemName) {
             console.log('Selected sub-item:', itemName);
             closeMobileSidebar();
-            // Add your navigation logic here
-            @* window.location.href = '/Controller/' + itemName; *@
         }
         
         function showNotification() {
@@ -973,36 +1005,45 @@
             }
         });
         
-        // Prevent body scroll when sidebar is open
-        function preventBodyScroll(e) {
-            if (document.getElementById('mobileSidebar').classList.contains('open')) {
-                e.preventDefault();
-            }
-        }
-        
-        // Desktop sidebar dropdown toggle
+        // Desktop sidebar dropdown toggle (FIXED - includes Setting dropdown)
         document.addEventListener('DOMContentLoaded', function () {
-    var dropdownToggles = document.querySelectorAll('.sidebar .nav-dropdown-toggle');
+            var dropdownToggles = document.querySelectorAll('.sidebar .nav-dropdown-toggle');
 
-    dropdownToggles.forEach(function (toggle) {
-        toggle.addEventListener('click', function (e) {
-            e.stopPropagation();
+            dropdownToggles.forEach(function (toggle) {
+                toggle.addEventListener('click', function (e) {
+                    e.stopPropagation();
 
-            var subId =
-                this.id === 'HRToggle' ? 'HRSub' :
-                this.id === 'UserToggle' ? 'UserSub' :
-                this.id === 'leaveToggle' ? 'leaveSub' :
-                'SystemSub';
+                    var subId = 
+                        this.id === 'HRToggle' ? 'HRSub' :
+                        this.id === 'UserToggle' ? 'UserSub' :
+                        this.id === 'leaveToggle' ? 'leaveSub' :
+                        this.id === 'setToggle' ? 'setSub' :
+                        this.id === 'SystemToggle' ? 'SystemSub' : null;
 
-            var sub = document.getElementById(subId);
-
-            if (sub) {
-                sub.classList.toggle('open'); // ✅ FIXED
-                this.classList.toggle('expanded');
-            }
+                    if (subId) {
+                        var sub = document.getElementById(subId);
+                        if (sub) {
+                            // Close all other submenus
+                            document.querySelectorAll('.sidebar .nav-sub').forEach(function(submenu) {
+                                if (submenu.id !== subId) {
+                                    submenu.classList.remove('open');
+                                }
+                            });
+                            
+                            document.querySelectorAll('.sidebar .nav-dropdown-toggle').forEach(function(item) {
+                                if (item.id !== toggle.id) {
+                                    item.classList.remove('expanded');
+                                }
+                            });
+                            
+                            // Toggle current submenu
+                            sub.classList.toggle('open');
+                            toggle.classList.toggle('expanded');
+                        }
+                    }
+                });
+            });
         });
-    });
-});
     </script>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
