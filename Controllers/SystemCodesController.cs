@@ -102,12 +102,15 @@ namespace EmployeeManagement.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Code,Description,CreatedById,CreatedOn,ModifiedById,ModifiedOn")] SystemCode systemCode)
+        public async Task<IActionResult> Edit(int id, SystemCode systemCode)
         {
             if (id != systemCode.Id)
             {
                 return NotFound();
             }
+
+            ModelState.Remove("CreatedBy");
+            ModelState.Remove("ModifiedBy");
 
             if (ModelState.IsValid)
             {

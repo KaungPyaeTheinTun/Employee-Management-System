@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using EmployeeManagement.Data;
 using EmployeesManagement.Models;
+using System.Security.Claims;
 
 namespace EmployeeManagement.Controllers
 {
@@ -22,7 +23,11 @@ namespace EmployeeManagement.Controllers
         // GET: Countries
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Countries.ToListAsync());
+            var country = await _context.Countries
+                        .Include(c => c.CreatedBy)
+                        .Include(c => c.ModifiedBy)
+                        .ToListAsync();
+            return View(country);
         }
 
         // GET: Countries/Details/5
@@ -34,6 +39,8 @@ namespace EmployeeManagement.Controllers
             }
 
             var country = await _context.Countries
+                .Include(c => c.CreatedBy)
+                .Include(c => c.ModifiedBy)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (country == null)
             {
@@ -54,14 +61,15 @@ namespace EmployeeManagement.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Code,Name,CreatedById,CreatedOn,ModifiedById,ModifiedOn")] Country country)
+        public async Task<IActionResult> Create(Country country)
         {
-            if (ModelState.IsValid)
-            {
+                var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                country.CreatedById = UserId;
+                country.CreatedOn = DateTime.UtcNow;
                 _context.Add(country);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(UserId);
                 return RedirectToAction(nameof(Index));
-            }
+            
             return View(country);
         }
 
@@ -97,8 +105,11 @@ namespace EmployeeManagement.Controllers
             {
                 try
                 {
+                    var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    country.ModifiedById = UserId;
+                    country.ModifiedOn = DateTime.UtcNow;
                     _context.Update(country);
-                    await _context.SaveChangesAsync();
+                    await _context.SaveChangesAsync(UserId);
                 }
                 catch (DbUpdateConcurrencyException)
                 {

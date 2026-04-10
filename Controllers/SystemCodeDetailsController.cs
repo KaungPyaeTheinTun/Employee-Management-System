@@ -1,15 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using EmployeeManagement.Data;
+using EmployeesManagement.Models;
+using EmployeeManagement.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using EmployeeManagement.Data;
-using EmployeesManagement.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
-namespace EmployeeManagement.Controllers
+namespace EmployeesManagement.Controllers
 {
     public class SystemCodeDetailsController : Controller
     {
@@ -21,13 +22,13 @@ namespace EmployeeManagement.Controllers
         }
 
         // GET: SystemCodeDetails
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(SystemCodeDetailViewModel vm)
         {
-            var systemcodes = await _context.SystemCodeDetails
-                            .Include(s => s.SystemCode)
-                            .Include(s => s.CreatedBy)
-                            .ToListAsync();
-            return View(systemcodes);
+            vm.SystemCodeDetails = await _context.SystemCodeDetails
+               .Include(s => s.SystemCode)
+               .Include(s => s.CreatedBy)
+               .ToListAsync();
+            return View(vm);
         }
 
         // GET: SystemCodeDetails/Details/5
@@ -63,12 +64,13 @@ namespace EmployeeManagement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(SystemCodeDetail systemCodeDetail)
         {
+
             var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            systemCodeDetail.CreatedById = UserId;
             systemCodeDetail.CreatedOn = DateTime.Now;
-                _context.Add(systemCodeDetail);
-                await _context.SaveChangesAsync(UserId);
-                return RedirectToAction(nameof(Index));
+            systemCodeDetail.CreatedById = UserId;
+            _context.Add(systemCodeDetail);
+            await _context.SaveChangesAsync(UserId);
+            return RedirectToAction(nameof(Index));
 
             ViewData["SystemCodeId"] = new SelectList(_context.SystemCodes, "Id", "Description", systemCodeDetail.SystemCodeId);
             return View(systemCodeDetail);
@@ -87,7 +89,7 @@ namespace EmployeeManagement.Controllers
             {
                 return NotFound();
             }
-            ViewData["SystemCodeId"] = new SelectList(_context.SystemCodes, "Id", "Id", systemCodeDetail.SystemCodeId);
+            ViewData["SystemCodeId"] = new SelectList(_context.SystemCodes, "Id", "Description", systemCodeDetail.SystemCodeId);
             return View(systemCodeDetail);
         }
 
@@ -96,19 +98,25 @@ namespace EmployeeManagement.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,SystemCodeId,Code,Description,OrderNo,CreatedById,CreatedOn,ModifiedById,ModifiedOn")] SystemCodeDetail systemCodeDetail)
+        public async Task<IActionResult> Edit(int id, SystemCodeDetail systemCodeDetail)
         {
             if (id != systemCodeDetail.Id)
             {
                 return NotFound();
             }
 
+            var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            systemCodeDetail.ModifiedById = Userid;
+            systemCodeDetail.ModifiedOn = DateTime.Now;
+            ModelState.Remove("CreatedBy");
+            ModelState.Remove("ModifiedBy");
+            ModelState.Remove("SystemCode");
             if (ModelState.IsValid)
             {
                 try
                 {
                     _context.Update(systemCodeDetail);
-                    await _context.SaveChangesAsync();
+                    await _context.SaveChangesAsync(Userid);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -151,13 +159,25 @@ namespace EmployeeManagement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var isUsed = await _context.Employees
+                .AnyAsync(e => e.DisabilityId == id);
+
+            if (isUsed)
+            {
+                TempData["Error"] = "Cannot delete. This record is used by employees.";
+                return RedirectToAction(nameof(Index));
+            }
+
             var systemCodeDetail = await _context.SystemCodeDetails.FindAsync(id);
+
             if (systemCodeDetail != null)
             {
                 _context.SystemCodeDetails.Remove(systemCodeDetail);
+                await _context.SaveChangesAsync(UserId);
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
