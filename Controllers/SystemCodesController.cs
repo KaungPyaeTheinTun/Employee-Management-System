@@ -23,7 +23,21 @@ namespace EmployeeManagement.Controllers
         // GET: SystemCodes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.SystemCodes.ToListAsync());
+            var systemcodes = await _context.SystemCodes
+                            .Include(s => s.CreatedBy)
+                            .Include(s => s.ModifiedBy)
+                            .ToListAsync();
+            return View(systemcodes);
+        }
+
+        public async Task<IActionResult> SystemCodeDetails(int id)
+        {
+            var systemcodes = await _context.SystemCodeDetails
+                            .Include(s => s.CreatedBy)
+                            .Include(s => s.SystemCode)
+                            .Where(x => x.SystemCodeId == id)
+                            .ToListAsync();
+            return View(systemcodes);
         }
 
         // GET: SystemCodes/Details/5

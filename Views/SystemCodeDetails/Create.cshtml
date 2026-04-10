@@ -1,47 +1,571 @@
 @model EmployeesManagement.Models.SystemCodeDetail
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Add System Code Detail";
 }
 
-<h1>Create</h1>
-
-<h4>SystemCodeDetail</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="SystemCodeId" class="control-label"></label>
-                <select asp-for="SystemCodeId" class ="form-control" asp-items="ViewBag.SystemCodeId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="Code" class="control-label"></label>
-                <input asp-for="Code" class="form-control" />
-                <span asp-validation-for="Code" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="OrderNo" class="control-label"></label>
-                <input asp-for="OrderNo" class="form-control" />
-                <span asp-validation-for="OrderNo" class="text-danger"></span>
-            </div>
-        
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+<div class="page-header">
+    <div>
+        <h1 class="page-header-title">Add System Code Detail</h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Dashboard</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index">System Code Details</a></li>
+            <li class="breadcrumb-item active">Add New</li>
+        </ol>
     </div>
+    <a asp-action="Index" class="btn-ghost">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin-right:6px">
+            <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        Back to List
+    </a>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+<form asp-action="Create" id="createForm">
+    <div asp-validation-summary="ModelOnly" class="field-error" style="padding:12px 16px;background:var(--red-bg);border-radius:9px;border:1px solid rgba(192,57,43,0.2);margin-bottom:20px;"></div>
+
+    <!-- System Code Detail Information -->
+    <div class="form-card" style="margin-bottom:16px">
+        <div class="form-card-header">
+            <span class="section-badge blue">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <rect x="2" y="3" width="8" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                    <path d="M4 2v2M8 2v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+                System Code Detail Information
+            </span>
+        </div>
+        <div class="form-card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="SystemCodeId" class="field-label">System Code <span class="field-required">*</span></label>
+                    <select asp-for="SystemCodeId" class="field-control" asp-items="ViewBag.SystemCodeId">
+                        <option value="">— Select System Code —</option>
+                    </select>
+                    <span asp-validation-for="SystemCodeId" class="field-error"></span>
+                    <span class="field-hint">Select the parent system code this detail belongs to</span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Code" class="field-label">Detail Code <span class="field-required">*</span></label>
+                    <input asp-for="Code" class="field-control" placeholder="e.g. ACTIVE, PENDING, APPROVED" />
+                    <span asp-validation-for="Code" class="field-error"></span>
+                    <span class="field-hint">Unique code for this system code detail (uppercase, no spaces)</span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Description" class="field-label">Description <span class="field-required">*</span></label>
+                    <input asp-for="Description" class="field-control" placeholder="e.g. Active Status, Pending Approval, Approved" />
+                    <span asp-validation-for="Description" class="field-error"></span>
+                    <span class="field-hint">Clear description of what this code represents</span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="OrderNo" class="field-label">Order Number</label>
+                    <input asp-for="OrderNo" class="field-control" type="number" placeholder="e.g. 1, 2, 3..." />
+                    <span asp-validation-for="OrderNo" class="field-error"></span>
+                    <span class="field-hint">Determines the display order in dropdown lists</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Preview Card -->
+    <div class="form-card" style="margin-bottom:16px;background:var(--bg2);" id="previewCard">
+        <div class="form-card-header">
+            <span class="section-badge neutral">Live Preview</span>
+        </div>
+        <div class="form-card-body">
+            <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <div id="previewAvatar" class="emp-avatar" style="width:48px;height:48px;background:#e8eefa;color:#1a4fa0;font-size:18px">C</div>
+                    <div>
+                        <div style="font-size:11px;color:var(--ink3);margin-bottom:2px;">DETAIL CODE</div>
+                        <div>
+                            <span id="previewBadge" class="dept-badge" style="background:#e8eefa;color:#1a4fa0">CODE</span>
+                        </div>
+                    </div>
+                </div>
+                <div style="flex:1">
+                    <div style="font-size:11px;color:var(--ink3);margin-bottom:2px;">DESCRIPTION</div>
+                    <div id="previewDesc" style="font-size:13px;color:var(--ink1);font-weight:500;">Description will appear here</div>
+                </div>
+                <div>
+                    <div style="font-size:11px;color:var(--ink3);margin-bottom:2px;">ORDER</div>
+                    <div id="previewOrder" class="sequence-badge" style="display:inline-block">1</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- System Information -->
+    <div class="form-card" style="margin-bottom:16px;opacity:0.8">
+        <div class="form-card-header">
+            <span class="section-badge green">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <circle cx="6" cy="6" r="4" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                    <path d="M6 3v3l2 1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+                System Information
+            </span>
+            <span class="field-hint" style="font-size:11px">Auto-populated by system</span>
+        </div>
+        <div class="form-card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="CreatedById" class="field-label">Created By</label>
+                    <input asp-for="CreatedById" class="field-control" placeholder="Will be set automatically" readonly disabled />
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="CreatedOn" class="field-label">Created On</label>
+                    <input asp-for="CreatedOn" class="field-control" type="date" readonly disabled />
+                </div>
+            </div>
+            <div class="field-hint" style="margin-top:12px;padding:8px 12px;background:var(--bg2);border-radius:6px">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="display:inline;margin-right:4px;vertical-align:-2px">
+                    <circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                    <path d="M7 4v4M7 10h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                <span>System fields are automatically populated when the record is created</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="form-actions" style="border-top:none;padding-top:0">
+        <a asp-action="Index" class="btn-ghost">Cancel</a>
+        <button type="submit" class="btn-primary" style="background-color: black;">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin-right:6px;vertical-align:-2px">
+                <path d="M2 7l3.5 3.5L12 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Create System Code Detail
+        </button>
+    </div>
+</form>
+
+<style>
+    /* Form field styles */
+    .field-label {
+        display: block;
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--ink2);
+        margin-bottom: 6px;
+    }
+
+    .field-required {
+        color: #c0392b;
+        font-size: 12px;
+    }
+
+    .field-control {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-size: 13px;
+        color: var(--ink1);
+        background: var(--card-bg);
+        transition: all 0.15s;
+    }
+
+    .field-control:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(26, 79, 160, 0.1);
+    }
+
+    /* Select field specific styles */
+    select.field-control {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 12 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2 4L6 8L10 4' stroke='%23666' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        padding-right: 32px;
+        cursor: pointer;
+    }
+
+    select.field-control:hover {
+        border-color: var(--primary);
+    }
+
+    select.field-control option {
+        padding: 8px;
+        font-size: 13px;
+    }
+
+    input[type="number"].field-control {
+        -moz-appearance: textfield;
+    }
+
+    input[type="number"].field-control::-webkit-inner-spin-button,
+    input[type="number"].field-control::-webkit-outer-spin-button {
+        opacity: 0.5;
+    }
+
+    .field-error {
+        font-size: 11px;
+        color: #c0392b;
+        margin-top: 4px;
+        display: block;
+    }
+
+    .field-hint {
+        display: block;
+        font-size: 11px;
+        color: var(--ink3);
+        margin-top: 4px;
+    }
+
+    input[readonly], 
+    input[disabled] {
+        background-color: var(--bg2);
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
+
+    /* Form card styles */
+    .form-card {
+        background: var(--card-bg);
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        overflow: hidden;
+    }
+
+    .form-card-header {
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+        background: var(--bg2);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .form-card-body {
+        padding: 20px;
+    }
+
+    .section-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .section-badge.blue {
+        background: #e8eefa;
+        color: #1a4fa0;
+    }
+
+    .section-badge.green {
+        background: #e8f5ee;
+        color: #1a7a4a;
+    }
+
+    .section-badge.amber {
+        background: #fef3e0;
+        color: #a05c00;
+    }
+
+    .section-badge.neutral {
+        background: var(--bg2);
+        color: var(--ink2);
+    }
+
+    /* Badge styles */
+    .dept-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    .sequence-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        white-space: nowrap;
+        background: var(--bg2);
+        color: var(--ink2);
+        border: 1px solid var(--border);
+    }
+
+    .emp-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 12px;
+        flex-shrink: 0;
+    }
+
+    /* Button styles */
+    .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        padding: 10px 20px;
+        background: var(--primary);
+        color: white;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        border: none;
+        cursor: pointer;
+        transition: all 0.15s;
+        text-decoration: none;
+    }
+
+    .btn-primary:hover {
+        background: #134080;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(26, 79, 160, 0.2);
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-ghost {
+        display: inline-flex;
+        align-items: center;
+        padding: 10px 20px;
+        background: var(--bg2);
+        color: var(--ink2);
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        text-decoration: none;
+        border: 1px solid var(--border);
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+
+    .btn-ghost:hover {
+        background: var(--border);
+        color: var(--ink1);
+        text-decoration: none;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+        padding: 20px 0;
+        border-top: 1px solid var(--border);
+        margin-top: 20px;
+    }
+
+    /* Page Header */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 24px;
+        gap: 16px;
+    }
+
+    .page-header-title {
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--ink1);
+        margin: 0 0 8px 0;
+    }
+
+    .breadcrumb {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        gap: 8px;
+        font-size: 13px;
+    }
+
+    .breadcrumb-item {
+        color: var(--ink3);
+    }
+
+    .breadcrumb-item a {
+        color: var(--primary);
+        text-decoration: none;
+    }
+
+    .breadcrumb-item a:hover {
+        text-decoration: underline;
+    }
+
+    .breadcrumb-item.active {
+        color: var(--ink2);
+        font-weight: 500;
+    }
+
+    .breadcrumb-item + .breadcrumb-item::before {
+        content: "/";
+        margin-right: 8px;
+        color: var(--ink4);
+    }
+
+    /* Grid system */
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin: -8px;
+    }
+
+    .g-3 {
+        margin: -8px;
+    }
+
+    .g-3 > [class*="col-"] {
+        padding: 8px;
+    }
+
+    .col-md-4 {
+        flex: 0 0 33.333333%;
+        max-width: 33.333333%;
+    }
+
+    .col-md-6 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+
+    .col-md-12 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    /* CSS Variables */
+    :root {
+        --ink1: #1a1a1a;
+        --ink2: #4a4a4a;
+        --ink3: #8a8a8a;
+        --ink4: #c0c0c0;
+        --border: #e5e5e5;
+        --bg2: #f8f8f8;
+        --card-bg: #ffffff;
+        --primary: #1a4fa0;
+        --red-bg: rgba(192, 57, 43, 0.1);
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .col-md-4,
+        .col-md-6,
+        .col-md-12 {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+        
+        .form-actions {
+            flex-direction: column-reverse;
+        }
+        
+        .btn-primary,
+        .btn-ghost {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .form-card-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get form elements
+        const codeInput = document.getElementById('Code');
+        const descInput = document.getElementById('Description');
+        const orderInput = document.getElementById('OrderNo');
+        const previewBadge = document.getElementById('previewBadge');
+        const previewDesc = document.getElementById('previewDesc');
+        const previewOrder = document.getElementById('previewOrder');
+        const previewAvatar = document.getElementById('previewAvatar');
+
+        // Avatar colors array matching index page
+        const avatarColors = [
+            { bg: "#e8eefa", text: "#1a4fa0" },
+            { bg: "#e8f5ee", text: "#1a7a4a" },
+            { bg: "#fef3e0", text: "#a05c00" },
+            { bg: "#fdecea", text: "#c0392b" },
+            { bg: "#f2f2ef", text: "#3a3a38" },
+            { bg: "#f0eeff", text: "#4a35c0" }
+        ];
+
+        function updatePreview() {
+            let code = codeInput ? codeInput.value.trim() : '';
+            let desc = descInput ? descInput.value.trim() : '';
+            let order = orderInput ? orderInput.value : '1';
+            
+            // Use color based on code length for consistency
+            let colorIndex = code.length % avatarColors.length;
+            let colors = avatarColors[colorIndex];
+            
+            if (previewBadge) {
+                previewBadge.textContent = code || "CODE";
+                previewBadge.style.backgroundColor = colors.bg;
+                previewBadge.style.color = colors.text;
+            }
+            
+            if (previewDesc) {
+                previewDesc.textContent = desc || "Description will appear here";
+            }
+            
+            if (previewOrder) {
+                previewOrder.textContent = `Order ${order}`;
+            }
+            
+            // Update avatar
+            if (previewAvatar) {
+                let avatarLetter = code ? code.substring(0, 1).toUpperCase() : "C";
+                previewAvatar.textContent = avatarLetter;
+                previewAvatar.style.backgroundColor = colors.bg;
+                previewAvatar.style.color = colors.text;
+            }
+        }
+
+        // Add event listeners
+        if (codeInput) codeInput.addEventListener('input', updatePreview);
+        if (descInput) descInput.addEventListener('input', updatePreview);
+        if (orderInput) orderInput.addEventListener('input', updatePreview);
+
+        // Format code input to uppercase and replace spaces with underscores
+        if (codeInput) {
+            codeInput.addEventListener('blur', function() {
+                let value = this.value.trim().toUpperCase().replace(/\s+/g, '_');
+                this.value = value;
+                updatePreview();
+            });
+        }
+
+        // Auto-fill system fields
+        const today = new Date().toISOString().split('T')[0];
+        const createdById = document.querySelector('input[name="CreatedById"]');
+        const createdOn = document.querySelector('input[name="CreatedOn"]');
+        
+        if (createdById) {
+            createdById.value = "Current User"; // This would come from server
+        }
+        if (createdOn) {
+            createdOn.value = today;
+        }
+    });
+</script>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

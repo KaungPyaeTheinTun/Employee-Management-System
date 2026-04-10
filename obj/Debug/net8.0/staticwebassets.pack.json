@@ -1,299 +1,415 @@
 {
   "Files": [
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/obj/Debug/net8.0/scopedcss/projectbundle/EmployeeManagement.bundle.scp.css",
+      "Id": "/app/obj/Debug/net8.0/scopedcss/projectbundle/EmployeeManagement.bundle.scp.css",
       "PackagePath": "staticwebassets/EmployeeManagement.bundle.scp.css"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/css/dashboard.css",
+      "Id": "/app/wwwroot/css/dashboard.css",
       "PackagePath": "staticwebassets/css/dashboard.css"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/css/site.css",
+      "Id": "/app/wwwroot/css/site.css",
       "PackagePath": "staticwebassets/css/site.css"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/favicon.ico",
+      "Id": "/app/wwwroot/favicon.ico",
       "PackagePath": "staticwebassets/favicon.ico"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/images/EMS.png",
+      "Id": "/app/wwwroot/images/EMS.png",
       "PackagePath": "staticwebassets/images/EMS.png"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/js/site.js",
+      "Id": "/app/wwwroot/js/site.js",
       "PackagePath": "staticwebassets/js/site.js"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/bootstrap/LICENSE",
+      "Id": "/app/wwwroot/lib/bootstrap/LICENSE",
       "PackagePath": "staticwebassets/lib/bootstrap"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/bootstrap/dist/css/bootstrap-grid.css",
+      "Id": "/app/wwwroot/lib/bootstrap/dist/css/bootstrap-grid.css",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-grid.css"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/bootstrap/dist/css/bootstrap-grid.css.map",
+      "Id": "/app/wwwroot/lib/bootstrap/dist/css/bootstrap-grid.css.map",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-grid.css.map"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/bootstrap/dist/css/bootstrap-grid.min.css",
+      "Id": "/app/wwwroot/lib/bootstrap/dist/css/bootstrap-grid.min.css",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-grid.min.css"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/bootstrap/dist/css/bootstrap-grid.min.css.map",
+      "Id": "/app/wwwroot/lib/bootstrap/dist/css/bootstrap-grid.min.css.map",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-grid.min.css.map"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/bootstrap/dist/css/bootstrap-grid.rtl.css",
+      "Id": "/app/wwwroot/lib/bootstrap/dist/css/bootstrap-grid.rtl.css",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-grid.rtl.css"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/bootstrap/dist/css/bootstrap-grid.rtl.css.map",
+      "Id": "/app/wwwroot/lib/bootstrap/dist/css/bootstrap-grid.rtl.css.map",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-grid.rtl.css.map"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/bootstrap/dist/css/bootstrap-grid.rtl.min.css",
+      "Id": "/app/wwwroot/lib/bootstrap/dist/css/bootstrap-grid.rtl.min.css",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-grid.rtl.min.css"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/bootstrap/dist/css/bootstrap-grid.rtl.min.css.map",
+      "Id": "/app/wwwroot/lib/bootstrap/dist/css/bootstrap-grid.rtl.min.css.map",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-grid.rtl.min.css.map"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/bootstrap/dist/css/bootstrap-reboot.css",
+      "Id": "/app/wwwroot/lib/bootstrap/dist/css/bootstrap-reboot.css",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-reboot.css"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/bootstrap/dist/css/bootstrap-reboot.css.map",
+      "Id": "/app/wwwroot/lib/bootstrap/dist/css/bootstrap-reboot.css.map",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-reboot.css.map"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/bootstrap/dist/css/bootstrap-reboot.min.css",
+      "Id": "/app/wwwroot/lib/bootstrap/dist/css/bootstrap-reboot.min.css",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-reboot.min.css"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/bootstrap/dist/css/bootstrap-reboot.min.css.map",
+      "Id": "/app/wwwroot/lib/bootstrap/dist/css/bootstrap-reboot.min.css.map",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-reboot.min.css.map"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/bootstrap/dist/css/bootstrap-reboot.rtl.css",
+      "Id": "/app/wwwroot/lib/bootstrap/dist/css/bootstrap-reboot.rtl.css",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-reboot.rtl.css"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/bootstrap/dist/css/bootstrap-reboot.rtl.css.map",
+      "Id": "/app/wwwroot/lib/bootstrap/dist/css/bootstrap-reboot.rtl.css.map",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-reboot.rtl.css.map"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/bootstrap/dist/css/bootstrap-reboot.rtl.min.css",
+      "Id": "/app/wwwroot/lib/bootstrap/dist/css/bootstrap-reboot.rtl.min.css",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-reboot.rtl.min.css"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/bootstrap/dist/css/bootstrap-reboot.rtl.min.css.map",
+      "Id": "/app/wwwroot/lib/bootstrap/dist/css/bootstrap-reboot.rtl.min.css.map",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-reboot.rtl.min.css.map"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/bootstrap/dist/css/bootstrap-utilities.css",
+      "Id": "/app/wwwroot/lib/bootstrap/dist/css/bootstrap-utilities.css",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-utilities.css"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/bootstrap/dist/css/bootstrap-utilities.css.map",
+      "Id": "/app/wwwroot/lib/bootstrap/dist/css/bootstrap-utilities.css.map",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-utilities.css.map"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/bootstrap/dist/css/bootstrap-utilities.min.css",
+      "Id": "/app/wwwroot/lib/bootstrap/dist/css/bootstrap-utilities.min.css",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-utilities.min.css"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/bootstrap/dist/css/bootstrap-utilities.min.css.map",
+      "Id": "/app/wwwroot/lib/bootstrap/dist/css/bootstrap-utilities.min.css.map",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-utilities.min.css.map"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/bootstrap/dist/css/bootstrap-utilities.rtl.css",
+      "Id": "/app/wwwroot/lib/bootstrap/dist/css/bootstrap-utilities.rtl.css",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-utilities.rtl.css"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/bootstrap/dist/css/bootstrap-utilities.rtl.css.map",
+      "Id": "/app/wwwroot/lib/bootstrap/dist/css/bootstrap-utilities.rtl.css.map",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-utilities.rtl.css.map"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/bootstrap/dist/css/bootstrap-utilities.rtl.min.css",
+      "Id": "/app/wwwroot/lib/bootstrap/dist/css/bootstrap-utilities.rtl.min.css",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-utilities.rtl.min.css"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/bootstrap/dist/css/bootstrap-utilities.rtl.min.css.map",
+      "Id": "/app/wwwroot/lib/bootstrap/dist/css/bootstrap-utilities.rtl.min.css.map",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap-utilities.rtl.min.css.map"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/bootstrap/dist/css/bootstrap.css",
+      "Id": "/app/wwwroot/lib/bootstrap/dist/css/bootstrap.css",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap.css"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/bootstrap/dist/css/bootstrap.css.map",
+      "Id": "/app/wwwroot/lib/bootstrap/dist/css/bootstrap.css.map",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap.css.map"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/bootstrap/dist/css/bootstrap.min.css",
+      "Id": "/app/wwwroot/lib/bootstrap/dist/css/bootstrap.min.css",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap.min.css"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/bootstrap/dist/css/bootstrap.min.css.map",
+      "Id": "/app/wwwroot/lib/bootstrap/dist/css/bootstrap.min.css.map",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap.min.css.map"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/bootstrap/dist/css/bootstrap.rtl.css",
+      "Id": "/app/wwwroot/lib/bootstrap/dist/css/bootstrap.rtl.css",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap.rtl.css"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/bootstrap/dist/css/bootstrap.rtl.css.map",
+      "Id": "/app/wwwroot/lib/bootstrap/dist/css/bootstrap.rtl.css.map",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap.rtl.css.map"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/bootstrap/dist/css/bootstrap.rtl.min.css",
+      "Id": "/app/wwwroot/lib/bootstrap/dist/css/bootstrap.rtl.min.css",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap.rtl.min.css"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/bootstrap/dist/css/bootstrap.rtl.min.css.map",
+      "Id": "/app/wwwroot/lib/bootstrap/dist/css/bootstrap.rtl.min.css.map",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/css/bootstrap.rtl.min.css.map"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/bootstrap/dist/js/bootstrap.bundle.js",
+      "Id": "/app/wwwroot/lib/bootstrap/dist/js/bootstrap.bundle.js",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/js/bootstrap.bundle.js"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/bootstrap/dist/js/bootstrap.bundle.js.map",
+      "Id": "/app/wwwroot/lib/bootstrap/dist/js/bootstrap.bundle.js.map",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/js/bootstrap.bundle.js.map"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/bootstrap/dist/js/bootstrap.bundle.min.js",
+      "Id": "/app/wwwroot/lib/bootstrap/dist/js/bootstrap.bundle.min.js",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/js/bootstrap.bundle.min.js"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/bootstrap/dist/js/bootstrap.bundle.min.js.map",
+      "Id": "/app/wwwroot/lib/bootstrap/dist/js/bootstrap.bundle.min.js.map",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/js/bootstrap.bundle.min.js.map"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/bootstrap/dist/js/bootstrap.esm.js",
+      "Id": "/app/wwwroot/lib/bootstrap/dist/js/bootstrap.esm.js",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/js/bootstrap.esm.js"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/bootstrap/dist/js/bootstrap.esm.js.map",
+      "Id": "/app/wwwroot/lib/bootstrap/dist/js/bootstrap.esm.js.map",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/js/bootstrap.esm.js.map"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/bootstrap/dist/js/bootstrap.esm.min.js",
+      "Id": "/app/wwwroot/lib/bootstrap/dist/js/bootstrap.esm.min.js",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/js/bootstrap.esm.min.js"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/bootstrap/dist/js/bootstrap.esm.min.js.map",
+      "Id": "/app/wwwroot/lib/bootstrap/dist/js/bootstrap.esm.min.js.map",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/js/bootstrap.esm.min.js.map"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/bootstrap/dist/js/bootstrap.js",
+      "Id": "/app/wwwroot/lib/bootstrap/dist/js/bootstrap.js",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/js/bootstrap.js"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/bootstrap/dist/js/bootstrap.js.map",
+      "Id": "/app/wwwroot/lib/bootstrap/dist/js/bootstrap.js.map",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/js/bootstrap.js.map"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/bootstrap/dist/js/bootstrap.min.js",
+      "Id": "/app/wwwroot/lib/bootstrap/dist/js/bootstrap.min.js",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/js/bootstrap.min.js"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/bootstrap/dist/js/bootstrap.min.js.map",
+      "Id": "/app/wwwroot/lib/bootstrap/dist/js/bootstrap.min.js.map",
       "PackagePath": "staticwebassets/lib/bootstrap/dist/js/bootstrap.min.js.map"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/jquery-validation-unobtrusive/LICENSE.txt",
+      "Id": "/app/wwwroot/lib/jquery-validation-unobtrusive/LICENSE.txt",
       "PackagePath": "staticwebassets/lib/jquery-validation-unobtrusive/LICENSE.txt"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js",
+      "Id": "/app/wwwroot/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js",
       "PackagePath": "staticwebassets/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js",
+      "Id": "/app/wwwroot/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js",
       "PackagePath": "staticwebassets/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/jquery-validation/LICENSE.md",
+      "Id": "/app/wwwroot/lib/jquery-validation/LICENSE.md",
       "PackagePath": "staticwebassets/lib/jquery-validation/LICENSE.md"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/jquery-validation/dist/additional-methods.js",
+      "Id": "/app/wwwroot/lib/jquery-validation/dist/additional-methods.js",
       "PackagePath": "staticwebassets/lib/jquery-validation/dist/additional-methods.js"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/jquery-validation/dist/additional-methods.min.js",
+      "Id": "/app/wwwroot/lib/jquery-validation/dist/additional-methods.min.js",
       "PackagePath": "staticwebassets/lib/jquery-validation/dist/additional-methods.min.js"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/jquery-validation/dist/jquery.validate.js",
+      "Id": "/app/wwwroot/lib/jquery-validation/dist/jquery.validate.js",
       "PackagePath": "staticwebassets/lib/jquery-validation/dist/jquery.validate.js"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/jquery-validation/dist/jquery.validate.min.js",
+      "Id": "/app/wwwroot/lib/jquery-validation/dist/jquery.validate.min.js",
       "PackagePath": "staticwebassets/lib/jquery-validation/dist/jquery.validate.min.js"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/jquery/LICENSE.txt",
+      "Id": "/app/wwwroot/lib/jquery/LICENSE.txt",
       "PackagePath": "staticwebassets/lib/jquery/LICENSE.txt"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/jquery/dist/jquery.js",
+      "Id": "/app/wwwroot/lib/jquery/dist/jquery.js",
       "PackagePath": "staticwebassets/lib/jquery/dist/jquery.js"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/jquery/dist/jquery.min.js",
+      "Id": "/app/wwwroot/lib/jquery/dist/jquery.min.js",
       "PackagePath": "staticwebassets/lib/jquery/dist/jquery.min.js"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/lib/jquery/dist/jquery.min.map",
+      "Id": "/app/wwwroot/lib/jquery/dist/jquery.min.map",
       "PackagePath": "staticwebassets/lib/jquery/dist/jquery.min.map"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/uploads/EmployeePhoto_20260322133650_Gemini_Generated_Image_qph720qph720qph7.png",
+      "Id": "/app/wwwroot/uploads/EmployeePhoto_20260322133650_Gemini_Generated_Image_qph720qph720qph7.png",
       "PackagePath": "staticwebassets/uploads/EmployeePhoto_20260322133650_Gemini_Generated_Image_qph720qph720qph7.png"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/uploads/EmployeePhoto_20260322152427_photo_2026-02-18 16.41.34.jpeg",
+      "Id": "/app/wwwroot/uploads/EmployeePhoto_20260322152427_photo_2026-02-18 16.41.34.jpeg",
       "PackagePath": "staticwebassets/uploads/EmployeePhoto_20260322152427_photo_2026-02-18 16.41.34.jpeg"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/uploads/EmployeePhoto_20260322154121_sign.png",
+      "Id": "/app/wwwroot/uploads/EmployeePhoto_20260322154121_sign.png",
       "PackagePath": "staticwebassets/uploads/EmployeePhoto_20260322154121_sign.png"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/uploads/EmployeePhoto_20260325155657_photo_2026-02-18 16.41.34.jpeg",
+      "Id": "/app/wwwroot/uploads/EmployeePhoto_20260325155657_photo_2026-02-18 16.41.34.jpeg",
       "PackagePath": "staticwebassets/uploads/EmployeePhoto_20260325155657_photo_2026-02-18 16.41.34.jpeg"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/uploads/EmployeePhoto_20260325163613_Gemini_Generated_Image_qph720qph720qph7.png",
+      "Id": "/app/wwwroot/uploads/EmployeePhoto_20260325163613_Gemini_Generated_Image_qph720qph720qph7.png",
       "PackagePath": "staticwebassets/uploads/EmployeePhoto_20260325163613_Gemini_Generated_Image_qph720qph720qph7.png"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/uploads/EmployeePhoto_20260325164045_gautama-buddha-3840x2160-15438.jpg",
+      "Id": "/app/wwwroot/uploads/EmployeePhoto_20260325164045_gautama-buddha-3840x2160-15438.jpg",
       "PackagePath": "staticwebassets/uploads/EmployeePhoto_20260325164045_gautama-buddha-3840x2160-15438.jpg"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/uploads/EmployeePhoto_20260326152709_chinese-3840x2160-18765.jpg",
+      "Id": "/app/wwwroot/uploads/EmployeePhoto_20260326152709_chinese-3840x2160-18765.jpg",
       "PackagePath": "staticwebassets/uploads/EmployeePhoto_20260326152709_chinese-3840x2160-18765.jpg"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/uploads/EmployeePhoto_20260407021844__.png",
+      "Id": "/app/wwwroot/uploads/EmployeePhoto_20260407021844__.png",
       "PackagePath": "staticwebassets/uploads/EmployeePhoto_20260407021844__.png"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/uploads/logo_20260406082645_photo_2026-02-18 16.41.34.jpeg",
+      "Id": "/app/wwwroot/uploads/EmployeePhoto_20260408160004__.png",
+      "PackagePath": "staticwebassets/uploads/EmployeePhoto_20260408160004__.png"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/EmployeePhoto_20260408160129__.png",
+      "PackagePath": "staticwebassets/uploads/EmployeePhoto_20260408160129__.png"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/EmployeePhoto_20260408160213__.png",
+      "PackagePath": "staticwebassets/uploads/EmployeePhoto_20260408160213__.png"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/EmployeePhoto_20260408160628__.png",
+      "PackagePath": "staticwebassets/uploads/EmployeePhoto_20260408160628__.png"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/EmployeePhoto_20260408160810__.png",
+      "PackagePath": "staticwebassets/uploads/EmployeePhoto_20260408160810__.png"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/EmployeePhoto_20260408161434__.png",
+      "PackagePath": "staticwebassets/uploads/EmployeePhoto_20260408161434__.png"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/EmployeePhoto_20260408162317__.png",
+      "PackagePath": "staticwebassets/uploads/EmployeePhoto_20260408162317__.png"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/EmployeePhoto_20260408163237__.png",
+      "PackagePath": "staticwebassets/uploads/EmployeePhoto_20260408163237__.png"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/EmployeePhoto_20260409024843__.png",
+      "PackagePath": "staticwebassets/uploads/EmployeePhoto_20260409024843__.png"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/EmployeePhoto_20260409024952__.png",
+      "PackagePath": "staticwebassets/uploads/EmployeePhoto_20260409024952__.png"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/EmployeePhoto_20260409025037__.png",
+      "PackagePath": "staticwebassets/uploads/EmployeePhoto_20260409025037__.png"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/EmployeePhoto_20260409030127__.png",
+      "PackagePath": "staticwebassets/uploads/EmployeePhoto_20260409030127__.png"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/EmployeePhoto_20260409030708__.png",
+      "PackagePath": "staticwebassets/uploads/EmployeePhoto_20260409030708__.png"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/EmployeePhoto_20260409030914__.png",
+      "PackagePath": "staticwebassets/uploads/EmployeePhoto_20260409030914__.png"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/EmployeePhoto_20260409031538__.png",
+      "PackagePath": "staticwebassets/uploads/EmployeePhoto_20260409031538__.png"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/EmployeePhoto_20260409032643__.png",
+      "PackagePath": "staticwebassets/uploads/EmployeePhoto_20260409032643__.png"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/EmployeePhoto_20260409032823__.png",
+      "PackagePath": "staticwebassets/uploads/EmployeePhoto_20260409032823__.png"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/EmployeePhoto_20260409033037__.png",
+      "PackagePath": "staticwebassets/uploads/EmployeePhoto_20260409033037__.png"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/EmployeePhoto_20260409064736_Gemini_Generated_Image_qph720qph720qph7.png",
+      "PackagePath": "staticwebassets/uploads/EmployeePhoto_20260409064736_Gemini_Generated_Image_qph720qph720qph7.png"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/EmployeePhoto_20260409064936_Gemini_Generated_Image_qph720qph720qph7.png",
+      "PackagePath": "staticwebassets/uploads/EmployeePhoto_20260409064936_Gemini_Generated_Image_qph720qph720qph7.png"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/EmployeePhoto_20260409070404_Gemini_Generated_Image_qph720qph720qph7.png",
+      "PackagePath": "staticwebassets/uploads/EmployeePhoto_20260409070404_Gemini_Generated_Image_qph720qph720qph7.png"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/EmployeePhoto_20260409071146_Gemini_Generated_Image_qph720qph720qph7.png",
+      "PackagePath": "staticwebassets/uploads/EmployeePhoto_20260409071146_Gemini_Generated_Image_qph720qph720qph7.png"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/EmployeePhoto_20260409071155_Gemini_Generated_Image_qph720qph720qph7.png",
+      "PackagePath": "staticwebassets/uploads/EmployeePhoto_20260409071155_Gemini_Generated_Image_qph720qph720qph7.png"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/EmployeePhoto_20260409071301_Gemini_Generated_Image_qph720qph720qph7.png",
+      "PackagePath": "staticwebassets/uploads/EmployeePhoto_20260409071301_Gemini_Generated_Image_qph720qph720qph7.png"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/EmployeePhoto_20260409072142_Gemini_Generated_Image_qph720qph720qph7.png",
+      "PackagePath": "staticwebassets/uploads/EmployeePhoto_20260409072142_Gemini_Generated_Image_qph720qph720qph7.png"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/EmployeePhoto_20260409072151_Gemini_Generated_Image_qph720qph720qph7.png",
+      "PackagePath": "staticwebassets/uploads/EmployeePhoto_20260409072151_Gemini_Generated_Image_qph720qph720qph7.png"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/EmployeePhoto_20260409072523_Gemini_Generated_Image_qph720qph720qph7.png",
+      "PackagePath": "staticwebassets/uploads/EmployeePhoto_20260409072523_Gemini_Generated_Image_qph720qph720qph7.png"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/EmployeePhoto_20260409073048_Gemini_Generated_Image_qph720qph720qph7.png",
+      "PackagePath": "staticwebassets/uploads/EmployeePhoto_20260409073048_Gemini_Generated_Image_qph720qph720qph7.png"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/EmployeePhoto_20260409073052_Gemini_Generated_Image_qph720qph720qph7.png",
+      "PackagePath": "staticwebassets/uploads/EmployeePhoto_20260409073052_Gemini_Generated_Image_qph720qph720qph7.png"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/logo_20260406082645_photo_2026-02-18 16.41.34.jpeg",
       "PackagePath": "staticwebassets/uploads/logo_20260406082645_photo_2026-02-18 16.41.34.jpeg"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/uploads/logo_20260406083454_photo_2026-02-18 16.41.34.jpeg",
+      "Id": "/app/wwwroot/uploads/logo_20260406083454_photo_2026-02-18 16.41.34.jpeg",
       "PackagePath": "staticwebassets/uploads/logo_20260406083454_photo_2026-02-18 16.41.34.jpeg"
     },
     {
-      "Id": "/Users/kaungpyaetheintun/EmployeeManagement/wwwroot/uploads/logo_20260406083536_photo_2026-02-18 16.41.34.jpeg",
+      "Id": "/app/wwwroot/uploads/logo_20260406083536_photo_2026-02-18 16.41.34.jpeg",
       "PackagePath": "staticwebassets/uploads/logo_20260406083536_photo_2026-02-18 16.41.34.jpeg"
     },
     {

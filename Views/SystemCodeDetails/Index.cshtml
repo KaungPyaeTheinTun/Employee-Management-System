@@ -88,7 +88,7 @@
                             <span class="dept-badge" style="background:@bg;color:@tc;max-width:250px;white-space:normal;line-height:1.3">@item.Description</span>
                         </td>
                         <td style="color:var(--ink2);font-weight:500">@item.OrderNo</td>
-                        <td style="color:var(--ink2)">@(item.CreatedById)</td>
+                        <td style="color:var(--ink2)">@(item.CreatedBy.FullName)</td>
                         <td style="color:var(--ink2)">
                             <span class="date-badge">@item.CreatedOn.ToString("MMM dd, yyyy")</span>
                         </td>

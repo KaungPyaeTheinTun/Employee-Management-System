@@ -166,66 +166,134 @@ namespace EmployeeManagement.Controllers
         } 
  
         // POST: LeaveApplications/Create 
-        [HttpPost] 
-        [ValidateAntiForgeryToken] 
-        public async Task<IActionResult> Create(LeaveApplication leaveApplication, IFormFile leaveattachment) 
-        { 
-            if (leaveattachment != null && leaveattachment.Length > 0)
+         // POST: LeaveApplications/Create 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(LeaveApplication leaveApplication, IFormFile leaveattachment)
+        {
+            try
             {
-                var uploadFolder = _configuration["FileSettings:UploadFolder"];
-
-                var path = Path.Combine(Directory.GetCurrentDirectory(), uploadFolder);
-
-                if (!Directory.Exists(path))
+                if (leaveattachment != null && leaveattachment.Length > 0)
                 {
-                    Directory.CreateDirectory(path);
+                    var uploadFolder = _configuration["FileSettings:UploadFolder"];
+                    var path = Path.Combine(Directory.GetCurrentDirectory(), uploadFolder);
+
+                    if (!Directory.Exists(path))
+                    {
+                        Directory.CreateDirectory(path);
+                    }
+
+                    var fileName = "EmployeePhoto_" + DateTime.Now.ToString("yyyyMMddHHmmss") + "_" + leaveattachment.FileName;
+                    var filePath = Path.Combine(path, fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await leaveattachment.CopyToAsync(stream);
+                    }
+
+                    leaveApplication.Attachment = fileName;
                 }
 
-                var fileName = "EmployeePhoto_" + DateTime.Now.ToString("yyyyMMddHHmmss") + "_" + leaveattachment.FileName;
+                // 2. GET LOGIN USER
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-                var filePath = Path.Combine(path, fileName);
+                if (string.IsNullOrEmpty(userId))
+                    throw new Exception("User not logged in");
 
-                using (var stream = new FileStream(filePath, FileMode.Create))
+                // 3. GET STATUS (Awaiting Approval)
+                var pendingStatus = await _context.SystemCodeDetails
+                    .Include(x => x.SystemCode)
+                    .FirstOrDefaultAsync(y =>
+                        y.Code == "Awaiting Approval" &&
+                        y.SystemCode.Code == "LEAVEAPPROVALSTATUS");
+
+                if (pendingStatus == null)
+                    throw new Exception("Status 'Awaiting Approval' not found");
+
+                // 4. SAVE LEAVE APPLICATION
+                leaveApplication.CreatedOn = DateTime.Now;
+                leaveApplication.CreatedById = userId;
+                leaveApplication.StatusId = pendingStatus.Id;
+
+                _context.Add(leaveApplication);
+                await _context.SaveChangesAsync(userId);
+
+                // 5. GET DOCUMENT TYPE
+                var documenttype = await _context.SystemCodeDetails
+                    .Include(x => x.SystemCode)
+                    .FirstOrDefaultAsync(x =>
+                        x.SystemCode.Code == "DOCUMENTTYPES" &&
+                        x.Code == "LeaveApplication"); // MUST match DB
+
+                if (documenttype == null)
+                    throw new Exception("DocumentType 'LEAVE_APPLICATION' not found");
+
+                // 6. GET USER WORKFLOW GROUP
+                var usergroup = await _context.ApprovalsUserMatrixs
+                    .FirstOrDefaultAsync(x =>
+                        x.UserId == userId &&
+                        x.DocumentTypeId == documenttype.Id &&
+                        x.Active == true);
+
+                if (usergroup == null)
+                    throw new Exception("User is not assigned to any workflow group");
+
+                // 7. GET APPROVERS
+                var approvers = await _context.WorkFlowUserGroupMembers
+                    .Where(x =>
+                        x.WorkFlowUserGroupId == usergroup.WorkFlowUserGroupId &&
+                        x.SenderId == userId)
+                    .ToListAsync();
+
+                if (approvers == null || !approvers.Any())
+                    throw new Exception("No approvers found for this workflow group");
+
+                // 8. INSERT APPROVAL ENTRIES
+                foreach (var approver in approvers)
                 {
-                    await leaveattachment.CopyToAsync(stream);
+                    var approvalEntry = new ApprovalEntry
+                    {
+                        ApproverId = approver.ApproverId,
+                        RecordId = leaveApplication.Id,
+                        DocumentTypeId = documenttype.Id,
+                        SequenceNo = approver.SequenceNo,
+                        StatusId = pendingStatus.Id,
+                        Comments = "Sent for Approval",
+                        ControllerName = "LeaveApplications",
+                        DateSentForApproval = DateTime.Now,
+                        LastModifiedOn = DateTime.Now,
+                        LastModifiedById = userId
+                    };
+
+                    _context.Add(approvalEntry);
                 }
 
-                leaveApplication.Attachment = fileName; 
+                // ✅ Save ONCE (important)
+                await _context.SaveChangesAsync(userId);
+
+                // 9. REDIRECT
+                return RedirectToAction(nameof(Index));
             }
-                var pendingStatus = await _context.SystemCodeDetails 
-                    .Include(x => x.SystemCode) 
-                    .Where(y => y.Code == "Pending" && y.SystemCode.Code == "LeaveApprovalStatus") 
-                    .FirstOrDefaultAsync(); 
+            catch (Exception ex)
+            {
+                // ERROR HANDLING
+                ModelState.AddModelError("", ex.Message);
 
-                var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier); 
- 
-                leaveApplication.CreatedOn = DateTime.Now; 
-                leaveApplication.CreatedById = "Marco Code"; 
-                leaveApplication.StatusId = pendingStatus?.Id ?? 0; 
- 
-                _context.Add(leaveApplication); 
-                await _context.SaveChangesAsync(UserId); 
-                return RedirectToAction(nameof(Index)); 
+                // Reload dropdowns
+                ViewData["DurationId"] = new SelectList(
+                    _context.SystemCodeDetails.Include(x => x.SystemCode)
+                        .Where(y => y.SystemCode.Code == "LEAVEDURATION"),
+                    "Id", "Description", leaveApplication.DurationId);
 
- 
-            // Re-populate dropdowns if ModelState invalid 
-            var durations = await _context.SystemCodeDetails 
-                .Include(x => x.SystemCode) 
-                .Where(y => y.SystemCode.Code == "LeaveDuration") 
-                .ToListAsync(); 
-            var employees = await _context.Employees.ToListAsync(); 
-            var leaveTypes = await _context.LeaveTypes.ToListAsync(); 
-            var statuses = await _context.SystemCodeDetails 
-                .Include(x => x.SystemCode) 
-                .Where(y => y.SystemCode.Code == "LeaveApprovalStatus")
-                .ToListAsync(); 
- 
-            ViewData["DurationId"] = new SelectList(durations, "Id", "Description", leaveApplication.DurationId); 
-            ViewData["EmployeeId"] = new SelectList(employees, "Id", "FullName", leaveApplication.EmployeeId); 
-            ViewData["LeaveTypeId"] = new SelectList(leaveTypes, "Id", "Name", leaveApplication.LeaveTypeId); 
- 
-            return View(leaveApplication); 
-        } 
+                ViewData["EmployeeId"] = new SelectList(
+                    _context.Employees, "Id", "FullName", leaveApplication.EmployeeId);
+
+                ViewData["LeaveTypeId"] = new SelectList(
+                    _context.LeaveTypes, "Id", "Name", leaveApplication.LeaveTypeId);
+
+                return View(leaveApplication);
+            }
+        }
  
         // GET: LeaveApplications/Edit/5 
         public async Task<IActionResult> Edit(int? id) 

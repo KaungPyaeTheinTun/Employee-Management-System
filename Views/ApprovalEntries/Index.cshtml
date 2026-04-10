@@ -12,12 +12,6 @@
             <li class="breadcrumb-item active">Approval Entries</li>
         </ol>
     </div>
-    <a asp-action="Create" class="add-btn">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-            <path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-        </svg>
-        Add Approval Entry
-    </a>
 </div>
 
 <div class="table-card">
@@ -37,7 +31,7 @@
                 <circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" stroke-width="1.2"/>
                 <path d="M9 9L12 12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
             </svg>
-            <input id="tableSearch" type="text" placeholder="Search approval entry..." />
+            <input id="tableSearch" type="text" placeholder="Search by record ID, document type, approver..." />
         </div>
 
         <!-- Items per page selector -->
@@ -85,7 +79,7 @@
                     var status = item.Status?.Description ?? "Pending";
                     var statusColor = statusColors.ContainsKey(status) ? statusColors[status] : ("#e8eefa", "#1a4fa0");
                     
-                    <tr data-id="@item.Id" data-status="@status">
+                    <tr data-id="@item.Id" data-status="@status.ToLower()">
                         <td>
                             <span class="mono" style="font-size:12px;color:var(--ink3);font-weight:500">@item.RecordId</span>
                         </td>
@@ -104,7 +98,7 @@
                             </div>
                         </td>
                         <td>
-                            <span class="status-badge" style="background:@statusColor.Item1;color:@statusColor.Item2">@status</span>
+                            <span class="status-badge" style="background:@statusColor.@bg;color:@statusColor">@status</span>
                         </td>
                         <td>
                             <span class="date-badge">@item.DateSentForApproval.ToString("dd MMM yyyy")</span>
@@ -117,16 +111,29 @@
                                         <path d="M1 7C2.5 3.5 4.5 2 7 2s4.5 1.5 6 5c-1.5 3.5-3.5 5-6 5S2.5 10.5 1 7z" stroke="currentColor" stroke-width="1.2" fill="none" />
                                     </svg>
                                 </a>
-                                <a class="action-btn" asp-action="Edit" asp-route-id="@item.Id" title="Edit">
-                                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                                        <path d="M9.5 2.5l2 2-7 7H2.5v-2l7-7z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" fill="none" />
-                                    </svg>
-                                </a>
-                                <a class="action-btn del" asp-action="Delete" asp-route-id="@item.Id" title="Delete">
-                                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                                        <path d="M2 4h10M5 4V2.5h4V4M11 4l-.75 8H3.75L3 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none" />
-                                    </svg>
-                                </a>
+                                @if (!string.IsNullOrEmpty(item.ControllerName))
+                                {
+                                    <a class="action-btn open" asp-action="Details" asp-route-id="@item.RecordId" asp-controller="@item.ControllerName" title="Open Document" style="background:#e8eefa;color:#1a4fa0">
+                                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                                            <path d="M2 3h10v8H2V3z" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                                            <path d="M4 1v2M10 1v2M2 6h10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                                            <circle cx="7" cy="9" r="1" fill="currentColor"/>
+                                        </svg>
+                                    </a>
+                                }
+                                @if (status == "Pending")
+                                {
+                                    <a class="action-btn approve" asp-action="Approve" asp-route-id="@item.Id" title="Approve" style="background:#e8f5ee;color:#1a7a4a">
+                                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                                            <path d="M2 7l3.5 3.5L12 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </a>
+                                    <a class="action-btn reject" asp-action="Reject" asp-route-id="@item.Id" title="Reject" style="background:#fdecea;color:#c0392b">
+                                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                                            <path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                        </svg>
+                                    </a>
+                                }
                             </div>
                         </td>
                     </tr>
@@ -314,12 +321,6 @@
         flex-shrink: 0;
     }
 
-    .emp-name {
-        font-weight: 500;
-        font-size: 13px;
-        color: var(--ink1);
-    }
-
     /* Badge styles */
     .dept-badge, .sequence-badge {
         display: inline-block;
@@ -386,7 +387,17 @@
         text-decoration: none;
     }
 
-    .action-btn.del:hover {
+    .action-btn.open:hover {
+        background: #1a4fa0;
+        color: white;
+    }
+
+    .action-btn.approve:hover {
+        background: #1a7a4a;
+        color: white;
+    }
+
+    .action-btn.reject:hover {
         background: #c0392b;
         color: white;
     }
@@ -469,29 +480,6 @@
         background: var(--primary);
         border-color: var(--primary);
         color: white;
-    }
-
-    /* Add Button */
-    .add-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 16px;
-        background: var(--primary);
-        color: white;
-        border-radius: 8px;
-        font-size: 13px;
-        font-weight: 500;
-        text-decoration: none;
-        transition: all 0.15s;
-    }
-
-    .add-btn:hover {
-        background: #134080;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 8px rgba(26, 79, 160, 0.2);
-        color: white;
-        text-decoration: none;
     }
 
     /* Page Header */
@@ -645,11 +633,6 @@
             flex-direction: column;
             align-items: flex-start;
         }
-
-        .add-btn {
-            width: 100%;
-            justify-content: center;
-        }
     }
 
     @@media (max-width: 1024px) and (min-width: 769px) {
@@ -698,7 +681,7 @@
                 const recordId = row.querySelector('td:first-child .mono')?.textContent.toLowerCase() || '';
                 const documentType = row.querySelector('.dept-badge')?.textContent.toLowerCase() || '';
                 const approver = row.querySelector('.emp-cell span')?.textContent.toLowerCase() || '';
-                const status = row.dataset.status?.toLowerCase() || '';
+                const status = row.dataset.status || '';
                 
                 // Search match
                 const matchesSearch = !searchTerm || 
@@ -825,8 +808,10 @@
                 const statusColor = statusBadge?.style.color || '#1a4fa0';
                 
                 const detailsLink = row.querySelector('.action-btn[title="View Details"]')?.href || '#';
-                const editLink = row.querySelector('.action-btn[title="Edit"]')?.href || '#';
-                const deleteLink = row.querySelector('.action-btn[title="Delete"]')?.href || '#';
+                const openLink = row.querySelector('.action-btn.open')?.href || '#';
+                const approveLink = row.querySelector('.action-btn.approve')?.href || '#';
+                const rejectLink = row.querySelector('.action-btn.reject')?.href || '#';
+                const showApproveReject = status === 'Pending';
 
                 const card = document.createElement('div');
                 card.className = 'mobile-emp-card';
@@ -849,11 +834,9 @@
                             <div style="font-size:13px;color:var(--ink2);font-weight:500">${escapeHtml(approver)}</div>
                         </div>
                     </div>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
-                        <div>
-                            <div style="font-size:10px;color:var(--ink3);margin-bottom:2px">DATE SENT</div>
-                            <div class="date-badge" style="background:none;padding:0">${escapeHtml(dateSent)}</div>
-                        </div>
+                    <div style="margin-bottom:12px">
+                        <div style="font-size:10px;color:var(--ink3);margin-bottom:2px">DATE SENT</div>
+                        <div class="date-badge" style="background:none;padding:0">${escapeHtml(dateSent)}</div>
                     </div>
                     <div class="action-group" style="justify-content:flex-end">
                         <a class="action-btn" href="${detailsLink}" title="View Details">
@@ -862,16 +845,25 @@
                                 <path d="M1 7C2.5 3.5 4.5 2 7 2s4.5 1.5 6 5c-1.5 3.5-3.5 5-6 5S2.5 10.5 1 7z" stroke="currentColor" stroke-width="1.2" fill="none"/>
                             </svg>
                         </a>
-                        <a class="action-btn" href="${editLink}" title="Edit">
+                        <a class="action-btn open" href="${openLink}" title="Open Document" style="background:#e8eefa;color:#1a4fa0">
                             <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                                <path d="M9.5 2.5l2 2-7 7H2.5v-2l7-7z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" fill="none"/>
+                                <path d="M2 3h10v8H2V3z" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                                <path d="M4 1v2M10 1v2M2 6h10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                                <circle cx="7" cy="9" r="1" fill="currentColor"/>
                             </svg>
                         </a>
-                        <a class="action-btn del" href="${deleteLink}" title="Delete">
-                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                                <path d="M2 4h10M5 4V2.5h4V4M11 4l-.75 8H3.75L3 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-                            </svg>
-                        </a>
+                        ${showApproveReject ? `
+                            <a class="action-btn approve" href="${approveLink}" title="Approve" style="background:#e8f5ee;color:#1a7a4a">
+                                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                                    <path d="M2 7l3.5 3.5L12 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </a>
+                            <a class="action-btn reject" href="${rejectLink}" title="Reject" style="background:#fdecea;color:#c0392b">
+                                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                                    <path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                            </a>
+                        ` : ''}
                     </div>
                 `;
                 mobileContainer.appendChild(card);

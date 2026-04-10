@@ -18,6 +18,6 @@ namespace EmployeesManagement.Models
         public string LastModifiedById { get; set; } //the action of the approver (Approved, Rejected) by
         public ApplicationUser LastModifiedBy { get; set; } //the action of the approver (Approved, Rejected) by
         public string Comments { get; set; } //the action of the approver (Approved, Rejected) comments
-        
+        public string ControllerName { get; set; }
     }
 }

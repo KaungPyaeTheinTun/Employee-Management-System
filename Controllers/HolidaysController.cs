@@ -24,7 +24,9 @@ namespace EmployeeManagement.Controllers
         // GET: Holidays
         public async Task<IActionResult> Index(HolidayViewModel vm)
         {
-            var query = _context.Holidays.AsQueryable();
+            var query = _context.Holidays
+                        .Include(x => x.CreatedBy)
+                        .AsQueryable();
 
             // 🔍 Search logic
             if (!string.IsNullOrWhiteSpace(vm.SearchTerm))
