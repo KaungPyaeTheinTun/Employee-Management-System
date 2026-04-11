@@ -77,13 +77,11 @@
                             <span class="mono dept-badge" style="background:@bg;color:@tc">@item.Code</span>
                         </td>
                         <td style="color:var(--ink2)">
-                            <div class="emp-cell">
-                                <div class="emp-avatar" style="background:@bg;color:@tc">@(item.Name?.Substring(0, 1).ToUpper() ?? "B")</div>
-                                <div>
+                            <div>
                                     <div class="emp-name">@item.Name</div>
                                     @* <div style="font-size:10px;color:var(--ink3);margin-top:2px;">@item.Code</div> *@
                                 </div>
-                            </div>
+                            
                         </td>
                         <td style="color:var(--ink2);font-family:monospace;font-size:12px;">@item.AccoutNo</td>
                         <td style="color:var(--ink2)">

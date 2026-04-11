@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using EmployeeManagement.Data;
 using EmployeesManagement.Models;
+using System.Security.Claims;
 
 namespace EmployeeManagement.Controllers
 {
@@ -22,7 +23,11 @@ namespace EmployeeManagement.Controllers
         // GET: Departments
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Departments.ToListAsync());
+            var departments = await _context.Departments
+                .Include(d => d.CreatedBy)
+                .Include(d => d.ModifiedBy)
+                .ToListAsync();
+            return View(departments);
         }
 
         // GET: Departments/Details/5
@@ -34,6 +39,8 @@ namespace EmployeeManagement.Controllers
             }
 
             var department = await _context.Departments
+                .Include(d => d.CreatedBy)
+                .Include(d => d.ModifiedBy)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (department == null)
             {
@@ -54,8 +61,13 @@ namespace EmployeeManagement.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Code,Name,CreatedById,CreatedOn,ModifiedById,ModifiedOn")] Department department)
+        public async Task<IActionResult> Create(Department department)
         {
+            var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            department.CreatedOn = DateTime.Now;
+            department.CreatedById = UserId;
+            ModelState.Remove("CreatedBy");
+            ModelState.Remove("ModifiedBy");
             if (ModelState.IsValid)
             {
                 _context.Add(department);
@@ -73,7 +85,10 @@ namespace EmployeeManagement.Controllers
                 return NotFound();
             }
 
-            var department = await _context.Departments.FindAsync(id);
+            var department = await _context.Departments
+                            .Include(d => d.CreatedBy)
+                            .Include(d => d.ModifiedBy)
+                            .FirstOrDefaultAsync(d => d.Id ==id);
             if (department == null)
             {
                 return NotFound();
@@ -93,12 +108,18 @@ namespace EmployeeManagement.Controllers
                 return NotFound();
             }
 
+            var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    department.ModifiedById = UserId;
+                    department.ModifiedOn = DateTime.UtcNow;
+                    ModelState.Remove("CreatedBy");
+                    ModelState.Remove("ModifiedBy");
+
             if (ModelState.IsValid)
             {
                 try
                 {
                     _context.Update(department);
-                    await _context.SaveChangesAsync();
+                    await _context.SaveChangesAsync(UserId);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -125,6 +146,8 @@ namespace EmployeeManagement.Controllers
             }
 
             var department = await _context.Departments
+                .Include(d => d.CreatedBy)
+                .Include(d => d.ModifiedBy)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (department == null)
             {

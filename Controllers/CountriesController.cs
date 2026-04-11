@@ -81,7 +81,11 @@ namespace EmployeeManagement.Controllers
                 return NotFound();
             }
 
-            var country = await _context.Countries.FindAsync(id);
+            var country = await _context.Countries
+                        .Include(c => c.CreatedBy)
+                        .Include(c => c.ModifiedBy)
+                        .FirstOrDefaultAsync(c => c.Id == id);
+
             if (country == null)
             {
                 return NotFound();
@@ -136,7 +140,9 @@ namespace EmployeeManagement.Controllers
             }
 
             var country = await _context.Countries
-                .FirstOrDefaultAsync(m => m.Id == id);
+                        .Include(c => c.CreatedBy)
+                        .Include(c => c.ModifiedBy)
+                        .FirstOrDefaultAsync(m => m.Id == id);
             if (country == null)
             {
                 return NotFound();

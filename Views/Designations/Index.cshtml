@@ -84,7 +84,7 @@
                                 </div>
                             </div>
                         </td>
-                        <td style="color:var(--ink2)">@(item.CreatedById ?? "System")</td>
+                        <td style="color:var(--ink2)">@(item.CreatedBy?.FullName ?? "System")</td>
                         <td style="color:var(--ink2)">
                             <span class="date-badge">@item.CreatedOn.ToString("dd MMM yyyy")</span>
                         </td>

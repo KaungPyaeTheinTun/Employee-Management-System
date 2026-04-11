@@ -23,8 +23,10 @@ namespace EmployeeManagement.Controllers
         // GET: Cities
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Cities.Include(c => c.Country);
-            return View(await applicationDbContext.ToListAsync());
+            var city = await _context.Cities
+                        .Include(c => c.Country)
+                        .ToListAsync();
+            return View(city);
         }
 
         // GET: Cities/Details/5
@@ -97,6 +99,8 @@ namespace EmployeeManagement.Controllers
             {
                 return NotFound();
             }
+
+            ModelState.Remove("Country");
 
             if (ModelState.IsValid)
             {

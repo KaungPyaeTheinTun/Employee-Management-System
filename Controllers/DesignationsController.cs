@@ -22,7 +22,11 @@ namespace EmployeeManagement.Controllers
         // GET: Designations
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Designations.ToListAsync());
+            var designations = await _context.Designations
+                                .Include(d => d.CreatedBy)
+                                .Include(d => d.ModifiedBy)
+                                .ToListAsync();
+            return View(designations);
         }
 
         // GET: Designations/Details/5
@@ -34,6 +38,8 @@ namespace EmployeeManagement.Controllers
             }
 
             var designation = await _context.Designations
+                .Include(d => d.CreatedBy)
+                .Include(d => d.ModifiedBy)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (designation == null)
             {
@@ -73,7 +79,10 @@ namespace EmployeeManagement.Controllers
                 return NotFound();
             }
 
-            var designation = await _context.Designations.FindAsync(id);
+            var designation = await _context.Designations
+                            .Include(d => d.CreatedBy)
+                            .Include(d => d.ModifiedBy)
+                            .FirstOrDefaultAsync(d => d.Id ==id);
             if (designation == null)
             {
                 return NotFound();
@@ -125,6 +134,8 @@ namespace EmployeeManagement.Controllers
             }
 
             var designation = await _context.Designations
+                .Include(d => d.CreatedBy)
+                .Include(d => d.ModifiedBy)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (designation == null)
             {
