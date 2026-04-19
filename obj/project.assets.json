@@ -7824,19 +7824,19 @@
     ]
   },
   "packageFolders": {
-    "/Users/kaungpyaetheintun/.nuget/packages/": {}
+    "/root/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/kaungpyaetheintun/EmployeeManagement/EmployeeManagement.csproj",
+      "projectUniqueName": "/app/EmployeeManagement.csproj",
       "projectName": "EmployeeManagement",
-      "projectPath": "/Users/kaungpyaetheintun/EmployeeManagement/EmployeeManagement.csproj",
-      "packagesPath": "/Users/kaungpyaetheintun/.nuget/packages/",
-      "outputPath": "/Users/kaungpyaetheintun/EmployeeManagement/obj/",
+      "projectPath": "/app/EmployeeManagement.csproj",
+      "packagesPath": "/root/.nuget/packages/",
+      "outputPath": "/app/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/Users/kaungpyaetheintun/.nuget/NuGet/NuGet.Config"
+        "/root/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
@@ -7921,7 +7921,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.418/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.419/PortableRuntimeIdentifierGraph.json"
       }
     }
   },

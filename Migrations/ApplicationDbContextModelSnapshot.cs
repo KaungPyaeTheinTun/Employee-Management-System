@@ -259,9 +259,11 @@ namespace EmployeeManagement.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("AuditLogs");
                 });
@@ -1358,6 +1360,17 @@ namespace EmployeeManagement.Migrations
                     b.Navigation("User");
 
                     b.Navigation("WorkFlowUserGroup");
+                });
+
+            modelBuilder.Entity("EmployeesManagement.Models.Audit", b =>
+                {
+                    b.HasOne("EmployeeManagement.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("EmployeesManagement.Models.Bank", b =>

@@ -128,46 +128,6 @@
         </div>
     </div>
 
-    <!-- Audit Trail -->
-    <div class="form-card" style="margin-bottom:16px">
-        <div class="form-card-header">
-            <span class="section-badge neutral">
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                    <circle cx="6" cy="6" r="4" stroke="currentColor" stroke-width="1.2" fill="none"/>
-                    <path d="M6 3v3l2 1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-                </svg>
-                Audit Trail
-            </span>
-        </div>
-        <div class="form-card-body">
-            <div class="row g-3">
-                <div class="col-md-3">
-                    <label asp-for="CreatedById" class="field-label">Created By</label>
-                    <input asp-for="CreatedById" class="field-control" value="@(Model.CreatedById ?? "System")" readonly disabled />
-                </div>
-                <div class="col-md-3">
-                    <label asp-for="CreatedOn" class="field-label">Created On</label>
-                    <input asp-for="CreatedOn" class="field-control" readonly disabled value="@Model.CreatedOn.ToString("yyyy-MM-dd HH:mm")" />
-                </div>
-                <div class="col-md-3">
-                    <label asp-for="ModifiedById" class="field-label">Modified By</label>
-                    <input asp-for="ModifiedById" class="field-control" value="@(Model.ModifiedById ?? "—")" readonly disabled />
-                </div>
-                <div class="col-md-3">
-                    <label asp-for="ModifiedOn" class="field-label">Modified On</label>
-                    <input asp-for="ModifiedOn" class="field-control" value="@(Model.ModifiedOn.ToString("yyyy-MM-dd HH:mm") ?? "—")" readonly disabled />
-                </div>
-            </div>
-            <div class="field-hint" style="margin-top:12px;padding:8px 12px;background:var(--bg2);border-radius:6px">
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="display:inline;margin-right:4px;vertical-align:-2px">
-                    <circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.2" fill="none"/>
-                    <path d="M7 4v4M7 10h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                </svg>
-                <span>System fields are automatically tracked and cannot be modified</span>
-            </div>
-        </div>
-    </div>
-
     <!-- Actions -->
     <div class="form-actions" style="border-top:none;padding-top:0">
         <a asp-action="Index" class="btn-ghost">Cancel</a>

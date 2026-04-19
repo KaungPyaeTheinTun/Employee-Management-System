@@ -3,7 +3,11 @@ using EmployeesManagement.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace EmployeesManagement.Controllers
 {
@@ -16,14 +20,19 @@ namespace EmployeesManagement.Controllers
             _context = context;
         }
 
-        // GET: ApprovalsUserMatrices
+        // GET: ApprovalsUserMetrices
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.ApprovalsUserMatrixs.Include(a => a.DocumentType).Include(a => a.User).Include(a => a.WorkFlowUserGroup);
-            return View(await applicationDbContext.ToListAsync());
+            var matrix = await _context.ApprovalsUserMatrixs
+                .Include(a => a.DocumentType)
+                .Include(a => a.User)
+                .Include(a => a.CreatedBy)
+                .Include(a => a.WorkFlowUserGroup)
+                .ToListAsync();
+            return View(matrix);
         }
 
-        // GET: ApprovalsUserMatrices/Details/5
+        // GET: ApprovalsUserMetrices/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -44,16 +53,16 @@ namespace EmployeesManagement.Controllers
             return View(approvalsUserMatrix);
         }
 
-        // GET: ApprovalsUserMatrices/Create
+        // GET: ApprovalsUserMetrices/Create
         public IActionResult Create()
         {
-            ViewData["DocumentTypeId"] = new SelectList(_context.SystemCodeDetails.Include(x=>x.SystemCode).Where(y=>y.SystemCode.Code=="DocumentTypes"), "Id", "Description");
+            ViewData["DocumentTypeId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(y => y.SystemCode.Code == "DocumentTypes"), "Id", "Description");
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "FullName");
             ViewData["WorkFlowUserGroupId"] = new SelectList(_context.WorkFlowUserGroups, "Id", "Description");
             return View();
         }
 
-        // POST: ApprovalsUserMatrices/Create
+        // POST: ApprovalsUserMetrices/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -65,16 +74,17 @@ namespace EmployeesManagement.Controllers
             approvalsUserMatrix.CreatedOn = DateTime.Now;
 
             _context.Add(approvalsUserMatrix);
-                await _context.SaveChangesAsync(userid);
-                return RedirectToAction(nameof(Index));
-            
+            await _context.SaveChangesAsync(userid);
+            TempData["Message"] = "Approval User Matrix created successfully";
+            return RedirectToAction(nameof(Index));
+
             ViewData["DocumentTypeId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(y => y.SystemCode.Code == "DocumentTypes"), "Id", "Description", approvalsUserMatrix.DocumentTypeId);
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "FullName", approvalsUserMatrix.UserId);
             ViewData["WorkFlowUserGroupId"] = new SelectList(_context.WorkFlowUserGroups, "Id", "Description", approvalsUserMatrix.WorkFlowUserGroupId);
             return View(approvalsUserMatrix);
         }
 
-        // GET: ApprovalsUserMatrices/Edit/5
+        // GET: ApprovalsUserMetrices/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -92,24 +102,35 @@ namespace EmployeesManagement.Controllers
             return View(approvalsUserMatrix);
         }
 
-        // POST: ApprovalsUserMatrices/Edit/5
+        // POST: ApprovalsUserMetrices/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,UserId,DocumentTypeId,WorkFlowUserGroupId,Active,CreatedById,CreatedOn,ModifiedById,ModifiedOn")] ApprovalsUserMatrix approvalsUserMatrix)
+        public async Task<IActionResult> Edit(int id, ApprovalsUserMatrix approvalsUserMatrix)
         {
             if (id != approvalsUserMatrix.Id)
             {
                 return NotFound();
             }
 
+            var userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            approvalsUserMatrix.ModifiedById = userid;
+            approvalsUserMatrix.ModifiedOn = DateTime.Now;
+
+            ModelState.Remove("CreatedBy");
+            ModelState.Remove("ModifiedBy");
+            ModelState.Remove("DocumentType"); 
+            ModelState.Remove("WorkFlowUserGroup");
+            ModelState.Remove("User");
             if (ModelState.IsValid)
             {
                 try
                 {
                     _context.Update(approvalsUserMatrix);
-                    await _context.SaveChangesAsync();
+                    await _context.SaveChangesAsync(userid);
+                    TempData["Message"] = "Approval User Matrix updated successfully";
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -124,13 +145,13 @@ namespace EmployeesManagement.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["DocumentTypeId"] = new SelectList(_context.SystemCodeDetails, "Id", "Description", approvalsUserMatrix.DocumentTypeId);
+            ViewData["DocumentTypeId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(y => y.SystemCode.Code == "DocumentTypes"), "Id", "Description", approvalsUserMatrix.DocumentTypeId);
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "FullName", approvalsUserMatrix.UserId);
             ViewData["WorkFlowUserGroupId"] = new SelectList(_context.WorkFlowUserGroups, "Id", "Description", approvalsUserMatrix.WorkFlowUserGroupId);
             return View(approvalsUserMatrix);
         }
 
-        // GET: ApprovalsUserMatrices/Delete/5
+        // GET: ApprovalsUserMetrices/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -151,7 +172,7 @@ namespace EmployeesManagement.Controllers
             return View(approvalsUserMatrix);
         }
 
-        // POST: ApprovalsUserMatrices/Delete/5
+        // POST: ApprovalsUserMetrices/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -165,7 +186,6 @@ namespace EmployeesManagement.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
         private bool ApprovalsUserMatrixExists(int id)
         {
             return _context.ApprovalsUserMatrixs.Any(e => e.Id == id);

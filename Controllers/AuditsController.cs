@@ -22,7 +22,10 @@ namespace EmployeeManagement.Controllers
         // GET: Audits
         public async Task<IActionResult> Index()
         {
-            return View(await _context.AuditLogs.ToListAsync());
+            var auditlog = await _context.AuditLogs
+                .Include(a => a.User)
+                .ToListAsync();
+            return View(auditlog);
         }
 
         // GET: Audits/Details/5

@@ -1,13 +1,13 @@
-using EmployeeManagement.Data;
-using EmployeesManagement.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using EmployeeManagement.Data;
+using EmployeesManagement.Models;
+using System.Security.Claims;
 
 namespace EmployeesManagement.Controllers
 {
@@ -23,11 +23,10 @@ namespace EmployeesManagement.Controllers
         // GET: WorkFlowUserGroups
         public async Task<IActionResult> Index()
         {
-            var groups = await _context
-                        .WorkFlowUserGroups
-                        .Include(x=>x.Department)
-                        .Include(x => x.DocumentType)
-                        .ToListAsync();
+            var groups = await _context.WorkFlowUserGroups
+                .Include(x=>x.Department)
+                .Include(x=>x.DocumentType)
+                .ToListAsync();
             return View(groups);
         }
 
@@ -54,6 +53,8 @@ namespace EmployeesManagement.Controllers
         {
             ViewData["DocumentTypeId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(y => y.SystemCode.Code == "DocumentTypes"), "Id", "Description");
             ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name");
+
+
             return View();
         }
 
@@ -64,14 +65,27 @@ namespace EmployeesManagement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(WorkFlowUserGroup workFlowUserGroup)
         {
-                var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            try
+            {
+                 var userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 _context.Add(workFlowUserGroup);
-                await _context.SaveChangesAsync(Userid);
+                await _context.SaveChangesAsync(userid);
+                TempData["Message"] = "WorkFlowUserGroup create successfully";
+
                 return RedirectToAction(nameof(Index));
 
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "An error occured while creating WorkFlowUserGroup" + ex.Message;
+
+                return View(workFlowUserGroup);
+
+            }
+
             ViewData["DocumentTypeId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(y => y.SystemCode.Code == "DocumentTypes"), "Id", "Description", workFlowUserGroup.DocumentTypeId);
-            ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name",workFlowUserGroup.DepartmentId);
-            return View(workFlowUserGroup);
+                ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name", workFlowUserGroup.DepartmentId);
+           
         }
 
         // GET: WorkFlowUserGroups/Edit/5
@@ -87,27 +101,33 @@ namespace EmployeesManagement.Controllers
             {
                 return NotFound();
             }
+
+            ViewData["DocumentTypeId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(y => y.SystemCode.Code == "DocumentTypes"), "Id", "Description", workFlowUserGroup.DocumentTypeId);
+            ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name", workFlowUserGroup.DepartmentId);
             return View(workFlowUserGroup);
         }
-
         // POST: WorkFlowUserGroups/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Code,Description")] WorkFlowUserGroup workFlowUserGroup)
+        public async Task<IActionResult> Edit(int id, WorkFlowUserGroup workFlowUserGroup)
         {
             if (id != workFlowUserGroup.Id)
             {
                 return NotFound();
             }
+
+            ModelState.Remove("Department");
+            ModelState.Remove("DocumentType");
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    var userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
                     _context.Update(workFlowUserGroup);
-                    await _context.SaveChangesAsync(Userid);
+                    await _context.SaveChangesAsync(userid);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -120,6 +140,8 @@ namespace EmployeesManagement.Controllers
                         throw;
                     }
                 }
+                ViewData["DocumentTypeId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(y => y.SystemCode.Code == "DocumentTypes"), "Id", "Description", workFlowUserGroup.DocumentTypeId);
+                ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name", workFlowUserGroup.DepartmentId);
                 return RedirectToAction(nameof(Index));
             }
             return View(workFlowUserGroup);
@@ -153,8 +175,8 @@ namespace EmployeesManagement.Controllers
             {
                 _context.WorkFlowUserGroups.Remove(workFlowUserGroup);
             }
-
-            await _context.SaveChangesAsync();
+            var userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            await _context.SaveChangesAsync(userid);
             return RedirectToAction(nameof(Index));
         }
 
