@@ -69,6 +69,8 @@ namespace EmployeesManagement.Controllers
             {
                 _context.Add(approvalEntry);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Approval entry created successfully.";
+
                 return RedirectToAction(nameof(Index));
             }
             ViewData["ApproverId"] = new SelectList(_context.Users, "Id", "Id", approvalEntry.ApproverId);

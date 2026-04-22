@@ -65,6 +65,8 @@ namespace EmployeeManagement.Controllers
             }
             _context.Update(employee);
             await _context.SaveChangesAsync(UserId);
+            TempData["SuccessMessage"] = "Leave balance adjusted successfully.";
+
 
             return RedirectToAction(nameof(Index));
             

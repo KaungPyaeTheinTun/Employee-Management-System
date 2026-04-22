@@ -70,6 +70,8 @@ namespace EmployeesManagement.Controllers
             systemCodeDetail.CreatedById = UserId;
             _context.Add(systemCodeDetail);
             await _context.SaveChangesAsync(UserId);
+            TempData["SuccessMessage"] = "System code detail created successfully.";
+
             return RedirectToAction(nameof(Index));
 
             ViewData["SystemCodeId"] = new SelectList(_context.SystemCodes, "Id", "Description", systemCodeDetail.SystemCodeId);

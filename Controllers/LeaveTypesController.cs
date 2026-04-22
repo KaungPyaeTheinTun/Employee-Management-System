@@ -23,7 +23,11 @@ namespace EmployeeManagement.Controllers
         // GET: LeaveTypes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.LeaveTypes.ToListAsync());
+            var leaveTypes = await _context.LeaveTypes
+                .Include(l => l.CreatedBy)
+                .Include(l => l.ModifiedBy)
+                .ToListAsync();
+            return View(leaveTypes);
         }
 
         // GET: LeaveTypes/Details/5
@@ -64,6 +68,8 @@ namespace EmployeeManagement.Controllers
                 leaveType.CreatedOn = DateTime.Now;
                 _context.Add(leaveType);
                 await _context.SaveChangesAsync(UserId);
+            TempData["SuccessMessage"] = "Leave type created successfully.";
+
                 return RedirectToAction(nameof(Index));
             }
             return View(leaveType);

@@ -70,7 +70,7 @@ namespace EmployeesManagement.Controllers
                  var userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 _context.Add(workFlowUserGroup);
                 await _context.SaveChangesAsync(userid);
-                TempData["Message"] = "WorkFlowUserGroup create successfully";
+                TempData["SuccessMessage"] = "WorkFlowUserGroup created successfully";
 
                 return RedirectToAction(nameof(Index));
 

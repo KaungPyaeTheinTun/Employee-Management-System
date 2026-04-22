@@ -75,7 +75,7 @@ namespace EmployeesManagement.Controllers
 
             _context.Add(approvalsUserMatrix);
             await _context.SaveChangesAsync(userid);
-            TempData["Message"] = "Approval User Matrix created successfully";
+            TempData["SuccessMessage"] = "Approval User Matrix created successfully";
             return RedirectToAction(nameof(Index));
 
             ViewData["DocumentTypeId"] = new SelectList(_context.SystemCodeDetails.Include(x => x.SystemCode).Where(y => y.SystemCode.Code == "DocumentTypes"), "Id", "Description", approvalsUserMatrix.DocumentTypeId);

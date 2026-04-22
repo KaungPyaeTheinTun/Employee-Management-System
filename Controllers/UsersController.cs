@@ -57,7 +57,11 @@ namespace EmployeeManagement.Controllers
             user.RoleId = model.RoleId;
 
             var result = await _userManager.CreateAsync(user, model.Password);
-            if (result.Succeeded) return RedirectToAction("Index");
+            if (result.Succeeded) 
+            {
+                TempData["SuccessMessage"] = "User created successfully.";
+                return RedirectToAction("Index");
+            }
             return View(model);
             ViewData["RoleId"] = new SelectList(_context.Roles, "Id", "Name", model.RoleId); 
 

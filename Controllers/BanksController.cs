@@ -74,7 +74,7 @@ namespace EmployeesManagement.Controllers
                     bank.CreatedOn = DateTime.Now;
                     _context.Add(bank);
                     await _context.SaveChangesAsync(userid);
-                    TempData["Message"] = "Banks created successfully";
+                    TempData["SuccessMessage"] = "Banks created successfully";
                     return RedirectToAction(nameof(Index));
                 }
             }

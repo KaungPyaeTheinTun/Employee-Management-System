@@ -1,0 +1,46 @@
+@* /Views/Shared/_ToastNotification.cshtml or /Pages/Shared/_ToastNotification.cshtml *@
+
+@* Check if the specific TempData message exists *@
+@if (TempData["SuccessMessage"] != null)
+{
+    @* Convert the message object to a string for security *@
+    var message = TempData["SuccessMessage"].ToString();
+
+    <script type="text/javascript">
+        // Ensure the DOM and all libraries are loaded
+        document.addEventListener("DOMContentLoaded", function () {
+            
+            // CONFIGURE TOASTR: Setup all custom and layout-required options
+            toastr.options = {
+                // Time settings
+                "timeOut": "6000",       // How long the toast stays visible (6 seconds)
+                "extendedTimeOut": "2000", // How long it stays if hovered
+                
+                // Content settings
+                "closeButton": true,     // MUST be true to show our 'Got It!' button
+                "progressBar": false,    // Set to true if you want a progress bar
+                
+                // Placement settings
+                "positionClass": "toast-top-right", // Top-right position
+                "preventDuplicates": true,          // Don't show the same toast multiple times
+                
+                // HTML settings: define custom close button text
+                "closeHtml": '<button type="button">Got It!</button>', // The text on the button
+
+                // Animations
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            };
+
+            // Call toastr.success to show the success notification
+            // Parameter 1: The 'Description' message from TempData
+            // Parameter 2: A fixed Title like in your image
+            toastr.success('@Html.Raw(message)', 'Success Message.');
+
+        });
+    </script>
+}

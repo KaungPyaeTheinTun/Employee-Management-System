@@ -270,6 +270,8 @@ namespace EmployeeManagement.Controllers
 
                 // ✅ Save ONCE (important)
                 await _context.SaveChangesAsync(userId);
+            TempData["SuccessMessage"] = "Leave application submitted successfully.";
+
 
                 // 9. REDIRECT
                 return RedirectToAction(nameof(Index));

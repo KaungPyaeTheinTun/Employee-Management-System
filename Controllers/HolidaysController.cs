@@ -28,14 +28,18 @@ namespace EmployeeManagement.Controllers
                         .Include(x => x.CreatedBy)
                         .AsQueryable();
 
-            // 🔍 Search logic
             if (!string.IsNullOrWhiteSpace(vm.SearchTerm))
             {
                 var searchTerm = vm.SearchTerm.Trim();
 
+                DateTime searchDate;
+                bool isDate = DateTime.TryParse(searchTerm, out searchDate);
+
                 query = query.Where(x =>
                     (x.Title != null && x.Title.Contains(searchTerm)) ||
-                    (x.Description != null && x.Description.Contains(searchTerm))
+                    (x.Description != null && x.Description.Contains(searchTerm)) ||
+
+                    (isDate && x.StartDate.Date <= searchDate.Date && x.EndDate.Date >= searchDate.Date)
                 );
             }
 
@@ -126,24 +130,24 @@ namespace EmployeeManagement.Controllers
             holiday.ModifiedById = UserId;
             holiday.ModifiedOn = DateTime.Now;
 
-                try
+            try
+            {
+                _context.Update(holiday);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!HolidayExists(holiday.Id))
                 {
-                    _context.Update(holiday);
-                    await _context.SaveChangesAsync();
+                    return NotFound();
                 }
-                catch (DbUpdateConcurrencyException)
+                else
                 {
-                    if (!HolidayExists(holiday.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    throw;
                 }
-                return RedirectToAction(nameof(Index));
-    
+            }
+            return RedirectToAction(nameof(Index));
+
             return View(holiday);
         }
 

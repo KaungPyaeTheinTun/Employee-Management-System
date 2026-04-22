@@ -11,6 +11,7 @@ using System.Security.Claims;
 using EmployeeManagement.ViewModels;
 using Microsoft.CodeAnalysis.Elfie.Serialization;
 using AutoMapper;
+using System.Linq.Expressions;
 
 namespace EmployeeManagement.Controllers
 {
@@ -30,6 +31,21 @@ namespace EmployeeManagement.Controllers
         // GET: Employees
         public async Task<IActionResult> Index(EmployeeViewModel employees)
         {
+            Expression<Func<Employee, bool>> filter = e => true;
+            if (!string.IsNullOrWhiteSpace(employees.SearchTerm))
+            {
+                var searchTerm = employees.SearchTerm.Trim();
+
+                filter = e =>
+                    (e.EmpNo != null && e.EmpNo.Contains(searchTerm)) ||
+
+                    (e.FirstName != null && e.FirstName.Contains(searchTerm)) ||
+                    (e.MiddleName != null && e.MiddleName.Contains(searchTerm)) ||
+                    (e.LastName != null && e.LastName.Contains(searchTerm)) ||
+
+                    (e.PhoneNumber != null && e.PhoneNumber.Contains(searchTerm)) ||
+                    (e.EmailAddress != null && e.EmailAddress.Contains(searchTerm));
+            }
             var rawdata = _context.Employees
                 .Include(e => e.Department)
                 .Include(e => e.Designation)

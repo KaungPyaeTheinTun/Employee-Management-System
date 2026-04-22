@@ -43,7 +43,11 @@ namespace EmployeeManagement.Controllers
             Role.Name = model.RoleName;
 
             var result = await _roleManager.CreateAsync(Role);
-            if (result.Succeeded) return RedirectToAction("Index");
+            if (result.Succeeded) 
+            {
+                TempData["SuccessMessage"] = "Role created successfully.";
+                return RedirectToAction("Index");
+            }
             return View(model);
         }
 

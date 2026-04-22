@@ -72,6 +72,8 @@ namespace EmployeeManagement.Controllers
             {
                 _context.Add(department);
                 await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Department created successfully.";
+
                 return RedirectToAction(nameof(Index));
             }
             return View(department);

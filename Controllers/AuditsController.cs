@@ -63,6 +63,8 @@ namespace EmployeeManagement.Controllers
             {
                 _context.Add(audit);
                 await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Audit log created successfully.";
+
                 return RedirectToAction(nameof(Index));
             }
             return View(audit);

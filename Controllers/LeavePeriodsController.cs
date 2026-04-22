@@ -63,6 +63,7 @@ namespace EmployeeManagement.Controllers
 
             _context.Add(leavePeriod);
             await _context.SaveChangesAsync(UserId);
+            TempData["SuccessMessage"] = "Leave period created successfully.";
             return RedirectToAction(nameof(Index));
 
             return View(leavePeriod);

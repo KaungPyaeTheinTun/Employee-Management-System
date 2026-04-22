@@ -86,6 +86,8 @@ namespace EmployeesManagement.Controllers
             }
             _context.Add(companyInformation);
                 await _context.SaveChangesAsync(userid);
+            TempData["SuccessMessage"] = "Company information created successfully.";
+
                 return RedirectToAction(nameof(Index));
 
             ViewData["CityId"] = new SelectList(_context.Cities, "Id", "Name", companyInformation.CityId);

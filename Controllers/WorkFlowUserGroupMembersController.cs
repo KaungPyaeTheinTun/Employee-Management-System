@@ -72,6 +72,8 @@ namespace EmployeesManagement.Controllers
                 var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 _context.Add(workFlowUserGroupMenber);
                 await _context.SaveChangesAsync(Userid);
+                TempData["SuccessMessage"] = "WorkFlowUserGroupMember created successfully.";
+
                 return RedirectToAction(nameof(Index));
 
             ViewData["ApproverId"] = new SelectList(_context.Users, "Id", "FullName", workFlowUserGroupMenber.ApproverId);

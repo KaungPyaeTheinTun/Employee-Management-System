@@ -73,6 +73,8 @@ namespace EmployeeManagement.Controllers
             {
                 _context.Add(designation);
                 await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Designation created successfully.";
+
                 return RedirectToAction(nameof(Index));
             }
             return View(designation);

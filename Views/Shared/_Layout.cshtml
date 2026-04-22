@@ -12,6 +12,11 @@
     <!-- DataTables -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" />
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+    
+    <link rel="stylesheet" href="~/css/custom-toast.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/loader.css" asp-append-version="true" />
     <style>
         /* Mobile Sidebar Styles */
@@ -479,6 +484,96 @@
             text-decoration: none !important;
             outline: none;
             box-shadow: none;
+        }
+
+        /* Target the main container and remove default shadows */
+        #toast-container > .toast-success {
+            background-color: #ffffff; /* Very dark gray, near black */
+            color: #000000;
+            opacity: 1; /* Make it solid, no transparency */
+            border-radius: 40px; /* Highly rounded corners */
+            padding: 15px 25px 15px 60px; /* Extra left padding for the icon */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); /* Modern shadow */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            min-width: 500px;
+            max-width: 650px;
+            height:75px;
+            overflow: hidden; /* For rounded corners */
+        }
+
+        /* Redefining the checkmark container to look like the image */
+        #toast-container > .toast-success:before {
+            font-family: "Font Awesome 5 Free"; /* Required for FontAwesome */
+            font-weight: 900;
+            content: "\f00c"; /* FontAwesome checkmark Unicode */
+            
+            /* Position and Size */
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 32px;
+            
+            /* Colors and Background */
+            color: #000000; /* Checkmark is the dark background color */
+            background-color: #38ef7d; /* Bright green circle */
+            border-radius: 50%; /* Perfect circle */
+            
+            /* Center the checkmark inside the green circle */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            line-height: 1;
+        }
+
+        /* Style the title (e.g., "Holiday Deleted!") */
+        #toast-container > .toast-success .toast-title {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 2px;
+        }
+
+        /* Style the message (e.g., your description) */
+        #toast-container > .toast-success .toast-message {
+            font-size: 14px;
+            color: #000000; /* Light gray description text */
+            margin-right: 70px; /* Make room for the button */
+            display: block; /* Ensure it wraps correctly */
+        }
+
+        /* Create the 'Got It!' button */
+        #toast-container > .toast-success .toast-close-button {
+            background-color: black; /* Faint gray background */
+            border: 1px solid rgba(255, 255, 255, 0.15); /* Subtly visible border */
+            border-radius: 8px; /* Slightly rounded corners */
+            color: white;
+            padding: 6px 14px;
+            text-shadow: none;
+            
+            /* Position and Size */
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            
+            /* Formatting for the text */
+            font-size: 13px;
+            font-weight: 500;
+            line-height: 1;
+            cursor: pointer;
+            
+            /* Layout */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Button Hover State */
+        #toast-container > .toast-success .toast-close-button:hover {
+            background-color: navy;
+            color:white;
         }
     </style>
 </head>
@@ -1049,23 +1144,7 @@
                 });
             });
         });
-        document.addEventListener("DOMContentLoaded", function () {
-        var message = '@TempData["SuccessMessage"]';
-        if (message) {
-            const Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-            });
-
-            Toast.fire({
-                icon: 'success',
-                title: message
-            });
-        }
-    });
+        
     </script>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
@@ -1077,6 +1156,9 @@
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
     <script src="~/js/loader.js" asp-append-version="true"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    
+    <partial name="_ToastNotification" />
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

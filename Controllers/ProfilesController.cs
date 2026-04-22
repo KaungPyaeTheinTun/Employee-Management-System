@@ -46,6 +46,7 @@ namespace EmployeeManagement.Controllers
 
             _context.RoleProfiles.Add(role);
             await _context.SaveChangesAsync(UserId);
+            TempData["SuccessMessage"] = "Rights assigned successfully.";
             return RedirectToAction("Index");
         }
 

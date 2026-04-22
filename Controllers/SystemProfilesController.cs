@@ -65,6 +65,8 @@ namespace EmployeeManagement.Controllers
                 systemProfile.CreatedOn = DateTime.Now;
                 _context.Add(systemProfile);
                 await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "System profile created successfully.";
+
                 return RedirectToAction(nameof(Index));
             
             ViewData["ProfileId"] = new SelectList(_context.SystemProfiles, "Id", "Name", systemProfile.ProfileId);

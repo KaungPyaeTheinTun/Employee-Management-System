@@ -68,6 +68,8 @@ namespace EmployeeManagement.Controllers
                 country.CreatedOn = DateTime.UtcNow;
                 _context.Add(country);
                 await _context.SaveChangesAsync(UserId);
+            TempData["SuccessMessage"] = "Country created successfully.";
+
                 return RedirectToAction(nameof(Index));
             
             return View(country);
@@ -163,6 +165,8 @@ namespace EmployeeManagement.Controllers
             }
 
             await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Country deleted successfully.";
+
             return RedirectToAction(nameof(Index));
         }
 

@@ -76,6 +76,8 @@ namespace EmployeeManagement.Controllers
             systemCode.CreatedOn = DateTime.Now;
                 _context.Add(systemCode);
                 await _context.SaveChangesAsync(UserId);
+            TempData["SuccessMessage"] = "System code created successfully.";
+
                 return RedirectToAction(nameof(Index));
             
             return View(systemCode);

@@ -82,6 +82,8 @@ namespace EmployeesManagement.Controllers
           
                 _context.Add(leaveAdjustmentEntry);
                 await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Leave adjustment entry created successfully.";
+
                 return RedirectToAction(nameof(Index));
             
 
