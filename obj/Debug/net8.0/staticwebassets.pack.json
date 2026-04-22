@@ -9,6 +9,10 @@
       "PackagePath": "staticwebassets/css/dashboard.css"
     },
     {
+      "Id": "/app/wwwroot/css/loader.css",
+      "PackagePath": "staticwebassets/css/loader.css"
+    },
+    {
       "Id": "/app/wwwroot/css/site.css",
       "PackagePath": "staticwebassets/css/site.css"
     },
@@ -19,6 +23,10 @@
     {
       "Id": "/app/wwwroot/images/EMS.png",
       "PackagePath": "staticwebassets/images/EMS.png"
+    },
+    {
+      "Id": "/app/wwwroot/js/loader.js",
+      "PackagePath": "staticwebassets/js/loader.js"
     },
     {
       "Id": "/app/wwwroot/js/site.js",

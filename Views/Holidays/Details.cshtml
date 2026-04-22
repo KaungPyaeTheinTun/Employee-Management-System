@@ -28,7 +28,7 @@
     </div>
     <div style="display:flex;gap:10px;flex-wrap:wrap">
         <span class="status-badge" style="background:@statusBg;color:@statusColor;padding:8px 16px;font-size:13px;font-weight:600">@statusText</span>
-        <a asp-action="Edit" asp-route-id="@Model.Id" class="add-btn">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="add-btn" style="background-color: black;">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
                 <path d="M9.5 2.5l2 2-7 7H2.5v-2l7-7z" stroke="currentColor" stroke-width="1.3" fill="none"/>
             </svg>
@@ -91,7 +91,7 @@
                     <div class="info-icon">⊕</div>
                     <div>
                         <div class="info-label">CREATED BY</div>
-                        <div class="info-value">@(Model.CreatedById ?? "System")</div>
+                        <div class="info-value">@(Model.CreatedBy?.FullName)</div>
                         <div class="mono" style="font-size:11px;color:var(--ink4)">@Model.CreatedOn.ToString("dd MMM yyyy, HH:mm")</div>
                     </div>
                 </div>
@@ -99,7 +99,7 @@
                     <div class="info-icon">✎</div>
                     <div>
                         <div class="info-label">LAST MODIFIED</div>
-                        <div class="info-value">@(Model.ModifiedById ?? "Not modified")</div>
+                        <div class="info-value">@(Model.ModifiedBy?.FullName)</div>
                         @if (!string.IsNullOrEmpty(Model.ModifiedById))
                         {
                             <div class="mono" style="font-size:11px;color:var(--ink4)">@Model.ModifiedOn.ToString("dd MMM yyyy, HH:mm")</div>

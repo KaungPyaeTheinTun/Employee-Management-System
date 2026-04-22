@@ -91,7 +91,7 @@
         <dd class="mono">@Model.CreatedOn.ToString("dd MMM yyyy HH:mm")</dd>
 
         <dt>Created By</dt>
-        <dd>@(Model.CreatedById ?? "System")</dd>
+        <dd>@(Model.CreatedBy?.FullName)</dd>
 
         @if (!string.IsNullOrEmpty(Model.ModifiedById))
         {
@@ -99,7 +99,7 @@
             <dd class="mono">@Model.ModifiedOn.ToString("dd MMM yyyy HH:mm")</dd>
             
             <dt>Modified By</dt>
-            <dd>@(Model.ModifiedById)</dd>
+            <dd>@(Model.ModifiedBy?.FullName)</dd>
         }
     </dl>
 

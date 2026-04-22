@@ -1,14 +1,15 @@
+using EmployeeManagement.Data;
+using EmployeeManagement.Migrations;
+using EmployeesManagement.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using EmployeeManagement.Data;
-using EmployeesManagement.Models;
 
-namespace EmployeeManagement.Controllers
+namespace EmployeesManagement.Controllers
 {
     public class LeaveAdjustmentEntriesController : Controller
     {
@@ -49,26 +50,50 @@ namespace EmployeeManagement.Controllers
         // GET: LeaveAdjustmentEntries/Create
         public IActionResult Create()
         {
-            ViewData["AdjustmentTypeId"] = new SelectList(_context.SystemCodeDetails, "Id", "Description");
-            ViewData["EmployeeId"] = new SelectList(_context.Employees, "Id", "FullName");
+            var adjustmentTypes = _context.SystemCodeDetails
+                .Include(x => x.SystemCode)
+                .Where(x => x.SystemCode.Code == "LeaveAdjustment")
+                .ToList();
+
+            var employees = _context.Employees.ToList();
+            var leavePeriods = _context.LeavePeriods.ToList();
+
+            ViewData["AdjustmentTypeId"] = new SelectList(adjustmentTypes, "Id", "Description");
+            ViewData["LeavePeriodId"] = new SelectList(leavePeriods, "Id", "Name");
+            ViewData["EmployeeId"] = new SelectList(employees, "Id", "FullName");
+
             return View();
         }
 
         // POST: LeaveAdjustmentEntries/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,LeavePeriod,EmployeeId,NoOfDays,LeaveAdjustmentDate,LeaveStartDate,LeaveEndDate,AdjustmentDescription,AdjustmentTypeId")] LeaveAdjustmentEntry leaveAdjustmentEntry)
+        public async Task<IActionResult> Create(Models.LeaveAdjustmentEntry leaveAdjustmentEntry)
         {
-            if (ModelState.IsValid)
-            {
+            
+                // Debug: log errors
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                foreach (var error in errors)
+                {
+                    Console.WriteLine(error); // or use Debug.WriteLine
+                }
+            
+
+          
                 _context.Add(leaveAdjustmentEntry);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
-            }
-            ViewData["AdjustmentTypeId"] = new SelectList(_context.SystemCodeDetails, "Id", "Id", leaveAdjustmentEntry.AdjustmentTypeId);
-            ViewData["EmployeeId"] = new SelectList(_context.Employees, "Id", "Id", leaveAdjustmentEntry.EmployeeId);
+            
+
+            // Rebind dropdowns
+            var adjustmentTypes = _context.SystemCodeDetails
+                .Include(x => x.SystemCode)
+                .Where(x => x.SystemCode.Code == "LeaveAdjustment");
+
+            ViewData["AdjustmentTypeId"] = new SelectList(adjustmentTypes, "Id", "Description", leaveAdjustmentEntry.AdjustmentTypeId);
+            ViewData["EmployeeId"] = new SelectList(_context.Employees, "Id", "FullName", leaveAdjustmentEntry.EmployeeId);
+            ViewData["LeavePeriodId"] = new SelectList(_context.LeavePeriods, "Id", "Name", leaveAdjustmentEntry.LeavePeriodId);
+
             return View(leaveAdjustmentEntry);
         }
 
@@ -79,14 +104,13 @@ namespace EmployeeManagement.Controllers
             {
                 return NotFound();
             }
-
             var leaveAdjustmentEntry = await _context.LeaveAdjustmentEntries.FindAsync(id);
             if (leaveAdjustmentEntry == null)
             {
                 return NotFound();
             }
-            ViewData["AdjustmentTypeId"] = new SelectList(_context.SystemCodeDetails, "Id", "Id", leaveAdjustmentEntry.AdjustmentTypeId);
-            ViewData["EmployeeId"] = new SelectList(_context.Employees, "Id", "Id", leaveAdjustmentEntry.EmployeeId);
+            ViewData["AdjustmentTypeId"] = new SelectList(_context.SystemCodeDetails, "Id", "Description", leaveAdjustmentEntry.AdjustmentTypeId);
+            ViewData["EmployeeId"] = new SelectList(_context.Employees, "Id", "FullName", leaveAdjustmentEntry.EmployeeId);
             return View(leaveAdjustmentEntry);
         }
 
@@ -95,7 +119,7 @@ namespace EmployeeManagement.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,LeavePeriod,EmployeeId,NoOfDays,LeaveAdjustmentDate,LeaveStartDate,LeaveEndDate,AdjustmentDescription,AdjustmentTypeId")] LeaveAdjustmentEntry leaveAdjustmentEntry)
+        public async Task<IActionResult> Edit(int id, Models.LeaveAdjustmentEntry leaveAdjustmentEntry)
         {
             if (id != leaveAdjustmentEntry.Id)
             {
@@ -122,8 +146,8 @@ namespace EmployeeManagement.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AdjustmentTypeId"] = new SelectList(_context.SystemCodeDetails, "Id", "Id", leaveAdjustmentEntry.AdjustmentTypeId);
-            ViewData["EmployeeId"] = new SelectList(_context.Employees, "Id", "Id", leaveAdjustmentEntry.EmployeeId);
+            ViewData["AdjustmentTypeId"] = new SelectList(_context.SystemCodeDetails, "Id", "Description", leaveAdjustmentEntry.AdjustmentTypeId);
+            ViewData["EmployeeId"] = new SelectList(_context.Employees, "Id", "FullName", leaveAdjustmentEntry.EmployeeId);
             return View(leaveAdjustmentEntry);
         }
 

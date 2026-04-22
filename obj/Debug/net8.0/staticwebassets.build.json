@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "vrLEt35x5jF8Qsy023GyYt2F0DywjiaXb4Kk+qRs8vQ=",
+  "Hash": "+GDQUQq7xQjb8sMHDq9TLzdeAE7kYy9OOp/t9fIv/lk=",
   "Source": "EmployeeManagement",
   "BasePath": "_content/EmployeeManagement",
   "Mode": "Default",
@@ -74,6 +74,25 @@
       "OriginalItemSpec": "wwwroot/css/dashboard.css"
     },
     {
+      "Identity": "/app/wwwroot/css/loader.css",
+      "SourceId": "EmployeeManagement",
+      "SourceType": "Discovered",
+      "ContentRoot": "/app/wwwroot/",
+      "BasePath": "_content/EmployeeManagement",
+      "RelativePath": "css/loader.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/css/loader.css"
+    },
+    {
       "Identity": "/app/wwwroot/css/site.css",
       "SourceId": "EmployeeManagement",
       "SourceType": "Discovered",
@@ -129,6 +148,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot/images/EMS.png"
+    },
+    {
+      "Identity": "/app/wwwroot/js/loader.js",
+      "SourceId": "EmployeeManagement",
+      "SourceType": "Discovered",
+      "ContentRoot": "/app/wwwroot/",
+      "BasePath": "_content/EmployeeManagement",
+      "RelativePath": "js/loader.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/js/loader.js"
     },
     {
       "Identity": "/app/wwwroot/js/site.js",

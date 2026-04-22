@@ -175,6 +175,15 @@ namespace EmployeeManagement.Controllers
             ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "Name");
             ViewData["DesignationId"] = new SelectList(_context.Designations, "Id", "Name");
             ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name");
+            ViewData["BankId"] = new SelectList(_context.Banks, "Id", "Name");
+            ViewData["EmploymentTermsId"] = new SelectList(_context.SystemCodeDetails
+                                    .Include(x => x.SystemCode)
+                                    .Where(x => x.SystemCode.Code == "EmploymentTerms"), "Id", "Description");
+            ViewData["DisabilityId"] = new SelectList(_context.SystemCodeDetails
+                                    .Include(x => x.SystemCode)
+                                    .Where(x => x.SystemCode.Code == "DisabilityTypes"), "Id", "Description");
+            
+
             return View(employee);
         }
 
@@ -183,17 +192,36 @@ namespace EmployeeManagement.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,EmpNo,FirstName,MiddleName,LastName,PhoneNumber,EmailAddress,Country,DateOfBirth,Address,Department,Designation,CreatedById,CreatedOn,ModifiedById,ModifiedOn")] Employee employee)
+        public async Task<IActionResult> Edit(int id, Employee employee)
         {
             if (id != employee.Id)
             {
                 return NotFound();
             }
 
+            ModelState.Remove("Bank");
+            ModelState.Remove("Country");
+            ModelState.Remove("Department");
+            ModelState.Remove("Designation");
+            ModelState.Remove("ApplicationUser");
+            ModelState.Remove("Status");
+            ModelState.Remove("Gender");
+            ModelState.Remove("EmploymentTerms");
+            ModelState.Remove("Disability");
+            ModelState.Remove("CauseofInactivity");
+            ModelState.Remove("Reasonfortermination");
+            ModelState.Remove("CreatedBy");
+            ModelState.Remove("ModifiedBy");
+            ModelState.Remove("Employee");
+
+
             try
             {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                employee.ModifiedOn = DateTime.Now;
+                employee.ModifiedById = userId;
                 _context.Update(employee);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(userId);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -210,10 +238,18 @@ namespace EmployeeManagement.Controllers
 
             ViewData["GenderId"] = new SelectList(_context.SystemCodeDetails
                                     .Include(x => x.SystemCode)
-                                    .Where(x => x.SystemCode.Code == "Gender"), "Id", "Description");
-            ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "Name");
-            ViewData["DesignationId"] = new SelectList(_context.Designations, "Id", "Name");
-            ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name");
+                                    .Where(x => x.SystemCode.Code == "Gender"), "Id", "Description", employee.GenderId);
+            ViewData["CountryId"] = new SelectList(_context.Countries, "Id", "Name", employee.CountryId);
+            ViewData["DesignationId"] = new SelectList(_context.Designations, "Id", "Name", employee.DesignationId);
+            ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name", employee.DepartmentId);
+            ViewData["BankId"] = new SelectList(_context.Banks, "Id", "Name", employee.BankId);
+            ViewData["EmploymentTermsId"] = new SelectList(_context.SystemCodeDetails
+                                    .Include(x => x.SystemCode)
+                                    .Where(x => x.SystemCode.Code == "EmploymentTerms"), "Id", "Description", employee.EmploymentTermsId);
+            ViewData["DisabilityId"] = new SelectList(_context.SystemCodeDetails
+                                    .Include(x => x.SystemCode)
+                                    .Where(x => x.SystemCode.Code == "DisabilityTypes"), "Id", "Description", employee.DisabilityId);
+
             return View(employee);
         }
 

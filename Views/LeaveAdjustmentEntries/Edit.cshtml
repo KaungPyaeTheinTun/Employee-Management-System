@@ -1,68 +1,700 @@
 @model EmployeesManagement.Models.LeaveAdjustmentEntry
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Leave Adjustment";
+    var adjustmentType = Model.AdjustmentType?.Description ?? "Addition";
 }
 
-<h1>Edit</h1>
-
-<h4>LeaveAdjustmentEntry</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="LeavePeriod" class="control-label"></label>
-                <input asp-for="LeavePeriod" class="form-control" />
-                <span asp-validation-for="LeavePeriod" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="EmployeeId" class="control-label"></label>
-                <select asp-for="EmployeeId" class="form-control" asp-items="ViewBag.EmployeeId"></select>
-                <span asp-validation-for="EmployeeId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NoOfDays" class="control-label"></label>
-                <input asp-for="NoOfDays" class="form-control" />
-                <span asp-validation-for="NoOfDays" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="LeaveAdjustmentDate" class="control-label"></label>
-                <input asp-for="LeaveAdjustmentDate" class="form-control" />
-                <span asp-validation-for="LeaveAdjustmentDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="LeaveStartDate" class="control-label"></label>
-                <input asp-for="LeaveStartDate" class="form-control" />
-                <span asp-validation-for="LeaveStartDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="LeaveEndDate" class="control-label"></label>
-                <input asp-for="LeaveEndDate" class="form-control" />
-                <span asp-validation-for="LeaveEndDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="AdjustmentDescription" class="control-label"></label>
-                <input asp-for="AdjustmentDescription" class="form-control" />
-                <span asp-validation-for="AdjustmentDescription" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="AdjustmentTypeId" class="control-label"></label>
-                <select asp-for="AdjustmentTypeId" class="form-control" asp-items="ViewBag.AdjustmentTypeId"></select>
-                <span asp-validation-for="AdjustmentTypeId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+<div class="page-header">
+    <div>
+        <h1 class="page-header-title">Edit Leave Adjustment</h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Dashboard</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index">Leave Adjustments</a></li>
+            <li class="breadcrumb-item active">Edit @(Model.Employee?.FullName ?? "Adjustment")</li>
+        </ol>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <a asp-action="Details" asp-route-id="@Model.Id" class="btn-ghost">View Details</a>
+        <a asp-action="Index" class="btn-ghost">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin-right:6px">
+                <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            Back to List
+        </a>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+<form asp-action="Edit" id="editForm">
+    <div asp-validation-summary="ModelOnly" class="field-error" style="padding:12px 16px;background:var(--red-bg);border-radius:9px;border:1px solid rgba(192,57,43,0.2);margin-bottom:20px;"></div>
+
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="CreatedById" />
+    <input type="hidden" asp-for="CreatedOn" />
+
+    <!-- Leave Adjustment Information -->
+    <div class="form-card" style="margin-bottom:16px">
+        <div class="form-card-header">
+            <span class="section-badge blue">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <rect x="2" y="3" width="8" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                    <path d="M4 2v2M8 2v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+                Leave Adjustment Information
+            </span>
+            <span class="mono" style="margin-left:auto;font-size:11px;color:var(--ink4)">ID: @Model.Id</span>
+        </div>
+        <div class="form-card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="LeavePeriodId" class="field-label">Leave Period <span class="field-required">*</span></label>
+                    <select asp-for="LeavePeriodId" class="field-control" asp-items="ViewBag.LeavePeriodId">
+                        <option value="">— Select Leave Period —</option>
+                    </select>
+                    <span asp-validation-for="LeavePeriodId" class="field-error"></span>
+                    <span class="field-hint">Select the leave period for this adjustment</span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="EmployeeId" class="field-label">Employee <span class="field-required">*</span></label>
+                    <select asp-for="EmployeeId" class="field-control" asp-items="ViewBag.EmployeeId">
+                        <option value="">— Select Employee —</option>
+                    </select>
+                    <span asp-validation-for="EmployeeId" class="field-error"></span>
+                    <span class="field-hint">Select the employee whose leave balance will be adjusted</span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="AdjustmentTypeId" class="field-label">Adjustment Type <span class="field-required">*</span></label>
+                    <select asp-for="AdjustmentTypeId" class="field-control" asp-items="ViewBag.AdjustmentTypeId">
+                        <option value="">— Select Adjustment Type —</option>
+                    </select>
+                    <span asp-validation-for="AdjustmentTypeId" class="field-error"></span>
+                    <span class="field-hint">Select whether to add or deduct leave days</span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="NoOfDays" class="field-label">Number of Days <span class="field-required">*</span></label>
+                    <input asp-for="NoOfDays" class="field-control" type="number" step="0.5" placeholder="e.g. 1, 2.5, 5" />
+                    <span asp-validation-for="NoOfDays" class="field-error"></span>
+                    <span class="field-hint">Enter the number of days to adjust (positive number only)</span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="LeaveAdjustmentDate" class="field-label">Adjustment Date <span class="field-required">*</span></label>
+                    <input asp-for="LeaveAdjustmentDate" class="field-control" type="date" />
+                    <span asp-validation-for="LeaveAdjustmentDate" class="field-error"></span>
+                    <span class="field-hint">Date when this adjustment takes effect</span>
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="LeaveStartDate" class="field-label">Leave Start Date</label>
+                    <input asp-for="LeaveStartDate" class="field-control" type="date" />
+                    <span asp-validation-for="LeaveStartDate" class="field-error"></span>
+                    <span class="field-hint">Optional: Start date of the leave period</span>
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="LeaveEndDate" class="field-label">Leave End Date</label>
+                    <input asp-for="LeaveEndDate" class="field-control" type="date" />
+                    <span asp-validation-for="LeaveEndDate" class="field-error"></span>
+                    <span class="field-hint">Optional: End date of the leave period</span>
+                </div>
+                <div class="col-md-12">
+                    <label asp-for="AdjustmentDescription" class="field-label">Description <span class="field-required">*</span></label>
+                    <textarea asp-for="AdjustmentDescription" class="field-control" placeholder="Enter reason for leave adjustment (e.g., Prior year carryover, Correction, Bonus days)" rows="3"></textarea>
+                    <span asp-validation-for="AdjustmentDescription" class="field-error"></span>
+                    <span class="field-hint">Provide a clear explanation for this adjustment</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Preview Card -->
+    <div class="form-card" style="margin-bottom:16px;background:var(--bg2);" id="previewCard">
+        <div class="form-card-header">
+            <span class="section-badge neutral">Adjustment Preview</span>
+        </div>
+        <div class="form-card-body">
+            <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <div id="previewAvatar" class="emp-avatar" style="width:48px;height:48px;background:#e8eefa;color:#1a4fa0;font-size:18px">@(Model.Employee?.FullName?.Substring(0, 1).ToUpper() ?? "E")</div>
+                    <div>
+                        <div style="font-size:11px;color:var(--ink3);margin-bottom:2px;">EMPLOYEE</div>
+                        <div id="previewEmployee" style="font-size:13px;color:var(--ink1);font-weight:500;">@(Model.Employee?.FullName ?? "Not selected")</div>
+                    </div>
+                </div>
+                <div style="flex:1">
+                    <div style="font-size:11px;color:var(--ink3);margin-bottom:2px;">ADJUSTMENT TYPE</div>
+                    <div id="previewType" class="dept-badge" style="background:#fef3e0;color:#a05c00;display:inline-block">@adjustmentType</div>
+                </div>
+                <div>
+                    <div style="font-size:11px;color:var(--ink3);margin-bottom:2px;">DAYS</div>
+                    <div id="previewDays" class="sequence-badge" style="display:inline-block">@Model.NoOfDays day@(Model.NoOfDays != 1 ? "s" : "")</div>
+                </div>
+            </div>
+            <div style="margin-top:16px;padding:12px;background:var(--card-bg);border-radius:8px;">
+                <div style="font-size:11px;color:var(--ink3);margin-bottom:4px;">DESCRIPTION</div>
+                <div id="previewDescription" style="font-size:13px;color:var(--ink1);">@(string.IsNullOrEmpty(Model.AdjustmentDescription) ? "No description provided" : Model.AdjustmentDescription)</div>
+            </div>
+            <div class="field-hint" style="margin-top:12px;padding:8px 12px;background:var(--warning-bg);border-radius:6px;color:#a05c00">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="display:inline;margin-right:4px;vertical-align:-2px">
+                    <circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                    <path d="M7 4v4M7 10h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                <span>This adjustment will update the employee's leave balance immediately after submission.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audit Trail -->
+    <div class="form-card" style="margin-bottom:16px">
+        <div class="form-card-header">
+            <span class="section-badge neutral">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <circle cx="6" cy="6" r="4" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                    <path d="M6 3v3l2 1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+                Audit Trail
+            </span>
+        </div>
+        <div class="form-card-body">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label asp-for="CreatedById" class="field-label">Created By</label>
+                    <input asp-for="CreatedById" class="field-control" value="@(Model.CreatedById ?? "System")" readonly disabled />
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="CreatedOn" class="field-label">Created On</label>
+                    <input asp-for="CreatedOn" class="field-control" readonly disabled value="@Model.CreatedOn.ToString("yyyy-MM-dd HH:mm")" />
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="ModifiedById" class="field-label">Modified By</label>
+                    <input asp-for="ModifiedById" class="field-control" value="@(Model.ModifiedById ?? "—")" readonly disabled />
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="ModifiedOn" class="field-label">Modified On</label>
+                    <input asp-for="ModifiedOn" class="field-control" value="@(Model.ModifiedOn.ToString("yyyy-MM-dd HH:mm") ?? "—")" readonly disabled />
+                </div>
+            </div>
+            <div class="field-hint" style="margin-top:12px;padding:8px 12px;background:var(--bg2);border-radius:6px">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="display:inline;margin-right:4px;vertical-align:-2px">
+                    <circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                    <path d="M7 4v4M7 10h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                <span>System fields are automatically tracked and cannot be modified</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="form-actions" style="border-top:none;padding-top:0">
+        <a asp-action="Index" class="btn-ghost">Cancel</a>
+        <button type="submit" class="btn-primary" style="background-color: black;">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin-right:6px;vertical-align:-2px">
+                <path d="M2 7l3.5 3.5L12 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Update Adjustment
+        </button>
+    </div>
+</form>
+
+<style>
+    /* Form field styles */
+    .field-label {
+        display: block;
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--ink2);
+        margin-bottom: 6px;
+    }
+
+    .field-required {
+        color: #c0392b;
+        font-size: 12px;
+    }
+
+    .field-control {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-size: 13px;
+        color: var(--ink1);
+        background: var(--card-bg);
+        transition: all 0.15s;
+    }
+
+    .field-control:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(26, 79, 160, 0.1);
+    }
+
+    /* Select field specific styles */
+    select.field-control {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 12 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2 4L6 8L10 4' stroke='%23666' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        padding-right: 32px;
+        cursor: pointer;
+    }
+
+    select.field-control:hover {
+        border-color: var(--primary);
+    }
+
+    select.field-control option {
+        padding: 8px;
+        font-size: 13px;
+    }
+
+    textarea.field-control {
+        resize: vertical;
+        min-height: 80px;
+    }
+
+    input[type="number"].field-control {
+        -moz-appearance: textfield;
+    }
+
+    input[type="number"].field-control::-webkit-inner-spin-button,
+    input[type="number"].field-control::-webkit-outer-spin-button {
+        opacity: 0.5;
+    }
+
+    input[type="date"].field-control {
+        appearance: none;
+        -webkit-appearance: none;
+    }
+
+    input[type="date"].field-control::-webkit-calendar-picker-indicator {
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 4px;
+    }
+
+    input[type="date"].field-control::-webkit-calendar-picker-indicator:hover {
+        background: var(--bg2);
+    }
+
+    .field-error {
+        font-size: 11px;
+        color: #c0392b;
+        margin-top: 4px;
+        display: block;
+    }
+
+    .field-hint {
+        display: block;
+        font-size: 11px;
+        color: var(--ink3);
+        margin-top: 4px;
+    }
+
+    input[readonly], 
+    input[disabled] {
+        background-color: var(--bg2);
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
+
+    /* Form card styles */
+    .form-card {
+        background: var(--card-bg);
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        overflow: hidden;
+    }
+
+    .form-card-header {
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+        background: var(--bg2);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .form-card-body {
+        padding: 20px;
+    }
+
+    .section-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .section-badge.blue {
+        background: #e8eefa;
+        color: #1a4fa0;
+    }
+
+    .section-badge.green {
+        background: #e8f5ee;
+        color: #1a7a4a;
+    }
+
+    .section-badge.neutral {
+        background: var(--bg2);
+        color: var(--ink2);
+    }
+
+    /* Badge styles */
+    .dept-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    .sequence-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        white-space: nowrap;
+        background: var(--bg2);
+        color: var(--ink2);
+        border: 1px solid var(--border);
+    }
+
+    .emp-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 12px;
+        flex-shrink: 0;
+    }
+
+    .mono {
+        font-family: monospace;
+        font-size: 11px;
+        color: var(--ink3);
+    }
+
+    /* Button styles */
+    .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        padding: 10px 20px;
+        background: var(--primary);
+        color: white;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        border: none;
+        cursor: pointer;
+        transition: all 0.15s;
+        text-decoration: none;
+    }
+
+    .btn-primary:hover {
+        background: #134080;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(26, 79, 160, 0.2);
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-ghost {
+        display: inline-flex;
+        align-items: center;
+        padding: 10px 20px;
+        background: var(--bg2);
+        color: var(--ink2);
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        text-decoration: none;
+        border: 1px solid var(--border);
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+
+    .btn-ghost:hover {
+        background: var(--border);
+        color: var(--ink1);
+        text-decoration: none;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+        padding: 20px 0;
+        border-top: 1px solid var(--border);
+        margin-top: 20px;
+    }
+
+    /* Page Header */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 24px;
+        gap: 16px;
+    }
+
+    .page-header-title {
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--ink1);
+        margin: 0 0 8px 0;
+    }
+
+    .breadcrumb {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        gap: 8px;
+        font-size: 13px;
+    }
+
+    .breadcrumb-item {
+        color: var(--ink3);
+    }
+
+    .breadcrumb-item a {
+        color: var(--primary);
+        text-decoration: none;
+    }
+
+    .breadcrumb-item a:hover {
+        text-decoration: underline;
+    }
+
+    .breadcrumb-item.active {
+        color: var(--ink2);
+        font-weight: 500;
+    }
+
+    .breadcrumb-item + .breadcrumb-item::before {
+        content: "/";
+        margin-right: 8px;
+        color: var(--ink4);
+    }
+
+    /* Grid system */
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin: -8px;
+    }
+
+    .g-3 {
+        margin: -8px;
+    }
+
+    .g-3 > [class*="col-"] {
+        padding: 8px;
+    }
+
+    .col-md-3 {
+        flex: 0 0 25%;
+        max-width: 25%;
+    }
+
+    .col-md-6 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+
+    .col-md-12 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    /* CSS Variables */
+    :root {
+        --ink1: #1a1a1a;
+        --ink2: #4a4a4a;
+        --ink3: #8a8a8a;
+        --ink4: #c0c0c0;
+        --border: #e5e5e5;
+        --bg2: #f8f8f8;
+        --card-bg: #ffffff;
+        --primary: #1a4fa0;
+        --red-bg: rgba(192, 57, 43, 0.1);
+        --warning-bg: #fff0d9;
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .col-md-3,
+        .col-md-6,
+        .col-md-12 {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+        
+        .form-actions {
+            flex-direction: column-reverse;
+        }
+        
+        .btn-primary,
+        .btn-ghost {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .form-card-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .mono {
+            margin-left: 0 !important;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get form elements
+        const employeeSelect = document.getElementById('EmployeeId');
+        const adjustmentTypeSelect = document.getElementById('AdjustmentTypeId');
+        const daysInput = document.getElementById('NoOfDays');
+        const descriptionInput = document.getElementById('AdjustmentDescription');
+        
+        // Preview elements
+        const previewAvatar = document.getElementById('previewAvatar');
+        const previewEmployee = document.getElementById('previewEmployee');
+        const previewType = document.getElementById('previewType');
+        const previewDays = document.getElementById('previewDays');
+        const previewDescription = document.getElementById('previewDescription');
+
+        // Avatar colors
+        const avatarColors = [
+            { bg: "#e8eefa", text: "#1a4fa0" },
+            { bg: "#e8f5ee", text: "#1a7a4a" },
+            { bg: "#fef3e0", text: "#a05c00" },
+            { bg: "#fdecea", text: "#c0392b" },
+            { bg: "#f2f2ef", text: "#3a3a38" },
+            { bg: "#f0eeff", text: "#4a35c0" }
+        ];
+
+        // Adjustment type colors
+        const adjustmentColors = {
+            'Addition': { bg: "#e8f5ee", text: "#1a7a4a" },
+            'Deduction': { bg: "#fdecea", text: "#c0392b" }
+        };
+
+        // Get select option text
+        function getSelectedText(select) {
+            const selectedOption = select?.options[select.selectedIndex];
+            return selectedOption ? selectedOption.text : 'Not selected';
+        }
+
+        function getSelectedValue(select) {
+            return select?.value || '';
+        }
+
+        function updatePreview() {
+            // Update Employee preview
+            const employeeName = getSelectedText(employeeSelect);
+            const employeeId = getSelectedValue(employeeSelect);
+            let colorIndex = employeeId.length % avatarColors.length;
+            let colors = avatarColors[colorIndex];
+            
+            if (previewEmployee) {
+                previewEmployee.textContent = employeeName || 'Not selected';
+            }
+            
+            if (previewAvatar) {
+                let avatarLetter = employeeName && employeeName !== 'Not selected' ? employeeName.substring(0, 1).toUpperCase() : 'E';
+                previewAvatar.textContent = avatarLetter;
+                previewAvatar.style.backgroundColor = colors.bg;
+                previewAvatar.style.color = colors.text;
+            }
+            
+            // Update Adjustment Type preview
+            const adjustmentType = getSelectedText(adjustmentTypeSelect);
+            if (previewType) {
+                previewType.textContent = adjustmentType || 'Not selected';
+                if (adjustmentType === 'Addition') {
+                    previewType.style.backgroundColor = adjustmentColors.Addition.bg;
+                    previewType.style.color = adjustmentColors.Addition.text;
+                } else if (adjustmentType === 'Deduction') {
+                    previewType.style.backgroundColor = adjustmentColors.Deduction.bg;
+                    previewType.style.color = adjustmentColors.Deduction.text;
+                } else {
+                    previewType.style.backgroundColor = "#fef3e0";
+                    previewType.style.color = "#a05c00";
+                }
+            }
+            
+            // Update Days preview
+            const days = daysInput?.value || '0';
+            if (previewDays) {
+                previewDays.textContent = `${days} day${days != 1 ? 's' : ''}`;
+            }
+            
+            // Update Description preview
+            const description = descriptionInput?.value.trim() || '';
+            if (previewDescription) {
+                previewDescription.textContent = description || 'No description provided';
+            }
+        }
+
+        // Add event listeners
+        if (employeeSelect) employeeSelect.addEventListener('change', updatePreview);
+        if (adjustmentTypeSelect) adjustmentTypeSelect.addEventListener('change', updatePreview);
+        if (daysInput) daysInput.addEventListener('input', updatePreview);
+        if (descriptionInput) descriptionInput.addEventListener('input', updatePreview);
+        
+        // Validate days input is positive
+        if (daysInput) {
+            daysInput.addEventListener('change', function() {
+                let value = parseFloat(this.value);
+                if (value < 0) {
+                    this.value = 0;
+                    updatePreview();
+                }
+            });
+        }
+        
+        // Track unsaved changes
+        const form = document.getElementById('editForm');
+        const cancelBtn = document.querySelector('.btn-ghost[asp-action="Index"]');
+        let formChanged = false;
+        
+        if (form) {
+            form.addEventListener('input', function() {
+                formChanged = true;
+            });
+        }
+        
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', function(e) {
+                if (formChanged) {
+                    if (!confirm('You have unsaved changes. Are you sure you want to leave?')) {
+                        e.preventDefault();
+                    }
+                }
+            });
+        }
+        
+        // Initialize preview
+        updatePreview();
+    });
+</script>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

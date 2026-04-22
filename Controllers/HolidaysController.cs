@@ -54,6 +54,8 @@ namespace EmployeeManagement.Controllers
             }
 
             var holiday = await _context.Holidays
+                .Include(x => x.CreatedBy)
+                .Include(x => x.ModifiedBy)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (holiday == null)
             {
@@ -95,7 +97,10 @@ namespace EmployeeManagement.Controllers
                 return NotFound();
             }
 
-            var holiday = await _context.Holidays.FindAsync(id);
+            var holiday = await _context.Holidays
+                        .Include(x => x.CreatedBy)
+                        .Include(x => x.ModifiedBy)
+                        .FirstOrDefaultAsync(x => x.Id == id);
             if (holiday == null)
             {
                 return NotFound();
@@ -149,6 +154,8 @@ namespace EmployeeManagement.Controllers
             }
 
             var holiday = await _context.Holidays
+                .Include(h => h.CreatedBy)
+                .Include(h => h.ModifiedBy)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (holiday == null)
             {
