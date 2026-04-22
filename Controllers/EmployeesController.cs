@@ -138,6 +138,7 @@ namespace EmployeeManagement.Controllers
 
             _context.Add(employee);
             await _context.SaveChangesAsync(UserId);
+            TempData["SuccessMessage"] = "Employee created successfully.";
             return RedirectToAction(nameof(Index));
 
             ViewData["BankId"] = new SelectList(_context.Banks, "Id", "Name", employee.BankId);

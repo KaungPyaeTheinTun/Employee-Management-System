@@ -1,78 +1,744 @@
 @model EmployeesManagement.Models.LeavePeriod
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Leave Period Details";
+    var today = DateTime.Today;
+    var status = "";
+    var statusClass = "";
+    var statusBg = "";
+    var statusColor = "";
+    
+    if (Model.StartDate <= today && Model.EndDate >= today)
+    {
+        status = "Active";
+        statusClass = "active";
+        statusBg = "#e8f5ee";
+        statusColor = "#1a7a4a";
+    }
+    else if (Model.StartDate > today)
+    {
+        status = "Upcoming";
+        statusClass = "upcoming";
+        statusBg = "#fef3e0";
+        statusColor = "#a05c00";
+    }
+    else
+    {
+        status = "Expired";
+        statusClass = "expired";
+        statusBg = "#f2f2ef";
+        statusColor = "#3a3a38";
+    }
+    
+    var duration = (Model.EndDate - Model.StartDate).Days + 1;
+    var bgColor = "#e8eefa";
+    var textColor = "#1a4fa0";
 }
 
-<h1>Details</h1>
+<div class="page-header">
+    <div>
+        <h1 class="page-header-title">Leave Period Details</h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Dashboard</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index">Leave Periods</a></li>
+            <li class="breadcrumb-item active">@Model.Name</li>
+        </ol>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="add-btn">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path d="M9.5 2.5l2 2-7 7H2.5v-2l7-7z" stroke="currentColor" stroke-width="1.3" fill="none"/>
+            </svg>
+            Edit Period
+        </a>
+        <a asp-action="Index" class="btn-ghost">Back to List</a>
+    </div>
+</div>
 
-<div>
-    <h4>LeavePeriod</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StartDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StartDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.EndDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.EndDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Closed)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Closed)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Locked)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Locked)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedById)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreatedById)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedOn)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreatedOn)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ModifiedById)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ModifiedById)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ModifiedOn)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ModifiedOn)
-        </dd>
-    </dl>
+<div class="detail-grid">
+    <!-- Left: Profile card -->
+    <div>
+        <div class="profile-card">
+            <div class="profile-card-top">
+                <div class="profile-avatar-lg" style="background:@bgColor;color:@textColor;font-size:32px;">@(Model.Name?.Substring(0, 1).ToUpper() ?? "P")</div>
+                <div class="profile-name">@Model.Name</div>
+                <div class="profile-role">
+                    <span class="status-badge @statusClass" style="background:@statusBg;color:@statusColor">@status</span>
+                </div>
+            </div>
+            <div class="profile-card-body">
+                <div class="info-row">
+                    <div class="info-icon">📋</div>
+                    <div>
+                        <div class="info-label">PERIOD NAME</div>
+                        <div class="info-value">@Model.Name</div>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-icon">📝</div>
+                    <div>
+                        <div class="info-label">DESCRIPTION</div>
+                        <div class="info-value">@(string.IsNullOrEmpty(Model.Description) ? "—" : Model.Description)</div>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-icon">📅</div>
+                    <div>
+                        <div class="info-label">START DATE</div>
+                        <div class="info-value">@Model.StartDate.ToString("dd MMMM yyyy")</div>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-icon">📅</div>
+                    <div>
+                        <div class="info-label">END DATE</div>
+                        <div class="info-value">@Model.EndDate.ToString("dd MMMM yyyy")</div>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-icon">⏱️</div>
+                    <div>
+                        <div class="info-label">DURATION</div>
+                        <div class="info-value">@duration day@(duration > 1 ? "s" : "")</div>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-icon">⚙️</div>
+                    <div>
+                        <div class="info-label">SETTINGS</div>
+                        <div class="info-value">
+                            @if (Model.Closed && Model.Locked)
+                            {
+                                <span>🔒 Closed · 🔐 Locked</span>
+                            }
+                            else if (Model.Closed)
+                            {
+                                <span>🔒 Closed</span>
+                            }
+                            else if (Model.Locked)
+                            {
+                                <span>🔐 Locked</span>
+                            }
+                            else
+                            {
+                                <span style="color:var(--ink4)">No restrictions</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Audit card -->
+        <div class="profile-card" style="margin-top:16px">
+            <div class="detail-section-header" style="border-radius:var(--r-lg) var(--r-lg) 0 0">
+                Audit Information
+            </div>
+            <div class="profile-card-body">
+                <div class="info-row">
+                    <div class="info-icon">⊕</div>
+                    <div>
+                        <div class="info-label">CREATED BY</div>
+                        <div class="info-value">@(Model.CreatedById ?? "System")</div>
+                        <div class="mono" style="font-size:11px;color:var(--ink4)">@Model.CreatedOn.ToString("dd MMM yyyy, HH:mm")</div>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-icon">✎</div>
+                    <div>
+                        <div class="info-label">LAST MODIFIED</div>
+                        <div class="info-value">@(Model.ModifiedById ?? "Not modified")</div>
+                        @if (!string.IsNullOrEmpty(Model.ModifiedById))
+                        {
+                            <div class="mono" style="font-size:11px;color:var(--ink4)">@Model.ModifiedOn.ToString("dd MMM yyyy, HH:mm")</div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right: Detail sections -->
+    <div class="detail-sections">
+        <!-- Period Information -->
+        <div class="detail-section">
+            <div class="detail-section-header">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="opacity:.6">
+                    <rect x="2" y="3" width="10" height="8" rx="1.5" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                    <path d="M5 2v2M9 2v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+                Period Information
+            </div>
+            <div class="detail-section-body">
+                <div class="detail-grid-2">
+                    <div>
+                        <div class="detail-field-label">PERIOD NAME</div>
+                        <div class="detail-field-value">@Model.Name</div>
+                    </div>
+                    <div>
+                        <div class="detail-field-label">DESCRIPTION</div>
+                        <div class="detail-field-value">@(string.IsNullOrEmpty(Model.Description) ? "—" : Model.Description)</div>
+                    </div>
+                    <div>
+                        <div class="detail-field-label">START DATE</div>
+                        <div class="detail-field-value">@Model.StartDate.ToString("dd MMMM yyyy")</div>
+                    </div>
+                    <div>
+                        <div class="detail-field-label">END DATE</div>
+                        <div class="detail-field-value">@Model.EndDate.ToString("dd MMMM yyyy")</div>
+                    </div>
+                    <div>
+                        <div class="detail-field-label">DURATION</div>
+                        <div class="detail-field-value">@duration day@(duration > 1 ? "s" : "")</div>
+                    </div>
+                    <div>
+                        <div class="detail-field-label">STATUS</div>
+                        <div class="detail-field-value">
+                            <span class="status-badge @statusClass" style="background:@statusBg;color:@statusColor">@status</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Section -->
+        <div class="detail-section">
+            <div class="detail-section-header">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="opacity:.6">
+                    <rect x="2" y="4" width="2" height="8" fill="currentColor"/>
+                    <rect x="6" y="2" width="2" height="10" fill="currentColor"/>
+                    <rect x="10" y="3" width="2" height="9" fill="currentColor"/>
+                </svg>
+                Period Statistics
+            </div>
+            <div class="detail-section-body">
+                <div class="detail-grid-3">
+                    <div class="stat-card">
+                        <div class="stat-label">TOTAL LEAVE TYPES</div>
+                        <div class="stat-value">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">LEAVE APPLICATIONS</div>
+                        <div class="stat-value">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">EMPLOYEES WITH BALANCE</div>
+                        <div class="stat-value">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Period Timeline -->
+        <div class="detail-section">
+            <div class="detail-section-header">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="opacity:.6">
+                    <circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                    <path d="M7 4v3l2 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+                Period Timeline
+            </div>
+            <div class="detail-section-body">
+                <div class="timeline-container">
+                    <div class="timeline-bar">
+                        <div class="timeline-progress" style="width: @(Math.Min(100, (today - Model.StartDate).Days * 100 / Math.Max(1, duration)))%"></div>
+                    </div>
+                    <div class="timeline-labels">
+                        <div class="timeline-start">
+                            <div class="timeline-label">Start</div>
+                            <div class="timeline-date">@Model.StartDate.ToString("dd MMM yyyy")</div>
+                        </div>
+                        <div class="timeline-end">
+                            <div class="timeline-label">End</div>
+                            <div class="timeline-date">@Model.EndDate.ToString("dd MMM yyyy")</div>
+                        </div>
+                    </div>
+                    <div class="timeline-days">
+                        <span>Total: @duration days</span>
+                        @if (today >= Model.StartDate && today <= Model.EndDate)
+                        {
+                            var elapsed = (today - Model.StartDate).Days + 1;
+                            var remaining = duration - elapsed;
+                            <span>Elapsed: @elapsed days · Remaining: @remaining days</span>
+                        }
+                        else if (today < Model.StartDate)
+                        {
+                            <span>Starts in @((Model.StartDate - today).Days) days</span>
+                        }
+                        else
+                        {
+                            <span>Ended @((today - Model.EndDate).Days) days ago</span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Related Actions -->
+        <div class="detail-section">
+            <div class="detail-section-header">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="opacity:.6">
+                    <path d="M2 4h10v8H2V4z" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                    <path d="M4 2v2M10 2v2M2 7h10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+                Related Actions
+            </div>
+            <div class="detail-section-body">
+                <div class="action-buttons">
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="action-link">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M11 2l3 3-8 8H3v-3l8-8z" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                        </svg>
+                        Edit Period
+                    </a>
+                    <a asp-action="Delete" asp-route-id="@Model.Id" class="action-link delete">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M3 4h10M5 4V3a1.5 1.5 0 0 1 3 0v1M11 4l-.7 8H5.7L5 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+                        </svg>
+                        Delete Period
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+
+<style>
+    /* Detail Grid Layout */
+    .detail-grid {
+        display: grid;
+        grid-template-columns: 340px 1fr;
+        gap: 20px;
+    }
+
+    /* Profile Card Styles */
+    .profile-card {
+        background: var(--card-bg);
+        border-radius: 16px;
+        border: 1px solid var(--border);
+        overflow: hidden;
+        position: sticky;
+        top: 20px;
+    }
+
+    .profile-card-top {
+        text-align: center;
+        padding: 24px 20px 16px;
+        background: linear-gradient(135deg, var(--bg2) 0%, var(--card-bg) 100%);
+        border-bottom: 1px solid var(--border);
+    }
+
+    .profile-avatar-lg {
+        width: 100px;
+        height: 100px;
+        margin: 0 auto 16px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 48px;
+        font-weight: 600;
+        border-radius: 50%;
+        overflow: hidden;
+    }
+
+    .profile-name {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--ink1);
+        margin-bottom: 4px;
+    }
+
+    .profile-role {
+        font-size: 12px;
+        color: var(--ink3);
+    }
+
+    .profile-card-body {
+        padding: 16px;
+    }
+
+    .info-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .info-row:last-child {
+        border-bottom: none;
+    }
+
+    .info-icon {
+        width: 32px;
+        height: 32px;
+        background: var(--bg2);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        flex-shrink: 0;
+    }
+
+    .info-label {
+        font-size: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--ink4);
+        margin-bottom: 2px;
+    }
+
+    .info-value {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--ink1);
+    }
+
+    /* Detail Sections Styles */
+    .detail-sections {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .detail-section {
+        background: var(--card-bg);
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        overflow: hidden;
+    }
+
+    .detail-section-header {
+        padding: 14px 20px;
+        background: var(--bg2);
+        border-bottom: 1px solid var(--border);
+        font-weight: 600;
+        font-size: 13px;
+        color: var(--ink2);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .detail-section-body {
+        padding: 20px;
+    }
+
+    .detail-grid-2 {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .detail-grid-3 {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+    }
+
+    .detail-field-label {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--ink4);
+        margin-bottom: 6px;
+    }
+
+    .detail-field-value {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--ink1);
+        word-break: break-word;
+    }
+
+    /* Badge styles */
+    .status-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    .mono {
+        font-family: monospace;
+        font-size: 11px;
+        color: var(--ink3);
+    }
+
+    /* Stat Card */
+    .stat-card {
+        background: var(--bg2);
+        border-radius: 12px;
+        padding: 16px;
+        text-align: center;
+    }
+
+    .stat-label {
+        font-size: 11px;
+        color: var(--ink4);
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        margin-bottom: 4px;
+    }
+
+    .stat-value {
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--ink1);
+        line-height: 1.2;
+    }
+
+    /* Timeline Styles */
+    .timeline-container {
+        padding: 8px 0;
+    }
+
+    .timeline-bar {
+        height: 8px;
+        background: var(--bg2);
+        border-radius: 4px;
+        overflow: hidden;
+        margin-bottom: 16px;
+    }
+
+    .timeline-progress {
+        height: 100%;
+        background: var(--primary);
+        border-radius: 4px;
+        transition: width 0.3s ease;
+    }
+
+    .timeline-labels {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 12px;
+    }
+
+    .timeline-start, .timeline-end {
+        text-align: center;
+    }
+
+    .timeline-label {
+        font-size: 10px;
+        color: var(--ink4);
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        margin-bottom: 4px;
+    }
+
+    .timeline-date {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--ink2);
+    }
+
+    .timeline-days {
+        font-size: 11px;
+        color: var(--ink3);
+        text-align: center;
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        justify-content: center;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+
+    /* Action Links */
+    .action-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .action-link {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 16px;
+        background: var(--bg2);
+        border-radius: 8px;
+        color: var(--ink2);
+        text-decoration: none;
+        transition: all 0.15s;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .action-link:hover {
+        background: var(--border);
+        color: var(--primary);
+        text-decoration: none;
+    }
+
+    .action-link.delete:hover {
+        background: #fdecea;
+        color: #c0392b;
+    }
+
+    /* Button styles */
+    .add-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        background: var(--primary);
+        color: white;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.15s;
+    }
+
+    .add-btn:hover {
+        background: #134080;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(26, 79, 160, 0.2);
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-ghost {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 16px;
+        background: var(--bg2);
+        color: var(--ink2);
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        text-decoration: none;
+        border: 1px solid var(--border);
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+
+    .btn-ghost:hover {
+        background: var(--border);
+        color: var(--ink1);
+        text-decoration: none;
+    }
+
+    /* Page Header */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 24px;
+        gap: 16px;
+    }
+
+    .page-header-title {
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--ink1);
+        margin: 0 0 8px 0;
+    }
+
+    .breadcrumb {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        gap: 8px;
+        font-size: 13px;
+    }
+
+    .breadcrumb-item {
+        color: var(--ink3);
+    }
+
+    .breadcrumb-item a {
+        color: var(--primary);
+        text-decoration: none;
+    }
+
+    .breadcrumb-item a:hover {
+        text-decoration: underline;
+    }
+
+    .breadcrumb-item.active {
+        color: var(--ink2);
+        font-weight: 500;
+    }
+
+    .breadcrumb-item + .breadcrumb-item::before {
+        content: "/";
+        margin-right: 8px;
+        color: var(--ink4);
+    }
+
+    /* CSS Variables */
+    :root {
+        --ink1: #1a1a1a;
+        --ink2: #4a4a4a;
+        --ink3: #8a8a8a;
+        --ink4: #c0c0c0;
+        --border: #e5e5e5;
+        --bg2: #f8f8f8;
+        --card-bg: #ffffff;
+        --primary: #1a4fa0;
+    }
+
+    /* Responsive */
+    @@media (max-width: 900px) {
+        .detail-grid {
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        .profile-card {
+            position: static;
+        }
+
+        .detail-grid-2,
+        .detail-grid-3 {
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .add-btn,
+        .btn-ghost {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .detail-section-body {
+            padding: 16px;
+        }
+
+        .profile-avatar-lg {
+            width: 80px;
+            height: 80px;
+            font-size: 36px;
+        }
+
+        .profile-name {
+            font-size: 16px;
+        }
+
+        .timeline-days {
+            flex-direction: column;
+            gap: 4px;
+            text-align: center;
+        }
+    }
+</style>

@@ -1049,6 +1049,23 @@
                 });
             });
         });
+        document.addEventListener("DOMContentLoaded", function () {
+        var message = '@TempData["SuccessMessage"]';
+        if (message) {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+            });
+
+            Toast.fire({
+                icon: 'success',
+                title: message
+            });
+        }
+    });
     </script>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
@@ -1059,6 +1076,7 @@
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
     <script src="~/js/loader.js" asp-append-version="true"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

@@ -1,81 +1,454 @@
 @model EmployeesManagement.Models.LeavePeriod
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Delete Leave Period";
+    var today = DateTime.Today;
+    var status = "";
+    var statusClass = "";
+    var statusBg = "";
+    var statusColor = "";
+    
+    if (Model.StartDate <= today && Model.EndDate >= today)
+    {
+        status = "Active";
+        statusClass = "active";
+        statusBg = "#e8f5ee";
+        statusColor = "#1a7a4a";
+    }
+    else if (Model.StartDate > today)
+    {
+        status = "Upcoming";
+        statusClass = "upcoming";
+        statusBg = "#fef3e0";
+        statusColor = "#a05c00";
+    }
+    else
+    {
+        status = "Expired";
+        statusClass = "expired";
+        statusBg = "#f2f2ef";
+        statusColor = "#3a3a38";
+    }
+    
+    var duration = (Model.EndDate - Model.StartDate).Days + 1;
+    var bgColor = "#fdecea";
+    var textColor = "#c0392b";
 }
 
-<h1>Delete</h1>
-
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>LeavePeriod</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StartDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StartDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.EndDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.EndDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Closed)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Closed)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Locked)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Locked)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedById)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreatedById)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedOn)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreatedOn)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ModifiedById)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ModifiedById)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ModifiedOn)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ModifiedOn)
-        </dd>
-    </dl>
-    
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
-    </form>
+<div class="page-header">
+    <div>
+        <h1 class="page-header-title">Delete Leave Period</h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Dashboard</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index">Leave Periods</a></li>
+            <li class="breadcrumb-item active">Delete</li>
+        </ol>
+    </div>
 </div>
+
+<div class="delete-card">
+    <!-- Warning header -->
+    <div class="delete-warning-header">
+        <div class="delete-warning-icon">⚠</div>
+        <div>
+            <div class="delete-warning-title">This action cannot be undone</div>
+            <div class="delete-warning-sub">Deleting this leave period will permanently remove it from the system.</div>
+        </div>
+    </div>
+
+    <!-- Leave Period summary -->
+    <div style="padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div class="emp-avatar" style="width:48px;height:48px;border-radius:12px;background:@bgColor;color:@textColor;border:1px solid var(--border);font-size:20px;font-weight:600">@(Model.Name?.Substring(0, 1).ToUpper() ?? "P")</div>
+        <div>
+            <div style="font-size:17px;font-weight:700">@Model.Name</div>
+            <div style="font-size:13px;color:var(--ink3);margin-top:2px">
+                <span class="status-badge @statusClass" style="background:@statusBg;color:@statusColor">@status</span>
+            </div>
+        </div>
+        <span class="mono" style="margin-left:auto;font-size:12px;color:var(--ink4)">ID: @Model.Id</span>
+    </div>
+
+    <!-- Details -->
+    <dl class="delete-dl">
+        <dt>Period Name</dt>
+        <dd>@Model.Name</dd>
+
+        <dt>Description</dt>
+        <dd>@(string.IsNullOrEmpty(Model.Description) ? "—" : Model.Description)</dd>
+
+        <dt>Start Date</dt>
+        <dd>@Model.StartDate.ToString("dd MMMM yyyy")</dd>
+
+        <dt>End Date</dt>
+        <dd>@Model.EndDate.ToString("dd MMMM yyyy")</dd>
+
+        <dt>Duration</dt>
+        <dd>@duration day@(duration > 1 ? "s" : "")</dd>
+
+        <dt>Settings</dt>
+        <dd>
+            @if (Model.Closed && Model.Locked)
+            {
+                <span>🔒 Closed · 🔐 Locked</span>
+            }
+            else if (Model.Closed)
+            {
+                <span>🔒 Closed</span>
+            }
+            else if (Model.Locked)
+            {
+                <span>🔐 Locked</span>
+            }
+            else
+            {
+                <span style="color:var(--ink4)">No restrictions</span>
+            }
+        </dd>
+
+        <dt>Created On</dt>
+        <dd class="mono">@Model.CreatedOn.ToString("dd MMM yyyy HH:mm")</dd>
+
+        <dt>Created By</dt>
+        <dd>@(Model.CreatedById ?? "System")</dd>
+
+        <dt>Last Modified</dt>
+        <dd class="mono">@(Model.ModifiedOn.ToString("dd MMM yyyy HH:mm") ?? "—")</dd>
+
+        <dt>Modified By</dt>
+        <dd>@(Model.ModifiedById ?? "—")</dd>
+    </dl>
+
+    <!-- Usage Information -->
+    <div style="padding:16px 24px;background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+            <div style="display:flex;align-items:center;gap:12px">
+                <div style="background:var(--warning-bg);border-radius:12px;padding:10px">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#a05c00">
+                        <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                        <path d="M10 6v4M10 14h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div>
+                    <div style="font-size:12px;color:var(--ink4);margin-bottom:2px">LINKED LEAVE TYPES</div>
+                    <div style="font-size:20px;font-weight:600;color:var(--ink1)">0</div>
+                </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px">
+                <div style="background:var(--success-bg);border-radius:12px;padding:10px">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#1a7a4a">
+                        <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                        <path d="M6 10l3 3 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div>
+                    <div style="font-size:12px;color:var(--ink4);margin-bottom:2px">LEAVE APPLICATIONS</div>
+                    <div style="font-size:20px;font-weight:600;color:var(--ink1)">0</div>
+                </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px">
+                <div style="background:var(--error-bg);border-radius:12px;padding:10px">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#c0392b">
+                        <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                        <path d="M7 13l6-6M13 13L7 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div>
+                    <div style="font-size:12px;color:var(--ink4);margin-bottom:2px">LEAVE BALANCES</div>
+                    <div style="font-size:20px;font-weight:600;color:var(--ink1)">0</div>
+                </div>
+            </div>
+        </div>
+        <div style="margin-top:16px;padding:12px;background:var(--error-bg);border-radius:8px;font-size:13px;color:var(--error);display:flex;align-items:center;gap:8px">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor">
+                <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.3" fill="none"/>
+                <path d="M8 5v4M8 12h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+            <span>This leave period has <strong>0 associated records</strong>. Deleting it will remove this period from the system.</span>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div style="padding:16px 24px;background:var(--bg2);border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap">
+        <a asp-action="Index" class="btn-ghost">Cancel</a>
+        <a asp-action="Details" asp-route-id="@Model.Id" class="btn-ghost">View Details</a>
+        <form asp-action="Delete" method="post" style="display:inline">
+            <input type="hidden" asp-for="Id" />
+            <button type="submit" class="btn-danger-outline">
+                <svg width="13" height="13" viewBox="0 0 13 13" fill="none" style="margin-right:6px;vertical-align:-2px">
+                    <path d="M2 4h9M5 4V3a1.5 1.5 0 0 1 3 0v1M10.5 4l-.7 7H3.2L2.5 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+                </svg>
+                Permanently Delete
+            </button>
+        </form>
+    </div>
+</div>
+
+<style>
+    /* Delete Card Styles */
+    .delete-card {
+        max-width: 800px;
+        margin: 0 auto;
+        background: var(--card-bg);
+        border-radius: 20px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+        overflow: hidden;
+        border: 1px solid var(--border);
+    }
+
+    /* Warning Header */
+    .delete-warning-header {
+        background: #fff2f0;
+        padding: 20px 24px;
+        border-bottom: 1px solid rgba(192, 57, 43, 0.2);
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .delete-warning-icon {
+        width: 36px;
+        height: 36px;
+        background: #c0392b;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .delete-warning-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #c0392b;
+        margin-bottom: 4px;
+    }
+
+    .delete-warning-sub {
+        font-size: 13px;
+        color: var(--ink3);
+    }
+
+    /* Definition List Styles */
+    .delete-dl {
+        display: grid;
+        grid-template-columns: 140px 1fr;
+        gap: 8px 0;
+        padding: 24px;
+        margin: 0;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .delete-dl dt {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--ink4);
+        letter-spacing: 0.3px;
+        text-transform: uppercase;
+        padding: 8px 0;
+    }
+
+    .delete-dl dd {
+        font-size: 14px;
+        color: var(--ink1);
+        padding: 8px 0;
+        margin: 0;
+        border-bottom: 1px dashed var(--border);
+    }
+
+    .delete-dl dd:last-of-type {
+        border-bottom: none;
+    }
+
+    /* Badge styles */
+    .status-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    .emp-avatar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 14px;
+        flex-shrink: 0;
+    }
+
+    .mono {
+        font-family: monospace;
+        font-size: 12px;
+        color: var(--ink3);
+    }
+
+    /* Button styles */
+    .btn-ghost {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 16px;
+        background: var(--bg2);
+        color: var(--ink2);
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        text-decoration: none;
+        border: 1px solid var(--border);
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+
+    .btn-ghost:hover {
+        background: var(--border);
+        color: var(--ink1);
+        text-decoration: none;
+    }
+
+    .btn-danger-outline {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 20px;
+        background: transparent;
+        color: #c0392b;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        text-decoration: none;
+        border: 1px solid #c0392b;
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+
+    .btn-danger-outline:hover {
+        background: #c0392b;
+        color: white;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(192, 57, 43, 0.2);
+    }
+
+    /* Page Header */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 24px;
+        gap: 16px;
+    }
+
+    .page-header-title {
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--ink1);
+        margin: 0 0 8px 0;
+    }
+
+    .breadcrumb {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        gap: 8px;
+        font-size: 13px;
+    }
+
+    .breadcrumb-item {
+        color: var(--ink3);
+    }
+
+    .breadcrumb-item a {
+        color: var(--primary);
+        text-decoration: none;
+    }
+
+    .breadcrumb-item a:hover {
+        text-decoration: underline;
+    }
+
+    .breadcrumb-item.active {
+        color: var(--ink2);
+        font-weight: 500;
+    }
+
+    .breadcrumb-item + .breadcrumb-item::before {
+        content: "/";
+        margin-right: 8px;
+        color: var(--ink4);
+    }
+
+    /* Status background colors */
+    :root {
+        --warning-bg: #fff0d9;
+        --success-bg: #e0f2e9;
+        --error-bg: #fce8e6;
+        --error: #c0392b;
+        --ink1: #1a1a1a;
+        --ink2: #4a4a4a;
+        --ink3: #8a8a8a;
+        --ink4: #c0c0c0;
+        --border: #e5e5e5;
+        --bg2: #f8f8f8;
+        --card-bg: #ffffff;
+        --primary: #1a4fa0;
+    }
+
+    /* Responsive adjustments */
+    @@media (max-width: 600px) {
+        .delete-card {
+            border-radius: 16px;
+        }
+        
+        .delete-warning-header {
+            padding: 16px;
+        }
+        
+        .delete-dl {
+            grid-template-columns: 1fr;
+            gap: 4px 0;
+            padding: 16px;
+        }
+        
+        .delete-dl dt {
+            padding: 8px 0 4px 0;
+        }
+        
+        .delete-dl dd {
+            padding: 4px 0 8px 0;
+        }
+        
+        div[style*="display:flex"] {
+            flex-direction: column;
+            align-items: stretch !important;
+        }
+        
+        .btn-ghost, .btn-danger-outline {
+            text-align: center;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+</style>
+
+<script>
+    // Confirmation dialog for deletion
+    document.addEventListener('DOMContentLoaded', function() {
+        const deleteForm = document.querySelector('form[asp-action="Delete"]');
+        if (deleteForm) {
+            deleteForm.addEventListener('submit', function(e) {
+                if (!confirm('Are you absolutely sure you want to delete this leave period? This action cannot be undone.')) {
+                    e.preventDefault();
+                }
+            });
+        }
+    });
+</script>

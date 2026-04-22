@@ -21,20 +21,10 @@
 
 <!-- Search Form -->
 <div class="search-card">
-    <div class="search-card-header">
-        <span class="section-badge blue">
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                <circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" stroke-width="1.2"/>
-                <path d="M9 9L12 12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-            </svg>
-            Search Employees
-        </span>
-    </div>
     <form asp-action="Index" method="get" class="search-form">
         <div class="search-form-body">
             <div class="row">
                 <div class="col-md-12">
-                    <label asp-for="SearchTerm" class="field-label">Search</label>
                     <div style="display: flex; gap: 12px; align-items: flex-start;">
                         <div style="flex: 1;">
                             <div class="search-input-wrapper">

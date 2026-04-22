@@ -1,78 +1,774 @@
 @model EmployeesManagement.Models.LeavePeriod
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Leave Period";
+    var today = DateTime.Today;
+    var status = "";
+    var statusClass = "";
+    
+    if (Model.StartDate <= today && Model.EndDate >= today)
+    {
+        status = "Active";
+        statusClass = "active";
+    }
+    else if (Model.StartDate > today)
+    {
+        status = "Upcoming";
+        statusClass = "upcoming";
+    }
+    else
+    {
+        status = "Expired";
+        statusClass = "expired";
+    }
 }
 
-<h1>Edit</h1>
-
-<h4>LeavePeriod</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="StartDate" class="control-label"></label>
-                <input asp-for="StartDate" class="form-control" />
-                <span asp-validation-for="StartDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="EndDate" class="control-label"></label>
-                <input asp-for="EndDate" class="form-control" />
-                <span asp-validation-for="EndDate" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Closed" /> @Html.DisplayNameFor(model => model.Closed)
-                </label>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Locked" /> @Html.DisplayNameFor(model => model.Locked)
-                </label>
-            </div>
-            <div class="form-group">
-                <label asp-for="CreatedById" class="control-label"></label>
-                <input asp-for="CreatedById" class="form-control" />
-                <span asp-validation-for="CreatedById" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CreatedOn" class="control-label"></label>
-                <input asp-for="CreatedOn" class="form-control" />
-                <span asp-validation-for="CreatedOn" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ModifiedById" class="control-label"></label>
-                <input asp-for="ModifiedById" class="form-control" />
-                <span asp-validation-for="ModifiedById" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ModifiedOn" class="control-label"></label>
-                <input asp-for="ModifiedOn" class="form-control" />
-                <span asp-validation-for="ModifiedOn" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+<div class="page-header">
+    <div>
+        <h1 class="page-header-title">Edit Leave Period</h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Dashboard</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index">Leave Periods</a></li>
+            <li class="breadcrumb-item active">Edit @Model.Name</li>
+        </ol>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <a asp-action="Details" asp-route-id="@Model.Id" class="btn-ghost">View Details</a>
+        <a asp-action="Index" class="btn-ghost">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin-right:6px">
+                <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            Back to List
+        </a>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+<form asp-action="Edit" id="editForm">
+    <div asp-validation-summary="ModelOnly" class="field-error" style="padding:12px 16px;background:var(--red-bg);border-radius:9px;border:1px solid rgba(192,57,43,0.2);margin-bottom:20px;"></div>
+
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="CreatedById" />
+    <input type="hidden" asp-for="CreatedOn" />
+
+    <!-- Leave Period Information -->
+    <div class="form-card" style="margin-bottom:16px">
+        <div class="form-card-header">
+            <span class="section-badge blue">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <rect x="2" y="3" width="8" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                    <path d="M4 2v2M8 2v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+                Leave Period Information
+            </span>
+            <span class="mono" style="margin-left:auto;font-size:11px;color:var(--ink4)">ID: @Model.Id</span>
+        </div>
+        <div class="form-card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="Name" class="field-label">Period Name <span class="field-required">*</span></label>
+                    <input asp-for="Name" class="field-control" placeholder="e.g. 2024 Leave Period, FY2024" />
+                    <span asp-validation-for="Name" class="field-error"></span>
+                    <span class="field-hint">Unique name for this leave period</span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Description" class="field-label">Description</label>
+                    <input asp-for="Description" class="field-control" placeholder="e.g. Annual leave period for financial year 2024" />
+                    <span asp-validation-for="Description" class="field-error"></span>
+                    <span class="field-hint">Optional description of the leave period</span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="StartDate" class="field-label">Start Date <span class="field-required">*</span></label>
+                    <input asp-for="StartDate" class="field-control" type="date" />
+                    <span asp-validation-for="StartDate" class="field-error"></span>
+                    <span class="field-hint">Beginning date of the leave period</span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="EndDate" class="field-label">End Date <span class="field-required">*</span></label>
+                    <input asp-for="EndDate" class="field-control" type="date" />
+                    <span asp-validation-for="EndDate" class="field-error"></span>
+                    <span class="field-hint">Ending date of the leave period</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Period Settings -->
+    <div class="form-card" style="margin-bottom:16px">
+        <div class="form-card-header">
+            <span class="section-badge amber">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <circle cx="6" cy="6" r="4.5" stroke="currentColor" stroke-width="1.2"/>
+                    <path d="M6 3v3l2 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+                Period Settings
+            </span>
+        </div>
+        <div class="form-card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="field-checkbox">
+                        <input type="checkbox" asp-for="Closed" id="Closed" class="checkbox-control" />
+                        <label for="Closed" class="checkbox-label">Closed</label>
+                    </div>
+                    <span class="field-hint">Closed periods cannot have new leave applications</span>
+                </div>
+                <div class="col-md-6">
+                    <div class="field-checkbox">
+                        <input type="checkbox" asp-for="Locked" id="Locked" class="checkbox-control" />
+                        <label for="Locked" class="checkbox-label">Locked</label>
+                    </div>
+                    <span class="field-hint">Locked periods are read-only and cannot be modified</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Preview Card -->
+    <div class="form-card" style="margin-bottom:16px;background:var(--bg2);" id="previewCard">
+        <div class="form-card-header">
+            <span class="section-badge neutral">Live Preview</span>
+        </div>
+        <div class="form-card-body">
+            <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <div id="previewAvatar" class="emp-avatar" style="width:48px;height:48px;background:#e8eefa;color:#1a4fa0;font-size:18px">@(Model.Name?.Substring(0, 1).ToUpper() ?? "P")</div>
+                    <div>
+                        <div style="font-size:11px;color:var(--ink3);margin-bottom:2px;">PERIOD NAME</div>
+                        <div>
+                            <span id="previewBadge" class="dept-badge" style="background:#e8eefa;color:#1a4fa0">@Model.Name</span>
+                        </div>
+                    </div>
+                </div>
+                <div style="flex:1">
+                    <div style="font-size:11px;color:var(--ink3);margin-bottom:2px;">DESCRIPTION</div>
+                    <div id="previewDesc" style="font-size:13px;color:var(--ink1);font-weight:500;">@(Model.Description ?? "No description")</div>
+                </div>
+            </div>
+            <div style="margin-top:16px;display:flex;gap:16px;flex-wrap:wrap;">
+                <div>
+                    <div style="font-size:11px;color:var(--ink3);margin-bottom:2px;">START DATE</div>
+                    <div id="previewStartDate" class="date-badge" style="background:var(--bg2);display:inline-block">@Model.StartDate.ToString("dd MMM yyyy")</div>
+                </div>
+                <div>
+                    <div style="font-size:11px;color:var(--ink3);margin-bottom:2px;">END DATE</div>
+                    <div id="previewEndDate" class="date-badge" style="background:var(--bg2);display:inline-block">@Model.EndDate.ToString("dd MMM yyyy")</div>
+                </div>
+                <div>
+                    <div style="font-size:11px;color:var(--ink3);margin-bottom:2px;">DURATION</div>
+                    <div id="previewDuration" class="duration-badge" style="display:inline-block">@((Model.EndDate - Model.StartDate).Days + 1) days</div>
+                </div>
+            </div>
+            <div style="margin-top:16px;display:flex;gap:16px;flex-wrap:wrap;">
+                <div>
+                    <div style="font-size:11px;color:var(--ink3);margin-bottom:2px;">STATUS</div>
+                    <div id="previewStatus" class="status-badge @statusClass" style="display:inline-block">@status</div>
+                </div>
+                <div>
+                    <div style="font-size:11px;color:var(--ink3);margin-bottom:2px;">SETTINGS</div>
+                    <div id="previewSettings" style="font-size:12px;color:var(--ink2);">
+                        @if (Model.Closed && Model.Locked)
+                        {
+                            <span>🔒 Closed · 🔐 Locked</span>
+                        }
+                        else if (Model.Closed)
+                        {
+                            <span>🔒 Closed</span>
+                        }
+                        else if (Model.Locked)
+                        {
+                            <span>🔐 Locked</span>
+                        }
+                        else
+                        {
+                            <span id="previewNoSettings" style="color:var(--ink4)">No restrictions</span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="form-actions" style="border-top:none;padding-top:0">
+        <a asp-action="Index" class="btn-ghost">Cancel</a>
+        <button type="submit" class="btn-primary" style="background-color: black;">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin-right:6px;vertical-align:-2px">
+                <path d="M2 7l3.5 3.5L12 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Update Leave Period
+        </button>
+    </div>
+</form>
+
+<style>
+    /* Form field styles */
+    .field-label {
+        display: block;
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--ink2);
+        margin-bottom: 6px;
+    }
+
+    .field-required {
+        color: #c0392b;
+        font-size: 12px;
+    }
+
+    .field-control {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-size: 13px;
+        color: var(--ink1);
+        background: var(--card-bg);
+        transition: all 0.15s;
+    }
+
+    .field-control:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(26, 79, 160, 0.1);
+    }
+
+    /* Checkbox styles */
+    .field-checkbox {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 0;
+        margin-top: 6px;
+    }
+
+    .checkbox-control {
+        width: 18px;
+        height: 18px;
+        margin: 0;
+        cursor: pointer;
+        accent-color: var(--primary);
+    }
+
+    .checkbox-label {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--ink1);
+        cursor: pointer;
+    }
+
+    input[type="date"].field-control {
+        appearance: none;
+        -webkit-appearance: none;
+    }
+
+    input[type="date"].field-control::-webkit-calendar-picker-indicator {
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 4px;
+    }
+
+    input[type="date"].field-control::-webkit-calendar-picker-indicator:hover {
+        background: var(--bg2);
+    }
+
+    .field-error {
+        font-size: 11px;
+        color: #c0392b;
+        margin-top: 4px;
+        display: block;
+    }
+
+    .field-hint {
+        display: block;
+        font-size: 11px;
+        color: var(--ink3);
+        margin-top: 4px;
+    }
+
+    input[readonly], 
+    input[disabled] {
+        background-color: var(--bg2);
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
+
+    /* Form card styles */
+    .form-card {
+        background: var(--card-bg);
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        overflow: hidden;
+    }
+
+    .form-card-header {
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+        background: var(--bg2);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .form-card-body {
+        padding: 20px;
+    }
+
+    .section-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .section-badge.blue {
+        background: #e8eefa;
+        color: #1a4fa0;
+    }
+
+    .section-badge.amber {
+        background: #fef3e0;
+        color: #a05c00;
+    }
+
+    .section-badge.green {
+        background: #e8f5ee;
+        color: #1a7a4a;
+    }
+
+    .section-badge.neutral {
+        background: var(--bg2);
+        color: var(--ink2);
+    }
+
+    /* Badge styles */
+    .dept-badge, .duration-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    .date-badge {
+        background: var(--bg2);
+        padding: 4px 8px;
+        border-radius: 20px;
+        font-size: 11px;
+        color: var(--ink3);
+        white-space: nowrap;
+        display: inline-block;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    .status-badge.active {
+        background: #e8f5ee;
+        color: #1a7a4a;
+    }
+
+    .status-badge.upcoming {
+        background: #fef3e0;
+        color: #a05c00;
+    }
+
+    .status-badge.expired {
+        background: #f2f2ef;
+        color: #3a3a38;
+    }
+
+    .emp-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 12px;
+        flex-shrink: 0;
+    }
+
+    .mono {
+        font-family: monospace;
+        font-size: 11px;
+        color: var(--ink3);
+    }
+
+    /* Button styles */
+    .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        padding: 10px 20px;
+        background: var(--primary);
+        color: white;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        border: none;
+        cursor: pointer;
+        transition: all 0.15s;
+        text-decoration: none;
+    }
+
+    .btn-primary:hover {
+        background: #134080;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(26, 79, 160, 0.2);
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-ghost {
+        display: inline-flex;
+        align-items: center;
+        padding: 10px 20px;
+        background: var(--bg2);
+        color: var(--ink2);
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        text-decoration: none;
+        border: 1px solid var(--border);
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+
+    .btn-ghost:hover {
+        background: var(--border);
+        color: var(--ink1);
+        text-decoration: none;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+        padding: 20px 0;
+        border-top: 1px solid var(--border);
+        margin-top: 20px;
+    }
+
+    /* Page Header */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 24px;
+        gap: 16px;
+    }
+
+    .page-header-title {
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--ink1);
+        margin: 0 0 8px 0;
+    }
+
+    .breadcrumb {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        gap: 8px;
+        font-size: 13px;
+    }
+
+    .breadcrumb-item {
+        color: var(--ink3);
+    }
+
+    .breadcrumb-item a {
+        color: var(--primary);
+        text-decoration: none;
+    }
+
+    .breadcrumb-item a:hover {
+        text-decoration: underline;
+    }
+
+    .breadcrumb-item.active {
+        color: var(--ink2);
+        font-weight: 500;
+    }
+
+    .breadcrumb-item + .breadcrumb-item::before {
+        content: "/";
+        margin-right: 8px;
+        color: var(--ink4);
+    }
+
+    /* Grid system */
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin: -8px;
+    }
+
+    .g-3 {
+        margin: -8px;
+    }
+
+    .g-3 > [class*="col-"] {
+        padding: 8px;
+    }
+
+    .col-md-3 {
+        flex: 0 0 25%;
+        max-width: 25%;
+    }
+
+    .col-md-6 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+
+    /* CSS Variables */
+    :root {
+        --ink1: #1a1a1a;
+        --ink2: #4a4a4a;
+        --ink3: #8a8a8a;
+        --ink4: #c0c0c0;
+        --border: #e5e5e5;
+        --bg2: #f8f8f8;
+        --card-bg: #ffffff;
+        --primary: #1a4fa0;
+        --red-bg: rgba(192, 57, 43, 0.1);
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .col-md-3,
+        .col-md-6 {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+        
+        .form-actions {
+            flex-direction: column-reverse;
+        }
+        
+        .btn-primary,
+        .btn-ghost {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .form-card-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .mono {
+            margin-left: 0 !important;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get form elements
+        const nameInput = document.getElementById('Name');
+        const descInput = document.getElementById('Description');
+        const startDateInput = document.getElementById('StartDate');
+        const endDateInput = document.getElementById('EndDate');
+        const closedCheckbox = document.getElementById('Closed');
+        const lockedCheckbox = document.getElementById('Locked');
+        
+        // Preview elements
+        const previewAvatar = document.getElementById('previewAvatar');
+        const previewBadge = document.getElementById('previewBadge');
+        const previewDesc = document.getElementById('previewDesc');
+        const previewStartDate = document.getElementById('previewStartDate');
+        const previewEndDate = document.getElementById('previewEndDate');
+        const previewDuration = document.getElementById('previewDuration');
+        const previewStatus = document.getElementById('previewStatus');
+        const previewSettings = document.getElementById('previewSettings');
+        const previewNoSettings = document.getElementById('previewNoSettings');
+
+        // Avatar colors
+        const avatarColors = [
+            { bg: "#e8eefa", text: "#1a4fa0" },
+            { bg: "#e8f5ee", text: "#1a7a4a" },
+            { bg: "#fef3e0", text: "#a05c00" },
+            { bg: "#fdecea", text: "#c0392b" },
+            { bg: "#f2f2ef", text: "#3a3a38" },
+            { bg: "#f0eeff", text: "#4a35c0" }
+        ];
+
+        function formatDate(dateString) {
+            if (!dateString) return '—';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+
+        function calculateDuration(startDate, endDate) {
+            if (!startDate || !endDate) return null;
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            if (end < start) return null;
+            const diffTime = Math.abs(end - start);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+            return diffDays;
+        }
+
+        function getStatus(startDate, endDate) {
+            if (!startDate || !endDate) return { text: '—', class: '' };
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            end.setHours(23, 59, 59);
+            
+            if (start <= today && end >= today) {
+                return { text: 'Active', class: 'active' };
+            } else if (start > today) {
+                return { text: 'Upcoming', class: 'upcoming' };
+            } else {
+                return { text: 'Expired', class: 'expired' };
+            }
+        }
+
+        function updatePreview() {
+            let name = nameInput ? nameInput.value.trim() : '';
+            let desc = descInput ? descInput.value.trim() : '';
+            let startDate = startDateInput ? startDateInput.value : '';
+            let endDate = endDateInput ? endDateInput.value : '';
+            
+            // Use color based on name length for consistency
+            let colorIndex = name.length % avatarColors.length;
+            let colors = avatarColors[colorIndex];
+            
+            if (previewBadge) {
+                previewBadge.textContent = name || "Period Name";
+                previewBadge.style.backgroundColor = colors.bg;
+                previewBadge.style.color = colors.text;
+            }
+            
+            if (previewDesc) {
+                previewDesc.textContent = desc || "No description";
+            }
+            
+            // Update avatar
+            if (previewAvatar) {
+                let avatarLetter = name ? name.substring(0, 1).toUpperCase() : "P";
+                previewAvatar.textContent = avatarLetter;
+                previewAvatar.style.backgroundColor = colors.bg;
+                previewAvatar.style.color = colors.text;
+            }
+            
+            // Update dates
+            if (previewStartDate) {
+                previewStartDate.textContent = formatDate(startDate);
+            }
+            if (previewEndDate) {
+                previewEndDate.textContent = formatDate(endDate);
+            }
+            
+            // Update duration
+            const duration = calculateDuration(startDate, endDate);
+            if (previewDuration) {
+                if (duration && duration > 0) {
+                    previewDuration.textContent = `${duration} day${duration > 1 ? 's' : ''}`;
+                    previewDuration.style.backgroundColor = colors.bg;
+                    previewDuration.style.color = colors.text;
+                } else if (duration === null && (startDate || endDate)) {
+                    previewDuration.textContent = 'End date must be after start date';
+                    previewDuration.style.backgroundColor = '#fdecea';
+                    previewDuration.style.color = '#c0392b';
+                } else {
+                    previewDuration.textContent = '—';
+                    previewDuration.style.backgroundColor = '#e8eefa';
+                    previewDuration.style.color = '#1a4fa0';
+                }
+            }
+            
+            // Update status
+            const status = getStatus(startDate, endDate);
+            if (previewStatus) {
+                previewStatus.textContent = status.text;
+                previewStatus.className = `status-badge ${status.class}`;
+            }
+            
+            // Update settings
+            const isClosed = closedCheckbox ? closedCheckbox.checked : false;
+            const isLocked = lockedCheckbox ? lockedCheckbox.checked : false;
+            
+            if (previewSettings) {
+                let settingsHtml = '';
+                if (isClosed && isLocked) {
+                    settingsHtml = '🔒 Closed · 🔐 Locked';
+                } else if (isClosed) {
+                    settingsHtml = '🔒 Closed';
+                } else if (isLocked) {
+                    settingsHtml = '🔐 Locked';
+                } else {
+                    settingsHtml = '<span style="color:var(--ink4)">No restrictions</span>';
+                }
+                previewSettings.innerHTML = settingsHtml;
+            }
+        }
+
+        // Add event listeners
+        if (nameInput) nameInput.addEventListener('input', updatePreview);
+        if (descInput) descInput.addEventListener('input', updatePreview);
+        if (startDateInput) startDateInput.addEventListener('change', updatePreview);
+        if (endDateInput) endDateInput.addEventListener('change', updatePreview);
+        if (closedCheckbox) closedCheckbox.addEventListener('change', updatePreview);
+        if (lockedCheckbox) lockedCheckbox.addEventListener('change', updatePreview);
+        
+        // Validate that end date is not before start date
+        if (startDateInput && endDateInput) {
+            startDateInput.addEventListener('change', function() {
+                if (startDateInput.value) {
+                    endDateInput.setAttribute('min', startDateInput.value);
+                }
+            });
+        }
+        
+        // Track unsaved changes
+        const form = document.getElementById('editForm');
+        const cancelBtn = document.querySelector('.btn-ghost[asp-action="Index"]');
+        let formChanged = false;
+        
+        if (form) {
+            form.addEventListener('input', function() {
+                formChanged = true;
+            });
+        }
+        
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', function(e) {
+                if (formChanged) {
+                    if (!confirm('You have unsaved changes. Are you sure you want to leave?')) {
+                        e.preventDefault();
+                    }
+                }
+            });
+        }
+        
+        // Initialize preview
+        updatePreview();
+    });
+</script>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

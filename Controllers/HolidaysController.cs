@@ -84,6 +84,8 @@ namespace EmployeeManagement.Controllers
 
             _context.Add(holiday);
             await _context.SaveChangesAsync(UserId);
+            TempData["SuccessMessage"] = "Holiday created successfully.";
+
             return RedirectToAction(nameof(Index));
 
             return View(holiday);
@@ -177,6 +179,8 @@ namespace EmployeeManagement.Controllers
             }
 
             await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Holiday Delete successfully.";
+
             return RedirectToAction(nameof(Index));
         }
 
