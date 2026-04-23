@@ -160,6 +160,8 @@ namespace EmployeeManagement.Controllers
             }
 
             await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "City deleted successfully.";
+
             return RedirectToAction(nameof(Index));
         }
 

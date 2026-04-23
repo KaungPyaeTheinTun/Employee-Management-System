@@ -172,6 +172,8 @@ namespace EmployeesManagement.Controllers
             }
 
             await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Approval entry deleted successfully.";
+
             return RedirectToAction(nameof(Index));
         }
 

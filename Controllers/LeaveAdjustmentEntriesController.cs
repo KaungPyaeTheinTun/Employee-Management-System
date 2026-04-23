@@ -185,6 +185,8 @@ namespace EmployeesManagement.Controllers
             }
 
             await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Leave adjustment entry deleted successfully.";
+
             return RedirectToAction(nameof(Index));
         }
 

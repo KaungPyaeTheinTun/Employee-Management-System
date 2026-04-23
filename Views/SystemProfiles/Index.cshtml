@@ -86,7 +86,7 @@
                             <span class="dept-badge">@(item.Profile?.Name ?? "—")</span>
                         </td>
                         <td style="color:var(--ink2)">@item.Order</td>
-                        <td style="color:var(--ink2)">@item.CreatedById</td>
+                        <td style="color:var(--ink2)">@item.CreatedBy?.FullName</td>
                         <td style="color:var(--ink2)">
                             <span class="date-badge">@item.CreatedOn.ToString("MMM dd, yyyy")</span>
                         </td>

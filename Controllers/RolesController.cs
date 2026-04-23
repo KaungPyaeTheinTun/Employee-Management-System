@@ -88,7 +88,10 @@ namespace EmployeeManagement.Controllers
             var result = await _roleManager.DeleteAsync(role);
 
             if (result.Succeeded)
+            {                
+                TempData["SuccessMessage"] = "Role deleted successfully.";
                 return RedirectToAction("Index");
+            }
 
             return View("Index");
         }

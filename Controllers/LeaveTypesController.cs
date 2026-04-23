@@ -161,6 +161,7 @@ namespace EmployeeManagement.Controllers
             }
             var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             await _context.SaveChangesAsync(UserId);
+            TempData["SuccessMessage"] = "Leave type deleted successfully.";
             return RedirectToAction(nameof(Index));
         }
 

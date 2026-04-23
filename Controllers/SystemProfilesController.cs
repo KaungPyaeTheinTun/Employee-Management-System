@@ -23,8 +23,12 @@ namespace EmployeeManagement.Controllers
         // GET: SystemProfiles
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.SystemProfiles.Include(s => s.Profile);
-            return View(await applicationDbContext.ToListAsync());
+            var systemProfiles = await _context.SystemProfiles
+                                .Include(s => s.CreatedBy)
+                                .Include(s => s.ModifiedBy)
+                                .Include(s => s.Profile)
+                                .ToListAsync();
+            return View(systemProfiles);
         }
 
         // GET: SystemProfiles/Details/5
@@ -36,6 +40,8 @@ namespace EmployeeManagement.Controllers
             }
 
             var systemProfile = await _context.SystemProfiles
+                .Include(s => s.CreatedBy)
+                .Include(s => s.ModifiedBy)
                 .Include(s => s.Profile)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (systemProfile == null)
@@ -95,7 +101,7 @@ namespace EmployeeManagement.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,ProfileId,Order,CreatedById,CreatedOn,ModifiedById,ModifiedOn")] SystemProfile systemProfile)
+        public async Task<IActionResult> Edit(int id, SystemProfile systemProfile)
         {
             if (id != systemProfile.Id)
             {
@@ -109,7 +115,9 @@ namespace EmployeeManagement.Controllers
                     systemProfile.ModifiedById = UserId;
                     systemProfile.ModifiedOn = DateTime.Now;
                     _context.Update(systemProfile);
-                    await _context.SaveChangesAsync();
+                    await _context.SaveChangesAsync(UserId);
+                    TempData["SuccessMessage"] = "System profile updated successfully.";
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -136,6 +144,8 @@ namespace EmployeeManagement.Controllers
             }
 
             var systemProfile = await _context.SystemProfiles
+                .Include(s => s.CreatedBy)
+                .Include(s => s.ModifiedBy)
                 .Include(s => s.Profile)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (systemProfile == null)
@@ -158,6 +168,7 @@ namespace EmployeeManagement.Controllers
             }
 
             await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "System profile deleted successfully.";
             return RedirectToAction(nameof(Index));
         }
 

@@ -394,6 +394,7 @@ namespace EmployeeManagement.Controllers
             } 
  
             await _context.SaveChangesAsync(); 
+            TempData["SuccessMessage"] = "Leave application deleted successfully."; 
             return RedirectToAction(nameof(Index)); 
         } 
  

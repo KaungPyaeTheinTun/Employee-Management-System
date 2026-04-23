@@ -177,6 +177,7 @@ namespace EmployeesManagement.Controllers
             }
 
             await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Bank deleted successfully.";
             return RedirectToAction(nameof(Index));
         }
 

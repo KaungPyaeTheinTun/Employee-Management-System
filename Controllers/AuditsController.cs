@@ -151,6 +151,8 @@ namespace EmployeeManagement.Controllers
             }
 
             await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Audit log deleted successfully.";
+
             return RedirectToAction(nameof(Index));
         }
 
