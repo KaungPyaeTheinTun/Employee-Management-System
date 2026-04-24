@@ -12,6 +12,7 @@ using EmployeeManagement.ViewModels;
 using Microsoft.CodeAnalysis.Elfie.Serialization;
 using AutoMapper;
 using System.Linq.Expressions;
+using EmployeesManagement.Services;
 
 namespace EmployeeManagement.Controllers
 {
@@ -20,12 +21,14 @@ namespace EmployeeManagement.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
+        private readonly IExtensionService _extensionService;
 
-        public EmployeesController(IMapper mapper, ApplicationDbContext context, IConfiguration configuration)
+        public EmployeesController(IMapper mapper, ApplicationDbContext context, IConfiguration configuration, IExtensionService extensionService)
         {
             _context = context;
             _configuration = configuration;
             _mapper = mapper;
+            _extensionService = extensionService;
         }
 
         // GET: Employees
@@ -119,6 +122,7 @@ namespace EmployeeManagement.Controllers
         {
             var employee = new Employee();
             _mapper.Map(newemployee, employee);
+            employee.EmpNo = await _extensionService.GenerateEmployeeNumber();
 
             if (employeephoto != null && employeephoto.Length > 0)
             {
@@ -147,7 +151,7 @@ namespace EmployeeManagement.Controllers
                                     .Include(x => x.SystemCode)
                                     .Where(x => x.SystemCode.Code == "EmployeeStatus" && x.Code == "Active").FirstOrDefaultAsync();
 
-            var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var UserId = User.GetUserId();
             employee.CreatedOn = DateTime.Now;
             employee.CreatedById = UserId;
             employee.StatusId = statusId.Id;
@@ -234,11 +238,13 @@ namespace EmployeeManagement.Controllers
 
             try
             {
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var userId = User.GetUserId();
+
                 employee.ModifiedOn = DateTime.Now;
                 employee.ModifiedById = userId;
                 _context.Update(employee);
                 await _context.SaveChangesAsync(userId);
+                TempData["SuccessMessage"] = "Employee updated successfully.";
             }
             catch (DbUpdateConcurrencyException)
             {

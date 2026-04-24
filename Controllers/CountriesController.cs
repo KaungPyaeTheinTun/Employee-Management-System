@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using EmployeeManagement.Data;
 using EmployeesManagement.Models;
 using System.Security.Claims;
+using EmployeesManagement.Services;
 
 namespace EmployeeManagement.Controllers
 {
@@ -63,7 +64,7 @@ namespace EmployeeManagement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Country country)
         {
-                var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var UserId = User.GetUserId();
                 country.CreatedById = UserId;
                 country.CreatedOn = DateTime.UtcNow;
                 _context.Add(country);
@@ -111,7 +112,7 @@ namespace EmployeeManagement.Controllers
             {
                 try
                 {
-                    var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    var UserId = User.GetUserId();
                     country.ModifiedById = UserId;
                     country.ModifiedOn = DateTime.UtcNow;
                     _context.Update(country);

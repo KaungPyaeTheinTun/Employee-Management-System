@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using EmployeeManagement.Data;
 using EmployeesManagement.Models;
 using System.Security.Claims;
+using EmployeesManagement.Services;
 
 namespace EmployeeManagement.Controllers
 { 
@@ -88,7 +89,7 @@ namespace EmployeeManagement.Controllers
 
             if(leaveApplication == null) return NotFound();
 
-            var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var UserId = User.GetUserId();
             leaveApplication.ApprovedOn = DateTime.Now;
             leaveApplication.ApprovedById = UserId;
             leaveApplication.StatusId = ApproveStatus.Id;
@@ -195,7 +196,7 @@ namespace EmployeeManagement.Controllers
                 }
 
                 // 2. GET LOGIN USER
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var userId = User.GetUserId();
 
                 if (string.IsNullOrEmpty(userId))
                     throw new Exception("User not logged in");

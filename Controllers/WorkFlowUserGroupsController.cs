@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using EmployeeManagement.Data;
 using EmployeesManagement.Models;
 using System.Security.Claims;
+using EmployeesManagement.Services;
 
 namespace EmployeesManagement.Controllers
 {
@@ -67,7 +68,7 @@ namespace EmployeesManagement.Controllers
         {
             try
             {
-                 var userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                 var userid = User.GetUserId();
                 _context.Add(workFlowUserGroup);
                 await _context.SaveChangesAsync(userid);
                 TempData["SuccessMessage"] = "WorkFlowUserGroup created successfully";
@@ -125,7 +126,7 @@ namespace EmployeesManagement.Controllers
             {
                 try
                 {
-                    var userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    var userid = User.GetUserId();
                     _context.Update(workFlowUserGroup);
                     await _context.SaveChangesAsync(userid);
                 }
@@ -175,7 +176,7 @@ namespace EmployeesManagement.Controllers
             {
                 _context.WorkFlowUserGroups.Remove(workFlowUserGroup);
             }
-            var userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userid = User.GetUserId();
             await _context.SaveChangesAsync(userid);
             TempData["SuccessMessage"] = "WorkFlowUserGroup deleted successfully.";
 

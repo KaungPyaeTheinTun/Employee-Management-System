@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using EmployeeManagement.Data;
 using EmployeesManagement.Models;
 using System.Security.Claims;
+using EmployeesManagement.Services;
 
 namespace EmployeeManagement.Controllers
 {
@@ -66,11 +67,11 @@ namespace EmployeeManagement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(SystemProfile systemProfile)
         {
-            var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var UserId = User.GetUserId();
                 systemProfile.CreatedById = UserId;
                 systemProfile.CreatedOn = DateTime.Now;
                 _context.Add(systemProfile);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(UserId);
             TempData["SuccessMessage"] = "System profile created successfully.";
 
                 return RedirectToAction(nameof(Index));
@@ -111,7 +112,7 @@ namespace EmployeeManagement.Controllers
            
                 try
                 {
-                    var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    var UserId = User.GetUserId();
                     systemProfile.ModifiedById = UserId;
                     systemProfile.ModifiedOn = DateTime.Now;
                     _context.Update(systemProfile);

@@ -1,4 +1,5 @@
 using EmployeeManagement.Data;
+using EmployeesManagement.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -60,7 +61,7 @@ namespace EmployeesManagement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CompanyInformation companyInformation, IFormFile logo)
         {
-            var userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userid = User.GetUserId();
 
             if (logo != null && logo.Length > 0)
             {

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using EmployeesManagement.Services;
 
 namespace EmployeesManagement.Controllers
 {
@@ -65,7 +66,7 @@ namespace EmployeesManagement.Controllers
         public async Task<IActionResult> Create(SystemCodeDetail systemCodeDetail)
         {
 
-            var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var UserId = User.GetUserId();
             systemCodeDetail.CreatedOn = DateTime.Now;
             systemCodeDetail.CreatedById = UserId;
             _context.Add(systemCodeDetail);
@@ -107,7 +108,7 @@ namespace EmployeesManagement.Controllers
                 return NotFound();
             }
 
-            var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var Userid = User.GetUserId();
             systemCodeDetail.ModifiedById = Userid;
             systemCodeDetail.ModifiedOn = DateTime.Now;
             ModelState.Remove("CreatedBy");
@@ -161,7 +162,7 @@ namespace EmployeesManagement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var UserId = User.GetUserId();
 
             var isUsed = await _context.Employees
                 .AnyAsync(e => e.DisabilityId == id);

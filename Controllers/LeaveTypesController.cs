@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using EmployeeManagement.Data;
 using EmployeesManagement.Models;
 using System.Security.Claims;
+using EmployeesManagement.Services;
 
 namespace EmployeeManagement.Controllers
 {
@@ -63,7 +64,7 @@ namespace EmployeeManagement.Controllers
         {
             if (ModelState.IsValid)
             {
-                var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var UserId =User.GetUserId();
                 leaveType.CreatedById = UserId;
                 leaveType.CreatedOn = DateTime.Now;
                 _context.Add(leaveType);
@@ -107,7 +108,7 @@ namespace EmployeeManagement.Controllers
             {
                 try
                 {
-                    var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    var UserId = User.GetUserId();
                     //Get Old Value
                     var oldLeaveValue = await _context.LeaveTypes.FindAsync(id);
                     leaveType.ModifiedById = UserId;
@@ -159,7 +160,7 @@ namespace EmployeeManagement.Controllers
             {
                 _context.LeaveTypes.Remove(leaveType);
             }
-            var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var UserId = User.GetUserId();
             await _context.SaveChangesAsync(UserId);
             TempData["SuccessMessage"] = "Leave type deleted successfully.";
             return RedirectToAction(nameof(Index));

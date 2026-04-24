@@ -417,6 +417,10 @@
       "PackagePath": "staticwebassets/uploads/EmployeePhoto_20260422033251_optimus-prime-ai-5120x2880-25905.jpg"
     },
     {
+      "Id": "/app/wwwroot/uploads/EmployeePhoto_20260424033007_Gemini_Generated_Image_qph720qph720qph7.png",
+      "PackagePath": "staticwebassets/uploads/EmployeePhoto_20260424033007_Gemini_Generated_Image_qph720qph720qph7.png"
+    },
+    {
       "Id": "/app/wwwroot/uploads/logo_20260406082645_photo_2026-02-18 16.41.34.jpeg",
       "PackagePath": "staticwebassets/uploads/logo_20260406082645_photo_2026-02-18 16.41.34.jpeg"
     },

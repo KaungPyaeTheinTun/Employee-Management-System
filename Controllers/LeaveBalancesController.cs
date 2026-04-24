@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using EmployeeManagement.Data;
 using EmployeesManagement.Models;
+using EmployeesManagement.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -50,7 +51,7 @@ namespace EmployeeManagement.Controllers
 
             leaveAdjustmentEntry.AdjustmentDescription = leaveAdjustmentEntry.AdjustmentDescription + "-" + adjustmentType.Description;
             leaveAdjustmentEntry.Id = 0;
-            var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var UserId = User.GetUserId();
             _context.Add(leaveAdjustmentEntry);
             await _context.SaveChangesAsync(UserId);
 

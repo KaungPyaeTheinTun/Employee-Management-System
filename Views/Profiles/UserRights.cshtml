@@ -1,236 +1,488 @@
 @model EmployeeManagement.ViewModels.ProfileViewModel
+
 @{
-    ViewData["Title"] = "User Rights";
+    ViewData["Title"] = "Assign User Rights";
 }
 
 <div class="page-header">
     <div>
-        <h1 class="page-header-title">User Rights</h1>
+        <h1 class="page-header-title">Assign User Rights</h1>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Dashboard</a></li>
-            <li class="breadcrumb-item active">User Rights</li>
+            <li class="breadcrumb-item"><a asp-action="Index">User Roles</a></li>
+            <li class="breadcrumb-item active">Assign Rights</li>
         </ol>
     </div>
+    <a asp-action="Index" class="btn-ghost">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin-right:6px">
+            <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        Back to List
+    </a>
 </div>
 
-<form asp-action="UserGroupRights" method="post">
-    <div class="table-card">
-        <!-- Toolbar -->
-        <div class="table-toolbar">
-            <span class="table-title">Assign User Rights</span>
+<div class="table-card">
+    <div class="table-toolbar">
+        <span class="table-title">Role Rights Assignment</span>
+    </div>
 
-            <div class="table-search">
-                <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-                    <circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" stroke-width="1.2" />
-                    <path d="M9 9L12 12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" />
-                </svg>
-                <input id="tableSearch" type="text" placeholder="Search modules, submodules, actions..." />
-            </div>
-
-            <!-- Items per page selector -->
-            <div class="items-per-page">
-                <select id="itemsPerPage" class="per-page-select">
-                    <option value="10">10 per page</option>
-                    <option value="25">25 per page</option>
-                    <option value="50">50 per page</option>
-                    <option value="100">100 per page</option>
-                </select>
+    <form asp-action="UserGroupRights" method="post" id="rightsForm">
+        <div class="form-card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="RoleId" class="field-label">Select Role <span class="field-required">*</span></label>
+                    <select asp-for="RoleId" class="field-control role-select" asp-items="ViewBag.RoleId">
+                        <option value="">— Select Role —</option>
+                    </select>
+                    <span class="field-hint">Select a role to view and assign its permissions</span>
+                </div>
             </div>
         </div>
 
-        <!-- Desktop table -->
-        <div class="table-wrap">
-            <input type="hidden" name="RoleId" value="@Model.RoleId" />
-            <table class="emp-table" id="rightsTable">
-                <thead>
-                    <tr>
-                        <th data-sort="0">Module</th>
-                        <th data-sort="1">SubModule</th>
-                        <th data-sort="2">Action</th>
-                        <th data-sort="3">Assign</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody">
-                    @{
-                        var avatarColors = new[] {
-                            ("#e8eefa","#1a4fa0"), ("#e8f5ee","#1a7a4a"), ("#fef3e0","#a05c00"),
-                            ("#fdecea","#c0392b"), ("#f2f2ef","#3a3a38"), ("#f0eeff","#4a35c0")
-                        };
-                        int colorIdx = 0;
-                    }
-                    @if (Model.Profiles != null)
-                    {
-                        foreach (var module in Model.Profiles.Where(x => x.ProfileId == null))
-                        {
-                            var (bg, tc) = avatarColors[colorIdx++ % avatarColors.Length];
-                            
-                            <!-- MODULE -->
-                            <tr class="module-row" data-type="module" data-module-id="@module.Id">
-                                <td colspan="4" style="background: rgb(233, 231, 231);">
-                                    <div style="display: flex; align-items: center; gap: 8px; padding: 8px 12px;">
-                                        <span style="font-weight: 600; color: var(--primary);">@module.Name</span>
-                                    </div>
-                                </td>
-                            </tr>
+        <!-- Permissions Tree -->
+        <div class="permissions-section" id="permissionsSection" style="display: none;">
+            <div class="permissions-header">
+                <div class="permissions-header-left">
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                        <rect x="2" y="3" width="14" height="12" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                        <path d="M5 7h8M5 11h5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                    </svg>
+                    <span>Permissions Matrix</span>
+                </div>
+                <div class="permissions-actions">
+                    <button type="button" class="btn-link-sm" id="expandAllBtn">
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                            <path d="M3 5l3 3 3-3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                        </svg>
+                        Expand All
+                    </button>
+                    <button type="button" class="btn-link-sm" id="collapseAllBtn">
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                            <path d="M3 7l3-3 3 3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                        </svg>
+                        Collapse All
+                    </button>
+                </div>
+            </div>
 
-                            if (module.Children != null && module.Children.Any())
-                            {
-                                foreach (var submodule in module.Children)
+            <div class="tree-container">
+                <div id="tree">
+                    <ul id="treeData" class="permission-tree">
+                        <!-- Grandparent -->
+                        <li class="tree-node">
+                            <div class="tree-node-header">
+                                <button type="button" class="tree-toggle expanded">
+                                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                                        <path d="M2 4l3 3 3-3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                                    </svg>
+                                </button>
+                                <div class="tree-checkbox">
+                                    <input class="grandparent" value="0" type="checkbox" id="allModules" />
+                                    <label for="allModules"></label>
+                                </div>
+                                <i class="tree-icon">📁</i>
+                                <span class="tree-label">All Modules</span>
+                            </div>
+
+                            <ul class="tree-children expanded">
+                                @foreach (var item in Model.Profiles)
                                 {
-                                    <!-- SUBMODULE -->
-                                    <tr class="submodule-row" data-type="submodule" data-module-id="@module.Id" data-submodule-id="@submodule.Id">
-                                        <td></td>
-                                        <td colspan="3" style="background: var(--bg-hover);">
-                                            <div style="display: flex; align-items: center; gap: 8px; padding: 6px 12px;">
-                                                <input type="hidden" name="RolesProfilesIds[]" value="@submodule.Id" />
-                                                <span style="font-weight: 500; color: var(--ink2);">@submodule.Name</span>
+                                    <li class="tree-node">
+                                        <div class="tree-node-header">
+                                            <button type="button" class="tree-toggle expanded">
+                                                <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                                                    <path d="M2 4l3 3 3-3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                                                </svg>
+                                            </button>
+                                            <div class="tree-checkbox">
+                                                <input class="parent"
+                                                       value="@item.Id"
+                                                       name="Ids[]"
+                                                       type="checkbox"
+                                                       id="parent_@item.Id"
+                                                       @(Model.RoleRightsIds.Contains(item.Id) ? "checked" : "") />
+                                                <label for="parent_@item.Id"></label>
                                             </div>
-                                        </td>
-                                    </tr>
+                                            <i class="tree-icon">📂</i>
+                                            <span class="tree-label">@item.Name</span>
+                                        </div>
 
-                                    @if (submodule.Children != null && submodule.Children.Any())
-                                    {
-                                        foreach (var action in submodule.Children)
+                                        @if (item.Children.Any())
                                         {
-                                            <tr class="action-row" data-type="action" data-module-id="@module.Id" data-submodule-id="@submodule.Id" data-action-id="@action.Id">
-                                                <td></td>
-                                                <td></td>
-                                                <td style="padding: 8px 12px;">
-                                                    <div style="display: flex; align-items: center; gap: 6px;">
-                                                        <span style="font-size: 13px; color: var(--ink1);">@action.Name</span>
-                                                    </div>
-                                                </td>
-                                                <td style="padding: 8px 12px; text-align: center;">
-                                                    <label class="checkbox-container">
-                                                        <input type="checkbox" name="Ids" value="@action.Id" class="action-checkbox"
-                                                        @(Model.RoleRightsIds != null && Model.RoleRightsIds.Contains(action.Id) ? "checked" : "") />
-                                                        <span class="checkmark"></span>
-                                                    </label>
-                                                </td>
-                                            </tr>
+                                            <ul class="tree-children expanded">
+                                                @foreach (var child in item.Children.OrderBy(c => c.Order))
+                                                {
+                                                    <li class="tree-node">
+                                                        <div class="tree-node-header">
+                                                            @if (child.Children.Any())
+                                                            {
+                                                                <button type="button" class="tree-toggle expanded">
+                                                                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                                                                        <path d="M2 4l3 3 3-3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                                                                    </svg>
+                                                                </button>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="tree-toggle-placeholder"></span>
+                                                            }
+                                                            <div class="tree-checkbox">
+                                                                <input class="child"
+                                                                       value="@child.Id"
+                                                                       name="Ids[]"
+                                                                       type="checkbox"
+                                                                       id="child_@child.Id"
+                                                                       @(Model.RoleRightsIds.Contains(child.Id) ? "checked" : "") />
+                                                                <label for="child_@child.Id"></label>
+                                                            </div>
+                                                            <i class="tree-icon">@(child.Children.Any() ? "📂" : "📄")</i>
+                                                            <span class="tree-label">@child.Name</span>
+                                                        </div>
+
+                                                        @if (child.Children.Any())
+                                                        {
+                                                            <ul class="tree-children expanded">
+                                                                @foreach (var childInner in child.Children.OrderBy(c => c.Order))
+                                                                {
+                                                                    <li class="tree-node">
+                                                                        <div class="tree-node-header">
+                                                                            <span class="tree-toggle-placeholder"></span>
+                                                                            <div class="tree-checkbox">
+                                                                                <input class="child"
+                                                                                       value="@childInner.Id"
+                                                                                       name="Ids[]"
+                                                                                       type="checkbox"
+                                                                                       id="child_@childInner.Id"
+                                                                                       @(Model.RoleRightsIds.Contains(childInner.Id) ? "checked" : "") />
+                                                                                <label for="child_@childInner.Id"></label>
+                                                                            </div>
+                                                                            <i class="tree-icon">📄</i>
+                                                                            <span class="tree-label">@childInner.Name</span>
+                                                                        </div>
+                                                                    </li>
+                                                                }
+                                                            </ul>
+                                                        }
+                                                    </li>
+                                                }
+                                            </ul>
                                         }
-                                    }
+                                    </li>
                                 }
-                            }
-                        }
-                    }
-                </tbody>
-            </table>
-
-            <!-- Mobile cards (injected by JS) -->
-            <div id="mobileRightsCards" class="mobile-emp-cards"></div>
-        </div>
-
-        <!-- Pagination -->
-        <div class="table-pagination">
-            <span class="pagination-info" id="paginationInfo"></span>
-            <div class="pagination-controls" id="tablePagination">
-                <button class="pagination-btn" id="prevPage" disabled>Previous</button>
-                <div class="page-numbers" id="pageNumbers"></div>
-                <button class="pagination-btn" id="nextPage">Next</button>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
-    
-    <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 20px;">
-        <a asp-action="Index" class="btn-ghost">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin-right:6px">
-                <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
-            Cancel
-        </a>
-        <button type="submit" class="btn-primary" style="background-color:black; color:white;">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin-right:6px;vertical-align:-2px">
-                <path d="M2 7l3.5 3.5L12 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-            Assign Rights
-        </button>
-    </div>
-</form>
+
+        <div class="form-actions" style="border-top:none;padding-top:0">
+            <a asp-action="Index" class="btn-ghost">Cancel</a>
+            <button type="submit" class="btn-primary" style="background-color: black;">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin-right:6px;vertical-align:-2px">
+                    <path d="M2 7l3.5 3.5L12 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Assign Rights
+            </button>
+        </div>
+    </form>
+</div>
 
 <style>
-    /* Custom checkbox styles */
-    .checkbox-container {
-        display: inline-block;
-        position: relative;
-        width: 18px;
-        height: 18px;
-        cursor: pointer;
-        user-select: none;
+    /* Page Header */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 24px;
+        gap: 16px;
     }
 
-    .checkbox-container input {
-        position: absolute;
-        opacity: 0;
-        cursor: pointer;
-        height: 0;
-        width: 0;
+    .page-header-title {
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--ink1);
+        margin: 0 0 8px 0;
     }
 
-    .checkmark {
-        position: absolute;
-        top: 0;
-        left: 0;
-        height: 18px;
-        width: 18px;
-        background-color: var(--card-bg);
-        border: 2px solid var(--border);
+    .breadcrumb {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        gap: 8px;
+        font-size: 13px;
+    }
+
+    .breadcrumb-item {
+        color: var(--ink3);
+    }
+
+    .breadcrumb-item a {
+        color: var(--primary);
+        text-decoration: none;
+    }
+
+    .breadcrumb-item a:hover {
+        text-decoration: underline;
+    }
+
+    .breadcrumb-item.active {
+        color: var(--ink2);
+        font-weight: 500;
+    }
+
+    .breadcrumb-item + .breadcrumb-item::before {
+        content: "/";
+        margin-right: 8px;
+        color: var(--ink4);
+    }
+
+    /* Table Card */
+    .table-card {
+        background: var(--card-bg);
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        overflow: hidden;
+    }
+
+    .table-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+        background: var(--bg2);
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .table-title {
+        font-weight: 600;
+        font-size: 14px;
+        color: var(--ink1);
+    }
+
+    /* Form field styles */
+    .field-label {
+        display: block;
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--ink2);
+        margin-bottom: 6px;
+    }
+
+    .field-required {
+        color: #c0392b;
+        font-size: 12px;
+    }
+
+    .field-control {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-size: 13px;
+        color: var(--ink1);
+        background: var(--card-bg);
+        transition: all 0.15s;
+    }
+
+    .field-control:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(26, 79, 160, 0.1);
+    }
+
+    select.field-control {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 12 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2 4L6 8L10 4' stroke='%23666' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        padding-right: 32px;
+        cursor: pointer;
+    }
+
+    .field-hint {
+        display: block;
+        font-size: 11px;
+        color: var(--ink3);
+        margin-top: 4px;
+    }
+
+    .form-card-body {
+        padding: 20px;
+    }
+
+    /* Permissions Section */
+    .permissions-section {
+        border-top: 1px solid var(--border);
+    }
+
+    .permissions-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 20px;
+        background: var(--bg2);
+        border-bottom: 1px solid var(--border);
+    }
+
+    .permissions-header-left {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 600;
+        font-size: 13px;
+        color: var(--ink2);
+    }
+
+    .permissions-actions {
+        display: flex;
+        gap: 12px;
+    }
+
+    .btn-link-sm {
+        background: none;
+        border: none;
+        font-size: 11px;
+        color: var(--primary);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 8px;
         border-radius: 4px;
         transition: all 0.15s;
     }
 
-    .checkbox-container:hover input ~ .checkmark {
-        border-color: var(--primary);
+    .btn-link-sm:hover {
+        background: var(--border);
     }
 
-    .checkbox-container input:checked ~ .checkmark {
-        background-color: blue;
-        border-color: var(--primary);
+    /* Tree Styles */
+    .tree-container {
+        padding: 20px;
+        max-height: 500px;
+        overflow-y: auto;
     }
 
-    .checkmark:after {
-        content: "";
-        position: absolute;
-        display: none;
+    .permission-tree {
+        list-style: none;
+        padding-left: 0;
+        margin: 0;
     }
 
-    .checkbox-container input:checked ~ .checkmark:after {
-        display: block;
+    .permission-tree ul {
+        list-style: none;
+        padding-left: 24px;
+        margin: 0;
     }
 
-    .checkbox-container .checkmark:after {
-        left: 5px;
-        top: 2px;
-        width: 4px;
-        height: 8px;
-        border: solid white;
-        border-width: 0 2px 2px 0;
-        transform: rotate(45deg);
+    .tree-node {
+        margin: 4px 0;
     }
 
-    /* Table row styles */
-    .module-row td {
-        padding: 0 !important;
-    }
-    
-    .submodule-row td {
-        padding: 0 !important;
-    }
-    
-    .action-row:hover {
-        background: var(--bg-hover);
+    .tree-node-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 8px;
+        border-radius: 8px;
+        transition: background 0.15s;
     }
 
-    .emp-avatar {
-        width: 24px;
-        height: 24px;
-        border-radius: 24px;
+    .tree-node-header:hover {
+        background: var(--bg2);
+    }
+
+    .tree-toggle {
+        width: 20px;
+        height: 20px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        font-weight: 600;
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--ink3);
+        transition: transform 0.2s;
+        padding: 0;
+    }
+
+    .tree-toggle.collapsed svg {
+        transform: rotate(-90deg);
+    }
+
+    .tree-toggle-placeholder {
+        width: 20px;
+        height: 20px;
+    }
+
+    .tree-checkbox {
+        position: relative;
+    }
+
+    .tree-checkbox input[type="checkbox"] {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+        width: 18px;
+        height: 18px;
+        margin: 0;
+    }
+
+    .tree-checkbox label {
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        background: var(--card-bg);
+        border: 2px solid var(--border);
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+
+    .tree-checkbox input[type="checkbox"]:checked + label {
+        background: var(--primary);
+        border-color: var(--primary);
+        position: relative;
+    }
+
+    .tree-checkbox input[type="checkbox"]:checked + label::after {
+        content: "✓";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
         font-size: 11px;
-        flex-shrink: 0;
+    }
+
+    .tree-checkbox input[type="checkbox"]:hover + label {
+        border-color: var(--primary);
+    }
+
+    .tree-icon {
+        font-size: 14px;
+        color: var(--ink3);
+        width: 20px;
+    }
+
+    .tree-label {
+        font-size: 13px;
+        color: var(--ink1);
+        cursor: pointer;
+    }
+
+    .tree-children {
+        padding-left: 28px;
+    }
+
+    .tree-children.collapsed {
+        display: none;
     }
 
     /* Button styles */
@@ -240,10 +492,10 @@
         padding: 10px 20px;
         background: var(--primary);
         color: white;
-        border: none;
         border-radius: 8px;
         font-size: 13px;
         font-weight: 500;
+        border: none;
         cursor: pointer;
         transition: all 0.15s;
         text-decoration: none;
@@ -263,13 +515,13 @@
         padding: 10px 20px;
         background: var(--bg2);
         color: var(--ink2);
-        border: 1px solid var(--border);
         border-radius: 8px;
         font-size: 13px;
         font-weight: 500;
+        text-decoration: none;
+        border: 1px solid var(--border);
         cursor: pointer;
         transition: all 0.15s;
-        text-decoration: none;
     }
 
     .btn-ghost:hover {
@@ -278,455 +530,230 @@
         text-decoration: none;
     }
 
-    /* Pagination styles */
-    .table-pagination {
+    .form-actions {
         display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 16px 20px;
-        border-top: 1px solid var(--border);
-        flex-wrap: wrap;
         gap: 12px;
+        justify-content: flex-end;
+        padding: 20px;
+        border-top: 1px solid var(--border);
+        margin-top: 0;
     }
 
-    .pagination-info {
-        font-size: 12px;
-        color: var(--ink3);
-    }
-
-    .pagination-controls {
+    /* Grid system */
+    .row {
         display: flex;
-        align-items: center;
-        gap: 8px;
+        flex-wrap: wrap;
+        margin: -8px;
     }
 
-    .pagination-btn {
-        padding: 6px 12px;
-        border: 1px solid var(--border);
-        background: var(--card-bg);
-        border-radius: 6px;
-        font-size: 12px;
-        color: var(--ink2);
-        cursor: pointer;
-        transition: all 0.2s;
+    .g-3 {
+        margin: -8px;
     }
 
-    .pagination-btn:hover:not(:disabled) {
-        background: var(--bg2);
-        border-color: var(--primary);
-        color: var(--primary);
+    .g-3 > [class*="col-"] {
+        padding: 8px;
     }
 
-    .pagination-btn:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
+    .col-md-6 {
+        flex: 0 0 50%;
+        max-width: 50%;
     }
 
-    .page-numbers {
-        display: flex;
-        gap: 4px;
+    /* CSS Variables */
+    :root {
+        --ink1: #1a1a1a;
+        --ink2: #4a4a4a;
+        --ink3: #8a8a8a;
+        --ink4: #c0c0c0;
+        --border: #e5e5e5;
+        --bg2: #f8f8f8;
+        --card-bg: #ffffff;
+        --primary: #1a4fa0;
     }
 
-    .page-number {
-        min-width: 32px;
-        height: 32px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 1px solid var(--border);
-        background: var(--card-bg);
-        border-radius: 6px;
-        font-size: 12px;
-        color: var(--ink2);
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-
-    .page-number:hover {
-        background: var(--bg2);
-        border-color: var(--primary);
-        color: var(--primary);
-    }
-
-    .page-number.active {
-        background: var(--primary);
-        border-color: var(--primary);
-        color: white;
-    }
-
-    /* Items per page selector */
-    .items-per-page {
-        margin-left: auto;
-    }
-
-    .per-page-select {
-        padding: 6px 10px;
-        border: 1px solid var(--border);
-        border-radius: 6px;
-        font-size: 12px;
-        color: var(--ink2);
-        background: var(--card-bg);
-        cursor: pointer;
-    }
-
-    .per-page-select:hover {
-        border-color: var(--primary);
-    }
-
-    /* Mobile card styles */
-    .mobile-emp-card {
-        background: var(--card-bg);
-        border-radius: 12px;
-        padding: 16px;
-        margin-bottom: 12px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
-        border: 1px solid var(--border);
-    }
-
-    .mobile-module {
-        font-weight: 600;
-        color: var(--primary);
-        margin-bottom: 8px;
-        padding-bottom: 8px;
-        border-bottom: 1px solid var(--border);
-    }
-
-    .mobile-submodule {
-        font-weight: 500;
-        color: var(--ink2);
-        margin: 8px 0 4px 0;
-    }
-
-    .mobile-action {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 8px 0;
-        border-bottom: 1px dashed var(--border);
-    }
-
-    .mobile-action:last-child {
-        border-bottom: none;
-    }
-
-    /* Responsive adjustments */
+    /* Responsive */
     @@media (max-width: 768px) {
-        .emp-table {
-            display: none;
+        .col-md-6 {
+            flex: 0 0 100%;
+            max-width: 100%;
         }
         
-        .table-pagination {
+        .form-actions {
+            flex-direction: column-reverse;
+        }
+        
+        .btn-primary,
+        .btn-ghost {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .page-header {
             flex-direction: column;
             align-items: flex-start;
         }
 
-        .pagination-controls {
-            width: 100%;
-            justify-content: center;
-        }
-
-        .items-per-page {
-            margin-left: 0;
-            width: 100%;
-        }
-
-        .per-page-select {
-            width: 100%;
-        }
-        
-        .btn-primary, .btn-ghost {
-            width: 100%;
-            justify-content: center;
-        }
-        
-        div[style*="justify-content: flex-end"] {
+        .permissions-header {
             flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .tree-container {
+            padding: 12px;
+        }
+
+        .tree-children {
+            padding-left: 16px;
         }
     }
 </style>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Get DOM elements
-        const searchInput = document.getElementById('tableSearch');
-        const table = document.getElementById('rightsTable');
-        const tableBody = document.getElementById('tableBody');
-        const rows = Array.from(tableBody.querySelectorAll('tr'));
-        const mobileContainer = document.getElementById('mobileRightsCards');
-        const itemsPerPageSelect = document.getElementById('itemsPerPage');
-        const prevBtn = document.getElementById('prevPage');
-        const nextBtn = document.getElementById('nextPage');
-        const pageNumbersDiv = document.getElementById('pageNumbers');
-        const paginationInfo = document.getElementById('paginationInfo');
+    document.addEventListener('DOMContentLoaded', function() {
+        // Role dropdown change redirect
+        const roleSelect = document.querySelector('.role-select');
+        const currentUrl = document.querySelector('.currentrooturl')?.getAttribute('href') || '/Profiles/UserRights';
+        const permissionsSection = document.getElementById('permissionsSection');
 
-        // Pagination state
-        let currentPage = 1;
-        let itemsPerPage = 10;
-        let filteredRows = [];
-        let totalPages = 1;
-
-        // Initialize
-        function init() {
-            itemsPerPage = parseInt(itemsPerPageSelect.value);
-            filterRows();
-            updatePagination();
-            renderCurrentPage();
-            toggleMobileView();
-        }
-
-        // Filter rows based on search
-        function filterRows() {
-            const searchTerm = searchInput.value.toLowerCase();
-
-            filteredRows = rows.filter(row => {
-                // Skip module and submodule rows that don't contain searchable content
-                if (row.classList.contains('module-row')) {
-                    const moduleText = row.querySelector('span')?.textContent.toLowerCase() || '';
-                    return !searchTerm || moduleText.includes(searchTerm);
-                } else if (row.classList.contains('submodule-row')) {
-                    const submoduleText = row.querySelector('span')?.textContent.toLowerCase() || '';
-                    return !searchTerm || submoduleText.includes(searchTerm);
+        if (roleSelect) {
+            // Show/hide permissions section based on selection
+            function togglePermissionsSection() {
+                if (roleSelect.value) {
+                    permissionsSection.style.display = 'block';
                 } else {
-                    // Action rows
-                    const actionText = row.querySelector('td:nth-child(3) span')?.textContent.toLowerCase() || '';
-                    return !searchTerm || actionText.includes(searchTerm);
+                    permissionsSection.style.display = 'none';
+                }
+            }
+
+            roleSelect.addEventListener('change', function() {
+                if (this.value) {
+                    window.location.href = currentUrl + '/' + this.value;
+                } else {
+                    togglePermissionsSection();
                 }
             });
 
-            totalPages = Math.ceil(filteredRows.length / itemsPerPage);
-            if (currentPage > totalPages) currentPage = totalPages || 1;
+            togglePermissionsSection();
         }
 
-        // Render current page
-        function renderCurrentPage() {
-            const start = (currentPage - 1) * itemsPerPage;
-            const end = start + itemsPerPage;
-            const pageRows = filteredRows.slice(start, end);
-
-            // Hide all rows first
-            rows.forEach(row => row.style.display = 'none');
-
-            // Show only current page rows
-            pageRows.forEach(row => row.style.display = '');
-
-            // Update mobile cards
-            generateMobileCards(pageRows);
-
-            // Update pagination info
-            updatePaginationInfo();
+        // Tree toggle functionality
+        function initTreeToggles() {
+            const toggles = document.querySelectorAll('.tree-toggle');
+            toggles.forEach(toggle => {
+                toggle.removeEventListener('click', handleToggleClick);
+                toggle.addEventListener('click', handleToggleClick);
+            });
         }
 
-        // Update pagination controls
-        function updatePagination() {
-            // Update button states
-            prevBtn.disabled = currentPage === 1;
-            nextBtn.disabled = currentPage === totalPages || totalPages === 0;
-
-            // Generate page numbers
-            generatePageNumbers();
-        }
-
-        // Generate page number buttons
-        function generatePageNumbers() {
-            pageNumbersDiv.innerHTML = '';
-
-            if (totalPages <= 7) {
-                // Show all pages
-                for (let i = 1; i <= totalPages; i++) {
-                    addPageButton(i);
-                }
-            } else {
-                // Show first page
-                addPageButton(1);
-
-                if (currentPage > 3) {
-                    addEllipsis();
-                }
-
-                // Show pages around current page
-                let start = Math.max(2, currentPage - 1);
-                let end = Math.min(totalPages - 1, currentPage + 1);
-
-                for (let i = start; i <= end; i++) {
-                    addPageButton(i);
-                }
-
-                if (currentPage < totalPages - 2) {
-                    addEllipsis();
-                }
-
-                // Show last page
-                addPageButton(totalPages);
+        function handleToggleClick(e) {
+            e.stopPropagation();
+            const btn = e.currentTarget;
+            const parentLi = btn.closest('.tree-node');
+            const childrenUl = parentLi.querySelector(':scope > .tree-children');
+            
+            if (childrenUl) {
+                btn.classList.toggle('collapsed');
+                childrenUl.classList.toggle('collapsed');
             }
         }
 
-        function addPageButton(pageNum) {
-            const btn = document.createElement('button');
-            btn.className = `page-number ${pageNum === currentPage ? 'active' : ''}`;
-            btn.textContent = pageNum;
-            btn.addEventListener('click', () => {
-                currentPage = pageNum;
-                renderCurrentPage();
-                updatePagination();
-            });
-            pageNumbersDiv.appendChild(btn);
-        }
-
-        function addEllipsis() {
-            const span = document.createElement('span');
-            span.className = 'page-number';
-            span.textContent = '...';
-            span.style.cursor = 'default';
-            pageNumbersDiv.appendChild(span);
-        }
-
-        // Update pagination info text
-        function updatePaginationInfo() {
-            const start = filteredRows.length ? (currentPage - 1) * itemsPerPage + 1 : 0;
-            const end = Math.min(currentPage * itemsPerPage, filteredRows.length);
-            paginationInfo.textContent = `Showing ${start}-${end} of ${filteredRows.length} items`;
-        }
-
-        // Generate mobile cards
-        function generateMobileCards(pageRows) {
-            if (!mobileContainer) return;
-
-            mobileContainer.innerHTML = '';
-
-            // Group rows by module for mobile display
-            const moduleMap = new Map();
-
-            pageRows.forEach(row => {
-                if (row.classList.contains('module-row')) {
-                    const moduleName = row.querySelector('span')?.textContent || 'Module';
-                    const moduleId = row.dataset.moduleId;
-                    if (!moduleMap.has(moduleId)) {
-                        moduleMap.set(moduleId, {
-                            name: moduleName,
-                            submodules: new Map()
-                        });
-                    }
-                } else if (row.classList.contains('submodule-row')) {
-                    const moduleId = row.dataset.moduleId;
-                    const submoduleName = row.querySelector('span')?.textContent || 'Submodule';
-                    const submoduleId = row.dataset.submoduleId;
-                    
-                    if (moduleMap.has(moduleId)) {
-                        const module = moduleMap.get(moduleId);
-                        if (!module.submodules.has(submoduleId)) {
-                            module.submodules.set(submoduleId, {
-                                name: submoduleName,
-                                actions: []
-                            });
-                        }
-                    }
-                } else if (row.classList.contains('action-row')) {
-                    const moduleId = row.dataset.moduleId;
-                    const submoduleId = row.dataset.submoduleId;
-                    const actionName = row.querySelector('td:nth-child(3) span')?.textContent || 'Action';
-                    const actionId = row.dataset.actionId;
-                    const isChecked = row.querySelector('.action-checkbox')?.checked || false;
-
-                    if (moduleMap.has(moduleId)) {
-                        const module = moduleMap.get(moduleId);
-                        if (module.submodules.has(submoduleId)) {
-                            module.submodules.get(submoduleId).actions.push({
-                                name: actionName,
-                                id: actionId,
-                                checked: isChecked
-                            });
-                        }
-                    }
-                }
-            });
-
-            // Generate cards
-            moduleMap.forEach((module, moduleId) => {
-                const card = document.createElement('div');
-                card.className = 'mobile-emp-card';
-                
-                let submodulesHtml = '';
-                module.submodules.forEach((submodule, submoduleId) => {
-                    let actionsHtml = '';
-                    submodule.actions.forEach(action => {
-                        actionsHtml += `
-                            <div class="mobile-action">
-                                <span style="font-size: 13px;">${action.name}</span>
-                                <label class="checkbox-container">
-                                    <input type="checkbox" name="Ids" value="${action.id}" class="action-checkbox" ${action.checked ? 'checked' : ''} />
-                                    <span class="checkmark"></span>
-                                </label>
-                            </div>
-                        `;
-                    });
-
-                    submodulesHtml += `
-                        <div class="mobile-submodule">
-                            <div style="margin-bottom: 4px;">${submodule.name}</div>
-                            <div style="margin-left: 12px;">
-                                ${actionsHtml}
-                            </div>
-                        </div>
-                    `;
+        // Expand All
+        const expandAllBtn = document.getElementById('expandAllBtn');
+        if (expandAllBtn) {
+            expandAllBtn.addEventListener('click', function() {
+                document.querySelectorAll('.tree-children').forEach(el => {
+                    el.classList.remove('collapsed');
                 });
-
-                card.innerHTML = `
-                    <div class="mobile-module">
-                        ${module.name}
-                    </div>
-                    ${submodulesHtml}
-                `;
-                
-                mobileContainer.appendChild(card);
+                document.querySelectorAll('.tree-toggle').forEach(btn => {
+                    btn.classList.remove('collapsed');
+                });
             });
         }
 
-        // Toggle mobile/desktop view
-        function toggleMobileView() {
-            if (!mobileContainer) return;
+        // Collapse All
+        const collapseAllBtn = document.getElementById('collapseAllBtn');
+        if (collapseAllBtn) {
+            collapseAllBtn.addEventListener('click', function() {
+                document.querySelectorAll('.tree-children').forEach(el => {
+                    el.classList.add('collapsed');
+                });
+                document.querySelectorAll('.tree-toggle').forEach(btn => {
+                    btn.classList.add('collapsed');
+                });
+            });
+        }
 
-            if (window.innerWidth <= 768) {
-                mobileContainer.style.display = 'block';
-            } else {
-                mobileContainer.style.display = 'none';
+        // Checkbox hierarchy logic
+        function initCheckboxHierarchy() {
+            // Parent and grandparent checkboxes affect children
+            document.querySelectorAll('input.parent, input.grandparent').forEach(checkbox => {
+                checkbox.removeEventListener('change', handleParentChange);
+                checkbox.addEventListener('change', handleParentChange);
+            });
+
+            // Child checkboxes affect parent
+            document.querySelectorAll('input.child').forEach(checkbox => {
+                checkbox.removeEventListener('change', handleChildChange);
+                checkbox.addEventListener('change', handleChildChange);
+            });
+        }
+
+        function handleParentChange(e) {
+            const checkbox = e.target;
+            const parentLi = checkbox.closest('.tree-node');
+            const childCheckboxes = parentLi.querySelectorAll(':scope .tree-children input[type="checkbox"]');
+            childCheckboxes.forEach(child => {
+                child.checked = checkbox.checked;
+            });
+        }
+
+        function handleChildChange(e) {
+            const checkbox = e.target;
+            const parentLi = checkbox.closest('.tree-node');
+            const parentDiv = parentLi?.parentElement?.closest('.tree-node');
+            if (parentDiv) {
+                const siblingCheckboxes = parentDiv.querySelectorAll(':scope > .tree-children input[type="checkbox"]');
+                const allChecked = Array.from(siblingCheckboxes).every(cb => cb.checked);
+                const someChecked = Array.from(siblingCheckboxes).some(cb => cb.checked);
+                const parentCheckbox = parentDiv.querySelector(':scope > .tree-node-header input[type="checkbox"]');
+                
+                if (parentCheckbox) {
+                    if (allChecked) {
+                        parentCheckbox.checked = true;
+                        parentCheckbox.indeterminate = false;
+                    } else if (someChecked) {
+                        parentCheckbox.checked = false;
+                        parentCheckbox.indeterminate = true;
+                    } else {
+                        parentCheckbox.checked = false;
+                        parentCheckbox.indeterminate = false;
+                    }
+                }
             }
         }
 
-        // Event Listeners
-        searchInput.addEventListener('input', function () {
-            currentPage = 1;
-            filterRows();
-            updatePagination();
-            renderCurrentPage();
-        });
+        // Initialize for dynamically loaded content
+        initTreeToggles();
+        initCheckboxHierarchy();
 
-        itemsPerPageSelect.addEventListener('change', function () {
-            itemsPerPage = parseInt(this.value);
-            currentPage = 1;
-            filterRows();
-            updatePagination();
-            renderCurrentPage();
-        });
-
-        prevBtn.addEventListener('click', function () {
-            if (currentPage > 1) {
-                currentPage--;
-                renderCurrentPage();
-                updatePagination();
+        // Handle indeterminate state for parent checkboxes on page load
+        document.querySelectorAll('input.parent').forEach(checkbox => {
+            const parentLi = checkbox.closest('.tree-node');
+            const childCheckboxes = parentLi.querySelectorAll(':scope .tree-children input[type="checkbox"]');
+            if (childCheckboxes.length > 0) {
+                const checkedCount = Array.from(childCheckboxes).filter(cb => cb.checked).length;
+                if (checkedCount > 0 && checkedCount < childCheckboxes.length) {
+                    checkbox.indeterminate = true;
+                    checkbox.checked = false;
+                }
             }
         });
-
-        nextBtn.addEventListener('click', function () {
-            if (currentPage < totalPages) {
-                currentPage++;
-                renderCurrentPage();
-                updatePagination();
-            }
-        });
-
-        window.addEventListener('resize', toggleMobileView);
-
-        // Initialize
-        init();
     });
 </script>
+
+<a class="currentrooturl" href="/Profiles/UserRights" style="display: none;"></a>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

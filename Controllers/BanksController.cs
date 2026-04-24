@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using EmployeeManagement.Data;
 using EmployeesManagement.Models;
 using System.Security.Claims;
+using EmployeesManagement.Services;
 
 namespace EmployeesManagement.Controllers
 {
@@ -69,7 +70,7 @@ namespace EmployeesManagement.Controllers
                 ModelState.Remove("ModifiedBy");
                 if (ModelState.IsValid)
                 {
-                    var userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    var userid = User.GetUserId();
                     bank.CreatedById = userid;
                     bank.CreatedOn = DateTime.Now;
                     _context.Add(bank);
@@ -123,7 +124,7 @@ namespace EmployeesManagement.Controllers
             {
                 try
                 {
-                    var userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    var userid = User.GetUserId();
                     bank.ModifiedById = userid;
                     bank.ModifiedOn = DateTime.Now;
                     _context.Update(bank);

@@ -1,5 +1,6 @@
 using EmployeeManagement.Data;
 using EmployeesManagement.Models;
+using EmployeesManagement.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -69,7 +70,7 @@ namespace EmployeesManagement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ApprovalsUserMatrix approvalsUserMatrix)
         {
-            var userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userid = User.GetUserId();
             approvalsUserMatrix.CreatedById = userid;
             approvalsUserMatrix.CreatedOn = DateTime.Now;
 
@@ -114,7 +115,7 @@ namespace EmployeesManagement.Controllers
                 return NotFound();
             }
 
-            var userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userid = User.GetUserId();
             approvalsUserMatrix.ModifiedById = userid;
             approvalsUserMatrix.ModifiedOn = DateTime.Now;
 

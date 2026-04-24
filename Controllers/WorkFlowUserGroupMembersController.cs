@@ -1,5 +1,6 @@
 using EmployeeManagement.Data;
 using EmployeesManagement.Models;
+using EmployeesManagement.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -69,7 +70,7 @@ namespace EmployeesManagement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(WorkFlowUserGroupMember workFlowUserGroupMenber)
         {
-                var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var Userid = User.GetUserId();
                 _context.Add(workFlowUserGroupMenber);
                 await _context.SaveChangesAsync(Userid);
                 TempData["SuccessMessage"] = "WorkFlowUserGroupMember created successfully.";
@@ -116,7 +117,7 @@ namespace EmployeesManagement.Controllers
             {
                 try
                 {
-                    var Userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    var Userid = User.GetUserId();
                     _context.Update(workFlowUserGroupMenber);
                     await _context.SaveChangesAsync(Userid);
                 }

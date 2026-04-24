@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using EmployeeManagement.Data;
 using EmployeesManagement.Models;
 using System.Security.Claims;
+using EmployeesManagement.Services;
 
 namespace EmployeeManagement.Controllers
 {
@@ -108,7 +109,7 @@ namespace EmployeeManagement.Controllers
             {
                 try
                 {
-                    var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    var UserId = User.GetUserId();
                     _context.Update(city);
                     await _context.SaveChangesAsync(UserId);
                 }

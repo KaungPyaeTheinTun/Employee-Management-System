@@ -9,6 +9,7 @@ using EmployeeManagement.Data;
 using EmployeesManagement.Models;
 using System.Security.Claims;
 using EmployeeManagement.ViewModels;
+using EmployeesManagement.Services;
 
 namespace EmployeeManagement.Controllers
 {
@@ -82,7 +83,7 @@ namespace EmployeeManagement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Holiday holiday)
         {
-            var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var UserId = User.GetUserId();
             holiday.CreatedById = UserId;
             holiday.CreatedOn = DateTime.Now;
 
@@ -126,7 +127,7 @@ namespace EmployeeManagement.Controllers
                 return NotFound();
             }
 
-            var UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var UserId = User.GetUserId();
             holiday.ModifiedById = UserId;
             holiday.ModifiedOn = DateTime.Now;
 

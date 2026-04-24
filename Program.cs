@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using EmployeeManagement.Models;
 using Microsoft.CodeAnalysis.Options;
 using Microsoft.Extensions.Options;
+using EmployeesManagement.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +23,7 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddAutoMapper(typeof(Program));
 
+builder.Services.AddTransient<IExtensionService, ExtensionService>();
 
 var app = builder.Build();
 
