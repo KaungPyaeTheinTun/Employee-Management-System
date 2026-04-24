@@ -151,7 +151,7 @@ namespace EmployeeManagement.Controllers
             }
 
             await _context.SaveChangesAsync();
-            TempData["SuccessMessage"] = "Leave period deleted successfully.";
+            TempData["DeleteMessage"] = "Leave period deleted successfully.";
             return RedirectToAction(nameof(Index));
         }
 

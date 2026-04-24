@@ -178,7 +178,7 @@ namespace EmployeesManagement.Controllers
             }
             var userid = User.GetUserId();
             await _context.SaveChangesAsync(userid);
-            TempData["SuccessMessage"] = "WorkFlowUserGroup deleted successfully.";
+            TempData["DeleteMessage"] = "WorkFlowUserGroup deleted successfully.";
 
             return RedirectToAction(nameof(Index));
         }

@@ -89,7 +89,7 @@ namespace EmployeeManagement.Controllers
 
             if (result.Succeeded)
             {                
-                TempData["SuccessMessage"] = "Role deleted successfully.";
+                TempData["DeleteMessage"] = "Role deleted successfully.";
                 return RedirectToAction("Index");
             }
 

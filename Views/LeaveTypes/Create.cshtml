@@ -1,12 +1,12 @@
 @model EmployeesManagement.Models.LeaveType
 
 @{
-    ViewData["Title"] = "Add New Leave Type";
+    ViewData["Title"] = "Add Leave Type";
 }
 
 <div class="page-header">
     <div>
-        <h1 class="page-header-title">Add New Leave Type</h1>
+        <h1 class="page-header-title">Add Leave Type</h1>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Dashboard</a></li>
             <li class="breadcrumb-item"><a asp-action="Index">Leave Types</a></li>
@@ -24,7 +24,7 @@
 <form asp-action="Create" id="createForm">
     <div asp-validation-summary="ModelOnly" class="field-error" style="padding:12px 16px;background:var(--red-bg);border-radius:9px;border:1px solid rgba(192,57,43,0.2);margin-bottom:20px;"></div>
 
-    <!-- Leave Type Details -->
+    <!-- Leave Type Information -->
     <div class="form-card" style="margin-bottom:16px">
         <div class="form-card-header">
             <span class="section-badge blue">
@@ -37,61 +37,52 @@
         </div>
         <div class="form-card-body">
             <div class="row g-3">
-                <div class="col-md-6">
-                    <label asp-for="Name" class="field-label">Leave Type Name</label>
-                    <input asp-for="Name" class="field-control" placeholder="e.g. Annual Leave, Sick Leave" />
-                    <span asp-validation-for="Name" class="field-error"></span>
-                </div>
-                <div class="col-md-6">
-                    <label asp-for="Code" class="field-label">Leave Code</label>
+                <div class="col-md-4">
+                    <label asp-for="Code" class="field-label">Leave Code <span class="field-required">*</span></label>
                     <input asp-for="Code" class="field-control" placeholder="e.g. AL, SL, CL" />
                     <span asp-validation-for="Code" class="field-error"></span>
-                    <small class="field-hint" style="display:block;margin-top:4px">A unique code to identify this leave type</small>
+                    <span class="field-hint">Unique code to identify this leave type (uppercase, no spaces)</span>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="Name" class="field-label">Leave Type Name <span class="field-required">*</span></label>
+                    <input asp-for="Name" class="field-control" placeholder="e.g. Annual Leave, Sick Leave" />
+                    <span asp-validation-for="Name" class="field-error"></span>
+                    <span class="field-hint">Full name of the leave type</span>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="Days" class="field-label">Default Days <span class="field-required">*</span></label>
+                    <input asp-for="Days" class="field-control" type="number" placeholder="e.g. 20, 12, 10" />
+                    <span asp-validation-for="Days" class="field-error"></span>
+                    <span class="field-hint">Number of days allocated per year</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- System Information (Read-only/Hidden in real scenario) -->
-    <div class="form-card" style="margin-bottom:16px;opacity:0.8">
+    <!-- Preview Card -->
+    <div class="form-card" style="margin-bottom:16px;background:var(--bg2);" id="previewCard">
         <div class="form-card-header">
-            <span class="section-badge green">
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                    <circle cx="6" cy="6" r="4" stroke="currentColor" stroke-width="1.2" fill="none"/>
-                    <path d="M6 3v3l2 1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-                </svg>
-                System Information
-            </span>
-            <span class="field-hint" style="font-size:11px">Auto-populated by system</span>
+            <span class="section-badge neutral">Live Preview</span>
         </div>
         <div class="form-card-body">
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <label asp-for="CreatedById" class="field-label">Created By</label>
-                    <input asp-for="CreatedById" class="field-control" placeholder="Will be set automatically" />
-                    <span asp-validation-for="CreatedById" class="field-error"></span>
+            <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <div id="previewAvatar" class="emp-avatar" style="width:48px;height:48px;background:#e8eefa;color:#1a4fa0;font-size:18px">L</div>
+                    <div>
+                        <div style="font-size:11px;color:var(--ink3);margin-bottom:2px;">LEAVE CODE</div>
+                        <div>
+                            <span id="previewBadge" class="dept-badge" style="background:#e8eefa;color:#1a4fa0">CODE</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    <label asp-for="CreatedOn" class="field-label">Created On</label>
-                    <input asp-for="CreatedOn" class="field-control" type="date" readonly disabled/>
-                    <span asp-validation-for="CreatedOn" class="field-error"></span>
+                <div style="flex:1">
+                    <div style="font-size:11px;color:var(--ink3);margin-bottom:2px;">LEAVE TYPE NAME</div>
+                    <div id="previewName" style="font-size:13px;color:var(--ink1);font-weight:500;">Leave type name will appear here</div>
                 </div>
-                <div class="col-md-6">
-                    <label asp-for="ModifiedById" class="field-label">Modified By</label>
-                    <input asp-for="ModifiedById" class="field-control" placeholder="Will be set on update" />
-                    <span asp-validation-for="ModifiedById" class="field-error"></span>
+                <div>
+                    <div style="font-size:11px;color:var(--ink3);margin-bottom:2px;">DEFAULT DAYS</div>
+                    <div id="previewDays" class="sequence-badge" style="display:inline-block">0 days</div>
                 </div>
-                <div class="col-md-6">
-                    <label asp-for="ModifiedOn" class="field-label">Modified On</label>
-                    <input asp-for="ModifiedOn" class="field-control" type="date" />
-                    <span asp-validation-for="ModifiedOn" class="field-error"></span>
-                </div>
-            </div>
-            <div class="field-hint" style="margin-top:12px;padding:8px 12px;background:var(--bg2);border-radius:6px">
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="display:inline;margin-right:4px;vertical-align:-2px">
-                    <circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.2" fill="none"/>
-                    <path d="M7 4v4M7 10h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                </svg>
             </div>
         </div>
     </div>
@@ -99,7 +90,7 @@
     <!-- Actions -->
     <div class="form-actions" style="border-top:none;padding-top:0">
         <a asp-action="Index" class="btn-ghost">Cancel</a>
-        <button type="submit" class="btn-primary">
+        <button type="submit" class="btn-primary" style="background-color: black;">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin-right:6px;vertical-align:-2px">
                 <path d="M2 7l3.5 3.5L12 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
@@ -109,64 +100,413 @@
 </form>
 
 <style>
-/* Additional styles for checkboxes and form elements */
-.field-checkbox {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 0;
-}
+    /* Form field styles */
+    .field-label {
+        display: block;
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--ink2);
+        margin-bottom: 6px;
+    }
 
-.field-checkbox input[type="checkbox"] {
-    width: 16px;
-    height: 16px;
-    margin: 0;
-    cursor: pointer;
-}
+    .field-required {
+        color: #c0392b;
+        font-size: 12px;
+    }
 
-.field-checkbox label {
-    font-size: 14px;
-    color: var(--ink2);
-    cursor: pointer;
-    font-weight: normal;
-}
+    .field-control {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-size: 13px;
+        color: var(--ink1);
+        background: var(--card-bg);
+        transition: all 0.15s;
+    }
 
-input[readonly], 
-input[disabled] {
-    background-color: var(--bg2);
-    cursor: not-allowed;
-    opacity: 0.7;
-}
+    .field-control:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(26, 79, 160, 0.1);
+    }
 
-/* Responsive adjustments */
-@@media (max-width: 768px) {
-    .field-hint {
+    input[type="number"].field-control {
+        -moz-appearance: textfield;
+    }
+
+    input[type="number"].field-control::-webkit-inner-spin-button,
+    input[type="number"].field-control::-webkit-outer-spin-button {
+        opacity: 0.5;
+    }
+
+    .field-error {
         font-size: 11px;
+        color: #c0392b;
+        margin-top: 4px;
+        display: block;
     }
-    
-    .form-card-body .row.g-3 > [class*="col-"] {
-        margin-bottom: 8px;
+
+    .field-hint {
+        display: block;
+        font-size: 11px;
+        color: var(--ink3);
+        margin-top: 4px;
     }
-}
+
+    input[readonly], 
+    input[disabled] {
+        background-color: var(--bg2);
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
+
+    /* Form card styles */
+    .form-card {
+        background: var(--card-bg);
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        overflow: hidden;
+    }
+
+    .form-card-header {
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+        background: var(--bg2);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .form-card-body {
+        padding: 20px;
+    }
+
+    .section-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .section-badge.blue {
+        background: #e8eefa;
+        color: #1a4fa0;
+    }
+
+    .section-badge.green {
+        background: #e8f5ee;
+        color: #1a7a4a;
+    }
+
+    .section-badge.neutral {
+        background: var(--bg2);
+        color: var(--ink2);
+    }
+
+    /* Badge styles */
+    .dept-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    .sequence-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        white-space: nowrap;
+        background: var(--bg2);
+        color: var(--ink2);
+        border: 1px solid var(--border);
+    }
+
+    .emp-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 12px;
+        flex-shrink: 0;
+    }
+
+    /* Button styles */
+    .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        padding: 10px 20px;
+        background: var(--primary);
+        color: white;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        border: none;
+        cursor: pointer;
+        transition: all 0.15s;
+        text-decoration: none;
+    }
+
+    .btn-primary:hover {
+        background: #134080;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(26, 79, 160, 0.2);
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-ghost {
+        display: inline-flex;
+        align-items: center;
+        padding: 10px 20px;
+        background: var(--bg2);
+        color: var(--ink2);
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        text-decoration: none;
+        border: 1px solid var(--border);
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+
+    .btn-ghost:hover {
+        background: var(--border);
+        color: var(--ink1);
+        text-decoration: none;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+        padding: 20px 0;
+        border-top: 1px solid var(--border);
+        margin-top: 20px;
+    }
+
+    /* Page Header */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 24px;
+        gap: 16px;
+    }
+
+    .page-header-title {
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--ink1);
+        margin: 0 0 8px 0;
+    }
+
+    .breadcrumb {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        gap: 8px;
+        font-size: 13px;
+    }
+
+    .breadcrumb-item {
+        color: var(--ink3);
+    }
+
+    .breadcrumb-item a {
+        color: var(--primary);
+        text-decoration: none;
+    }
+
+    .breadcrumb-item a:hover {
+        text-decoration: underline;
+    }
+
+    .breadcrumb-item.active {
+        color: var(--ink2);
+        font-weight: 500;
+    }
+
+    .breadcrumb-item + .breadcrumb-item::before {
+        content: "/";
+        margin-right: 8px;
+        color: var(--ink4);
+    }
+
+    /* Grid system */
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin: -8px;
+    }
+
+    .g-3 {
+        margin: -8px;
+    }
+
+    .g-3 > [class*="col-"] {
+        padding: 8px;
+    }
+
+    .col-md-4 {
+        flex: 0 0 33.333333%;
+        max-width: 33.333333%;
+    }
+
+    .col-md-6 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+
+    /* CSS Variables */
+    :root {
+        --ink1: #1a1a1a;
+        --ink2: #4a4a4a;
+        --ink3: #8a8a8a;
+        --ink4: #c0c0c0;
+        --border: #e5e5e5;
+        --bg2: #f8f8f8;
+        --card-bg: #ffffff;
+        --primary: #1a4fa0;
+        --red-bg: rgba(192, 57, 43, 0.1);
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .col-md-4,
+        .col-md-6 {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+        
+        .form-actions {
+            flex-direction: column-reverse;
+        }
+        
+        .btn-primary,
+        .btn-ghost {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .form-card-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+    }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get form elements
+        const codeInput = document.getElementById('Code');
+        const nameInput = document.getElementById('Name');
+        const daysInput = document.getElementById('Days');
+        const previewBadge = document.getElementById('previewBadge');
+        const previewName = document.getElementById('previewName');
+        const previewDays = document.getElementById('previewDays');
+        const previewAvatar = document.getElementById('previewAvatar');
+
+        // Avatar colors array matching index page
+        const avatarColors = [
+            { bg: "#e8eefa", text: "#1a4fa0" },
+            { bg: "#e8f5ee", text: "#1a7a4a" },
+            { bg: "#fef3e0", text: "#a05c00" },
+            { bg: "#fdecea", text: "#c0392b" },
+            { bg: "#f2f2ef", text: "#3a3a38" },
+            { bg: "#f0eeff", text: "#4a35c0" }
+        ];
+
+        function updatePreview() {
+            let code = codeInput ? codeInput.value.trim() : '';
+            let name = nameInput ? nameInput.value.trim() : '';
+            let days = daysInput ? daysInput.value : '0';
+            
+            // Use color based on code length for consistency
+            let colorIndex = code.length % avatarColors.length;
+            let colors = avatarColors[colorIndex];
+            
+            if (previewBadge) {
+                previewBadge.textContent = code || "CODE";
+                previewBadge.style.backgroundColor = colors.bg;
+                previewBadge.style.color = colors.text;
+            }
+            
+            if (previewName) {
+                previewName.textContent = name || "Leave type name will appear here";
+            }
+            
+            if (previewDays) {
+                previewDays.textContent = `${days} day${days != 1 ? 's' : ''}`;
+            }
+            
+            // Update avatar
+            if (previewAvatar) {
+                let avatarLetter = code ? code.substring(0, 1).toUpperCase() : "L";
+                previewAvatar.textContent = avatarLetter;
+                previewAvatar.style.backgroundColor = colors.bg;
+                previewAvatar.style.color = colors.text;
+            }
+        }
+
+        // Add event listeners
+        if (codeInput) codeInput.addEventListener('input', updatePreview);
+        if (nameInput) nameInput.addEventListener('input', updatePreview);
+        if (daysInput) daysInput.addEventListener('input', updatePreview);
+
+        // Format code input to uppercase and replace spaces with underscores
+        if (codeInput) {
+            codeInput.addEventListener('blur', function() {
+                let value = this.value.trim().toUpperCase().replace(/\s+/g, '_');
+                this.value = value;
+                updatePreview();
+            });
+        }
+
+        // Validate days input is positive
+        if (daysInput) {
+            daysInput.addEventListener('change', function() {
+                let value = parseInt(this.value);
+                if (value < 0) {
+                    this.value = 0;
+                    updatePreview();
+                }
+            });
+        }
+
+        // Auto-fill system fields
+        const today = new Date().toISOString().split('T')[0];
+        const createdById = document.querySelector('input[name="CreatedById"]');
+        const createdOn = document.querySelector('input[name="CreatedOn"]');
+        
+        if (createdById) {
+            createdById.value = "Current User"; // This would come from server
+        }
+        if (createdOn) {
+            createdOn.value = today;
+        }
+    });
+</script>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    <script>
-        // Auto-fill some fields for demo purposes (remove in production)
-        document.addEventListener('DOMContentLoaded', function() {
-            // In a real application, these would be set on the server
-            // This is just for demonstration
-            const today = new Date().toISOString().split('T')[0];
-            const createdById = document.querySelector('input[name="CreatedById"]');
-            const createdOn = document.querySelector('input[name="CreatedOn"]');
-            
-            if (createdById) {
-                createdById.value = "Current User"; // This would come from server
-            }
-            if (createdOn) {
-                createdOn.value = today;
-            }
-        });
-    </script>
 }

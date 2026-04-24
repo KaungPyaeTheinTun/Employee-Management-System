@@ -169,7 +169,7 @@ namespace EmployeeManagement.Controllers
             }
 
             await _context.SaveChangesAsync();
-            TempData["SuccessMessage"] = "System profile deleted successfully.";
+            TempData["DeleteMessage"] = "System profile deleted successfully.";
             return RedirectToAction(nameof(Index));
         }
 

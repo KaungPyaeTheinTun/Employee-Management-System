@@ -185,7 +185,7 @@ namespace EmployeesManagement.Controllers
             }
 
             await _context.SaveChangesAsync();
-            TempData["SuccessMessage"] = "Approval User Matrix deleted successfully.";
+            TempData["DeleteMessage"] = "Approval User Matrix deleted successfully.";
             return RedirectToAction(nameof(Index));
         }
         private bool ApprovalsUserMatrixExists(int id)

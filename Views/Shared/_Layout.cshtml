@@ -484,97 +484,100 @@
             text-decoration: none !important;
             outline: none;
             box-shadow: none;
-        }
+        }/* Target both success and error containers */
+/* Update the container selector to include toast-warning */
+#toast-container > .toast-success,
+#toast-container > .toast-error,
+#toast-container > .toast-warning {
+    background-color: #ffffff;
+    color: #000000;
+    opacity: 1;
+    border-radius: 10px;
+    padding: 13px 25px 13px 55px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    min-width: 500px;
+    max-width: 650px;
+    height: 75px;
+    overflow: hidden;
+    position: relative;
+}
 
-        /* Target the main container and remove default shadows */
-        #toast-container > .toast-success {
-            background-color: #ffffff; /* Very dark gray, near black */
-            color: #000000;
-            opacity: 1; /* Make it solid, no transparency */
-            border-radius: 10px; /* Highly rounded corners */
-            padding: 13px 25px 13px 55px; /* Extra left padding for the icon */
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); /* Modern shadow */
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-            min-width: 500px;
-            max-width: 650px;
-            height:75px;
-            overflow: hidden; /* For rounded corners */
-        }
+/* Base Icon styling (Added toast-warning) */
+#toast-container > .toast-success:before,
+#toast-container > .toast-error:before,
+#toast-container > .toast-warning:before {
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    line-height: 1;
+    color: #ffffff; /* Changed to white icon on colored circle */
+}
 
-        /* Redefining the checkmark container to look like the image */
-        #toast-container > .toast-success:before {
-            font-family: "Font Awesome 5 Free"; /* Required for FontAwesome */
-            font-weight: 900;
-            content: "\f00c"; /* FontAwesome checkmark Unicode */
-            
-            /* Position and Size */
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 32px;
-            height: 32px;
-            
-            /* Colors and Background */
-            color: #000000; /* Checkmark is the dark background color */
-            background-color: #38ef7d; /* Bright green circle */
-            border-radius: 50%; /* Perfect circle */
-            
-            /* Center the checkmark inside the green circle */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            line-height: 1;
-        }
+/* Success Specific */
+#toast-container > .toast-success:before {
+    content: "\f00c";
+    background-color: #38ef7d;
+}
 
-        /* Style the title (e.g., "Holiday Deleted!") */
-        #toast-container > .toast-success .toast-title {
-            font-weight: 600;
-            font-size: 16px;
-            margin-bottom: 2px;
-        }
+/* Error Specific */
+#toast-container > .toast-error:before {
+    content: "\f00d";
+    background-color: #ff4d4d;
+}
 
-        /* Style the message (e.g., your description) */
-        #toast-container > .toast-success .toast-message {
-            font-size: 14px;
-            color: #000000; /* Light gray description text */
-            margin-right: 70px; /* Make room for the button */
-            display: block; /* Ensure it wraps correctly */
-        }
+/* DELETE SPECIFIC (Warning) */
+#toast-container > .toast-warning:before {
+    content: "\f1f8"; /* FontAwesome Trash Icon */
+    background-color: #f39c12; /* Warning Orange or use #e74c3c for Red */
+}
 
-        /* Create the 'Got It!' button */
-        #toast-container > .toast-success .toast-close-button {
-            background-color: black; /* Faint gray background */
-            border: 1px solid rgba(255, 255, 255, 0.15); /* Subtly visible border */
-            border-radius: 8px; /* Slightly rounded corners */
-            color: white;
-            padding: 6px 14px;
-            text-shadow: none;
-            
-            /* Position and Size */
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            
-            /* Formatting for the text */
-            font-size: 13px;
-            font-weight: 500;
-            line-height: 1;
-            cursor: pointer;
-            
-            /* Layout */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+/* Shared Title, Message, and Button Styles */
+#toast-container > [class*="toast-"] .toast-title {
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 2px;
+}
 
-        /* Button Hover State */
-        #toast-container > .toast-success .toast-close-button:hover {
-            background-color: navy;
-            color:white;
-        }
+#toast-container > [class*="toast-"] .toast-message {
+    font-size: 14px;
+    color: #000000;
+    margin-right: 70px;
+    display: block;
+}
+
+#toast-container > [class*="toast-"] .toast-close-button {
+    background-color: black;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    color: white;
+    padding: 6px 14px;
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+}
+
+#toast-container > [class*="toast-"] .toast-close-button:hover {
+    background-color: navy;
+}
     </style>
 </head>
 <body>

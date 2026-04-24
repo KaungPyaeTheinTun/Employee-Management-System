@@ -60,18 +60,29 @@ namespace EmployeeManagement.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Code,CreatedById,CreatedOn,ModifiedById,ModifiedOn")] LeaveType leaveType)
+        public async Task<IActionResult> Create(LeaveType leaveType)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var UserId =User.GetUserId();
-                leaveType.CreatedById = UserId;
-                leaveType.CreatedOn = DateTime.Now;
-                _context.Add(leaveType);
-                await _context.SaveChangesAsync(UserId);
-            TempData["SuccessMessage"] = "Leave type created successfully.";
 
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    var Userid = User.GetUserId();
+                    leaveType.CreatedById = Userid;
+                    leaveType.CreatedOn = DateTime.Now;
+                    _context.Add(leaveType);
+                    await _context.SaveChangesAsync(Userid);
+
+                    TempData["SuccessMessage"] = "Leave Type Created Successfully";
+
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Error creating Leave Type" + ex.Message;
+
+                return View(leaveType);
             }
             return View(leaveType);
         }
@@ -97,12 +108,15 @@ namespace EmployeeManagement.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Code,CreatedById,CreatedOn,ModifiedById,ModifiedOn")] LeaveType leaveType)
+        public async Task<IActionResult> Edit(int id, LeaveType leaveType)
         {
             if (id != leaveType.Id)
             {
                 return NotFound();
             }
+
+            ModelState.Remove("CreatedBy");
+            ModelState.Remove("ModifiedBy");
 
             if (ModelState.IsValid)
             {
@@ -115,6 +129,7 @@ namespace EmployeeManagement.Controllers
                     leaveType.ModifiedOn = DateTime.Now;
                     _context.Entry(oldLeaveValue).CurrentValues.SetValues(leaveType);
                     await _context.SaveChangesAsync(UserId);
+                    TempData["SuccessMessage"] = "Leave type updated successfully.";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -162,7 +177,7 @@ namespace EmployeeManagement.Controllers
             }
             var UserId = User.GetUserId();
             await _context.SaveChangesAsync(UserId);
-            TempData["SuccessMessage"] = "Leave type deleted successfully.";
+            TempData["DeleteMessage"] = "Leave type deleted successfully.";
             return RedirectToAction(nameof(Index));
         }
 

@@ -4,6 +4,7 @@
     ViewData["Title"] = "Leave Applications";
     var statusColors = new Dictionary<string, (string bg, string text)>
     {
+        ["Awaiting Approval"] = ("#fef3e0", "#a05c00"),
         ["Pending"] = ("#fef3e0", "#a05c00"),
         ["Approval"] = ("#e8f5ee", "#1a7a4a"),
         ["Reject"] = ("#fdecea", "#c0392b"),
@@ -88,8 +89,9 @@
                     {
                         employeeInitials = $"{item.Employee.FirstName.Substring(0, 1)}{item.Employee.LastName.Substring(0, 1)}".ToUpper();
                     }
-
-                    var statusKey = item.Status?.Description ?? "Pending";
+                    var rawStatus = item.Status?.Description ?? "Pending";
+                    var displayStatus = rawStatus == "Awaiting Approval" ? "Pending" : rawStatus;
+                    var statusKey = displayStatus;
                     var (statusBg, statusText) = statusColors.ContainsKey(statusKey) ? statusColors[statusKey] : ("#f2f2ef", "#3a3a38");
 
                     <tr data-id="@item.Id">
@@ -125,7 +127,7 @@
                             </a>
 
                             <!-- APPROVE -->
-                            @if (item.Status?.Code == "Pending")
+                            @if (item.Status?.Code == "Awaiting Approval")
                             {
                                 <a class="action-btn approve" asp-action="Approval" asp-route-id="@item.Id" title="Approve" style="color:#1a7a4a;">
                                     <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
@@ -143,7 +145,7 @@
                             }
 
                             <!-- EDIT -->
-                            @if (item.Status?.Code == "Approval")
+                            @if (item.Status?.Code == "Awaiting Approval")
                             {
                                 <a class="action-btn" asp-action="Edit" asp-route-id="@item.Id" title="Edit">
                                     <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
@@ -161,7 +163,7 @@
                             }
 
                             <!-- DELETE -->
-                            @if (item.Status?.Code == "Approval" || item.Status?.Code == "Reject")
+                            @if (item.Status?.Code == "Approved" || item.Status?.Code == "Rejected")
                             {
                                 <a class="action-btn del" asp-action="Delete" asp-route-id="@item.Id" title="Delete">
                                     <svg width="14" height="14" viewBox="0 0 14 14" fill="none">

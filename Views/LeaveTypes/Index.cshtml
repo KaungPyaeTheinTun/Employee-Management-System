@@ -55,8 +55,9 @@
                 <tr>
                     <th data-sort="0">NAME</th>
                     <th data-sort="1">CODE</th>
-                    <th data-sort="2">CREATED BY</th>
-                    <th data-sort="3">CREATED ON</th>
+                    <th data-sort="2">DAYS</th>
+                    <th data-sort="3">CREATED BY</th>
+                    <th data-sort="4">CREATED ON</th>
                     <th>ACTIONS</th>
                 </tr>
             </thead>
@@ -81,6 +82,7 @@
                         <td>
                             <span class="mono dept-badge" style="background:@bg;color:@tc">@item.Code</span>
                         </td>
+                        <td style="color:var(--ink2)">@item.Days</td>
                         <td style="color:var(--ink2)">@item.CreatedBy?.FullName</td>
                         <td style="color:var(--ink2)">
                             <span class="date-badge">@item.CreatedOn.ToString("MMM dd, yyyy")</span>

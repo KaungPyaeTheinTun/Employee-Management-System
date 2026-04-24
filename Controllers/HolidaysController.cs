@@ -184,7 +184,7 @@ namespace EmployeeManagement.Controllers
             }
 
             await _context.SaveChangesAsync();
-            TempData["SuccessMessage"] = "Holiday Delete successfully.";
+            TempData["DeleteMessage"] = "Holiday Delete successfully.";
 
             return RedirectToAction(nameof(Index));
         }

@@ -173,7 +173,7 @@ namespace EmployeesManagement.Controllers
             }
 
             await _context.SaveChangesAsync();
-            TempData["SuccessMessage"] = "WorkFlowUserGroupMember deleted successfully.";
+            TempData["DeleteMessage"] = "WorkFlowUserGroupMember deleted successfully.";
 
             return RedirectToAction(nameof(Index));
         }

@@ -172,7 +172,7 @@ namespace EmployeeManagement.Controllers
             }
 
             await _context.SaveChangesAsync();
-            TempData["SuccessMessage"] = "Department deleted successfully.";
+            TempData["DeleteMessage"] = "Department deleted successfully.";
             return RedirectToAction(nameof(Index));
         }
 

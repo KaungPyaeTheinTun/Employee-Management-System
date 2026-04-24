@@ -179,7 +179,7 @@ namespace EmployeesManagement.Controllers
             {
                 _context.SystemCodeDetails.Remove(systemCodeDetail);
                 await _context.SaveChangesAsync(UserId);
-                TempData["SuccessMessage"] = "System code detail deleted successfully.";
+                TempData["DeleteMessage"] = "System code detail deleted successfully.";
             }
 
             return RedirectToAction(nameof(Index));

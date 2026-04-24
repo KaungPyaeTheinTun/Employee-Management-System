@@ -51,6 +51,11 @@
                     <span asp-validation-for="Name" class="field-error"></span>
                 </div>
                 <div class="col-md-6">
+                    <label asp-for="Days" class="field-label">Allowed Days</label>
+                    <input asp-for="Days" class="field-control" placeholder="e.g. 20, 15, 10" />
+                    <span asp-validation-for="Days" class="field-error"></span>
+                </div>
+                <div class="col-md-6">
                     <label asp-for="Code" class="field-label">Leave Code</label>
                     <input asp-for="Code" class="field-control" placeholder="e.g. AL, SL, CL" />
                     <span asp-validation-for="Code" class="field-error"></span>

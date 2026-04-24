@@ -173,7 +173,7 @@ namespace EmployeeManagement.Controllers
             }
 
             await _context.SaveChangesAsync();
-            TempData["SuccessMessage"] = "Designation deleted successfully.";
+            TempData["DeleteMessage"] = "Designation deleted successfully.";
             return RedirectToAction(nameof(Index));
         }
 

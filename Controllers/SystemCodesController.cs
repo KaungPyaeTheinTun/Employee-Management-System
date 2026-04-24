@@ -168,7 +168,7 @@ namespace EmployeeManagement.Controllers
             }
 
             await _context.SaveChangesAsync();
-            TempData["SuccessMessage"] = "System code deleted successfully.";
+            TempData["DeleteMessage"] = "System code deleted successfully.";
             return RedirectToAction(nameof(Index));
         }
 

@@ -912,6 +912,9 @@ namespace EmployeeManagement.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
+                    b.Property<decimal>("Days")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<string>("ModifiedById")
                         .HasColumnType("nvarchar(450)");
 
