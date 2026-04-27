@@ -6,121 +6,36 @@
 }
 
 <h3>@ViewData["Title"]</h3>
-<h3 class="profile-title">Profile</h3>
+<p class="profile-note">Manage your core profile details below.</p>
+<partial name="_StatusMessage" for="StatusMessage" />
+
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-7">
         <form id="profile-form" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-2" role="alert"></div>
+
             <div class="form-floating mb-3">
                 <input asp-for="Username" class="form-control" placeholder="Please choose your username." disabled />
                 <label asp-for="Username" class="form-label"></label>
-                <div class="profile-info-card">
-                    <div class="form-floating mb-3">
-                        <input asp-for="Input.PhoneNumber" class="form-control"
-                            placeholder="Please enter your phone number." />
-                        <label asp-for="Input.PhoneNumber" class="form-label"></label>
-                        <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
-                    </div>
-                    <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Input.PhoneNumber" class="form-control" placeholder="Please enter your phone number." />
+                <label asp-for="Input.PhoneNumber" class="form-label"></label>
+                <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+            </div>
+
+            <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Save changes</button>
         </form>
     </div>
 </div>
-}
 
-/* Form field styles */
-.field-label {
-display: block;
-font-size: 12px;
-font-weight: 500;
-color: var(--ink2);
-margin-bottom: 6px;
-}
-
-.field-control {
-width: 100%;
-padding: 10px 12px;
-border: 1px solid var(--border);
-border-radius: 8px;
-font-size: 13px;
-color: var(--ink1);
-background: var(--card-bg);
-transition: all 0.15s;
-}
-
-.field-control:focus {
-outline: none;
-border-color: var(--primary);
-box-shadow: 0 0 0 3px rgba(26, 79, 160, 0.1);
-}
-
-.field-control[disabled] {
-background-color: var(--bg2);
-cursor: not-allowed;
-opacity: 0.7;
-}
-
-.field-error {
-font-size: 11px;
-color: #c0392b;
-margin-top: 4px;
-display: block;
-}
-
-.field-hint {
-display: block;
-font-size: 11px;
-color: var(--ink3);
-margin-top: 4px;
-}
-
-.form-group {
-margin-bottom: 20px;
-}
-
-.form-actions {
-display: flex;
-justify-content: flex-end;
-padding-top: 8px;
-}
-
-.btn-primary {
-display: inline-flex;
-align-items: center;
-padding: 10px 20px;
-background: var(--primary);
-color: white;
-border-radius: 8px;
-font-size: 13px;
-font-weight: 500;
-border: none;
-cursor: pointer;
-transition: all 0.15s;
-text-decoration: none;
-}
-
-.btn-primary:hover {
-background: #134080;
-transform: translateY(-1px);
-box-shadow: 0 4px 8px rgba(26, 79, 160, 0.2);
-color: white;
-text-decoration: none;
-}
-
-@@media (max-width: 768px) {
-.profile-grid {
-grid-template-columns: 1fr;
-gap: 16px;
-}
-
-.form-actions {
-justify-content: stretch;
-}
-
-.btn-primary {
-width: 100%;
-justify-content: center;
-}
-}
+<style>
+    .profile-note {
+        margin: 0 0 14px;
+        font-size: 13px;
+        color: var(--ink4);
+    }
 </style>
 
 @section Scripts {

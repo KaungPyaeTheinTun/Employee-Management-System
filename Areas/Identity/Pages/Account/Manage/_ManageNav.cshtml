@@ -3,7 +3,7 @@
 @{
     var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
 }
-<ul class="nav nav-pills flex-column">
+<ul class="manage-nav-list nav nav-pills flex-column" id="manageNavPanel">
     <li class="nav-item"><a class="nav-link @ManageNavPages.IndexNavClass(ViewContext)" id="profile"
             asp-page="./Index">Profile</a></li>
     <li class="nav-item"><a class="nav-link @ManageNavPages.EmailNavClass(ViewContext)" id="email"
@@ -21,3 +21,32 @@
     <li class="nav-item"><a class="nav-link @ManageNavPages.PersonalDataNavClass(ViewContext)" id="personal-data"
             asp-page="./PersonalData">Personal data</a></li>
 </ul>
+
+<style>
+    .manage-nav-list {
+        gap: 4px;
+    }
+
+    .manage-nav-list .nav-link {
+        border-radius: 10px;
+        padding: 10px 12px;
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--ink3);
+        border: 1px solid transparent;
+        transition: all 0.16s;
+    }
+
+    .manage-nav-list .nav-link:hover {
+        color: var(--ink2);
+        background: var(--bg2);
+        border-color: var(--border);
+    }
+
+    .manage-nav-list .nav-link.active {
+        color: #fff;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-color: transparent;
+        box-shadow: 0 8px 18px rgba(102, 126, 234, 0.24);
+    }
+</style>
