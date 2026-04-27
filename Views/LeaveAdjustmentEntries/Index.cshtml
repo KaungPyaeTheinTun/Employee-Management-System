@@ -27,8 +27,6 @@
 
         <div class="filter-chips">
             <div class="chip filter-chip active" data-filter="all">All <span style="opacity:.5;margin-left:2px">@Model.Count()</span></div>
-            <div class="chip filter-chip" data-filter="addition">Addition</div>
-            <div class="chip filter-chip" data-filter="deduction">Deduction</div>
         </div>
 
         <div class="table-search">
@@ -221,7 +219,7 @@
 
     .chip {
         padding: 6px 12px;
-        border-radius: 20px;
+        border-radius: 8px;
         font-size: 12px;
         font-weight: 500;
         background: var(--card-bg);
@@ -237,7 +235,7 @@
     }
 
     .chip.active {
-        background: var(--primary);
+        background: black;
         border-color: var(--primary);
         color: white;
     }
@@ -487,7 +485,7 @@
         align-items: center;
         gap: 8px;
         padding: 8px 16px;
-        background: var(--primary);
+        background: black;
         color: white;
         border-radius: 8px;
         font-size: 13px;

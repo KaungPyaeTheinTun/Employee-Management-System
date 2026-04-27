@@ -679,19 +679,6 @@
                 </div>
                 <div class="nav-sub" id="settingSub">
                     <div class="sub-item" onclick="handleMobileSubItemClick('CompanyInformation')">Company Information</div>
-                    <div class="sub-item" onclick="handleMobileSubItemClick('EmailSettings')">Email Settings</div>
-                    <div class="sub-item" onclick="handleMobileSubItemClick('GeneralSettings')">General Settings</div>
-                </div>
-
-                <!-- Attendance -->
-                <div class="nav-item" onclick="handleMobileNavClick(this, 'Attendance/Index')">
-                    <div class="ni-icon">
-                        <svg viewBox="0 0 16 16">
-                            <circle cx="8" cy="8" r="6.5"/>
-                            <path d="M8 4.5V8L10.5 10"/>
-                        </svg>
-                    </div>
-                    <span class="ni-text">Attendance</span>
                 </div>
             </div>
 
@@ -882,8 +869,6 @@
                 </div>
                 <div class="nav-sub" id="setSub">
                     <a class="nav-sub-item" asp-area="" asp-controller="CompanyInformations" asp-action="Index">Company Information</a>
-                    <a class="nav-sub-item" asp-area="" asp-controller="EmailSettings" asp-action="Index">Email Settings</a>
-                    <a class="nav-sub-item" asp-area="" asp-controller="GeneralSettings" asp-action="Index">General Settings</a>
                 </div>
 
             </nav>
@@ -923,42 +908,8 @@
                     <h1 class="page-title">@ViewData["Title"]</h1>
                 </div>
                 <div class="header-right">
-                    <!-- Notifications -->
-                    <div class="dropdown">
-                        <button class="icon-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
-                                <path d="M8.5 1.5a5 5 0 0 1 5 5v3l1.5 2H2L3.5 9.5v-3a5 5 0 0 1 5-5z" stroke="currentColor" stroke-width="1.3" fill="none"/>
-                                <path d="M6.5 13.5a2 2 0 0 0 4 0" stroke="currentColor" stroke-width="1.3" fill="none"/>
-                            </svg>
-                            <span class="notif-dot"></span>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end notif-dropdown">
-                            <li><h6 class="dropdown-header">Notifications</h6></li>
-                            <li>
-                                <a class="dropdown-item notif-item" href="#">
-                                    <span class="notif-icon-wrap success">✓</span>
-                                    <div><div class="notif-title">5 new employees added</div><div class="notif-time">2 hours ago</div></div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item notif-item" href="#">
-                                    <span class="notif-icon-wrap warning">!</span>
-                                    <div><div class="notif-title">Pending attendance review</div><div class="notif-time">5 hours ago</div></div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item notif-item" href="#">
-                                    <span class="notif-icon-wrap info">✉</span>
-                                    <div><div class="notif-title">2 leave requests awaiting</div><div class="notif-time">Yesterday</div></div>
-                                </a>
-                            </li>
-                            <li><hr class="dropdown-divider" /></li>
-                            <li><a class="dropdown-item text-center" href="#">View all notifications</a></li>
-                        </ul>
-                    </div>
 
                     <!-- Profile -->
-                     <!-- Profile -->
                     @if (SignInManager.IsSignedIn(User))
                     {
                         var user = await UserManager.GetUserAsync(User);
@@ -1090,8 +1041,6 @@
                 'SystemCodeDetails':    '/SystemCodeDetails/Index',
                 // Settings
                 'CompanyInformation':   '/CompanyInformations/Index',
-                'EmailSettings':        '/EmailSettings/Index',
-                'GeneralSettings':      '/GeneralSettings/Index'
             };
 
             var url = routeMap[controller];
