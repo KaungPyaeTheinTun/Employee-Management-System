@@ -6,7 +6,8 @@
     {
         ["Awaiting Approval"] = ("#fef3e0", "#a05c00"),
         ["Pending"] = ("#fef3e0", "#a05c00"),
-        ["Approval"] = ("#e8f5ee", "#1a7a4a"),
+        ["Approval"] = ("#dcfce7", "#166534"),
+        ["Approved"] = ("#dcfce7", "#166534"),
         ["Reject"] = ("#fdecea", "#c0392b"),
     };
 }
@@ -36,7 +37,7 @@
         <div class="filter-chips">
             <div class="chip filter-chip active" data-filter="all">All <span style="opacity:.5;margin-left:2px">@Model.Count()</span></div>
             <div class="chip filter-chip" data-filter="pending">Pending</div>
-            <div class="chip filter-chip" data-filter="approval">Approved</div>
+            <div class="chip filter-chip" data-filter="approved">Approved</div>
             <div class="chip filter-chip" data-filter="reject">Rejected</div>
         </div>
 
@@ -91,6 +92,10 @@
                     }
                     var rawStatus = item.Status?.Description ?? "Pending";
                     var displayStatus = rawStatus == "Awaiting Approval" ? "Pending" : rawStatus;
+                    if (displayStatus == "Approval")
+                    {
+                        displayStatus = "Approved";
+                    }
                     var statusKey = displayStatus;
                     var (statusBg, statusText) = statusColors.ContainsKey(statusKey) ? statusColors[statusKey] : ("#f2f2ef", "#3a3a38");
 
@@ -163,7 +168,7 @@
                             }
 
                             <!-- DELETE -->
-                            @if (item.Status?.Code == "Approved" || item.Status?.Code == "Rejected")
+                            @if (item.Status?.Code == "Awaiting Approval" || item.Status?.Code == "Reject")
                             {
                                 <a class="action-btn del" asp-action="Delete" asp-route-id="@item.Id" title="Delete">
                                     <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
@@ -238,6 +243,99 @@
         font-size: 11px;
         color: var(--ink3);
         margin-top: 2px;
+    }
+
+    .mobile-emp-cards {
+        padding: 2px;
+    }
+
+    .mobile-emp-card {
+        background: #ffffff;
+        border: 1px solid #d9d9d9;
+        border-radius: 18px;
+        padding: 16px;
+        margin-bottom: 14px;
+    }
+
+    .mobile-card-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 14px;
+    }
+
+    .mobile-card-person {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+    }
+
+    .mobile-card-avatar {
+        width: 58px;
+        height: 58px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        font-weight: 600;
+        flex-shrink: 0;
+    }
+
+    .mobile-card-name {
+        font-size: 20px;
+        font-weight: 600;
+        color: #222;
+        line-height: 1.2;
+    }
+
+    .mobile-card-sub {
+        font-size: 15px;
+        color: #8b8b8b;
+        margin-top: 4px;
+    }
+
+    .mobile-card-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+    }
+
+    .mobile-card-label {
+        font-size: 12px;
+        font-weight: 500;
+        color: #8a8a8a;
+        margin-bottom: 4px;
+        letter-spacing: .2px;
+        text-transform: uppercase;
+    }
+
+    .mobile-card-value {
+        font-size: 16px;
+        font-weight: 500;
+        color: #3a3a3a;
+        line-height: 1.35;
+        word-break: break-word;
+    }
+
+    .mobile-card-separator {
+        border: 0;
+        border-top: 1px solid #dfdfdf;
+        margin: 14px 0;
+    }
+
+    .mobile-card-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .mobile-card-actions .action-btn {
+        width: 48px;
+        height: 42px;
+        border-radius: 12px;
     }
 
     /* Pagination styles */
@@ -375,6 +473,14 @@
         .per-page-select {
             width: 100%;
         }
+
+        .mobile-card-name {
+            font-size: 18px;
+        }
+
+        .mobile-card-sub {
+            font-size: 14px;
+        }
     }
 </style>
 
@@ -419,7 +525,11 @@ document.addEventListener('DOMContentLoaded', function () {
             const status = row.querySelector('.status-badge')?.textContent.toLowerCase() || '';
 
             const matchesSearch = !searchTerm || employeeName.includes(searchTerm) || leaveType.includes(searchTerm);
-            const matchesStatus = currentStatusFilter === 'all' || status.includes(currentStatusFilter);
+            const matchesStatus =
+                currentStatusFilter === 'all' ||
+                (currentStatusFilter === 'approved'
+                    ? (status.includes('approved') || status.includes('approval'))
+                    : status.includes(currentStatusFilter));
             
             return matchesSearch && matchesStatus;
         });
@@ -537,9 +647,16 @@ document.addEventListener('DOMContentLoaded', function () {
             const employeeName = row.querySelector('.emp-name').textContent;
             const employeeId = row.querySelector('.emp-id')?.textContent || '';
             const employeeAvatar = row.querySelector('.emp-avatar');
-            const avatarBg = employeeAvatar.style.backgroundColor;
-            const avatarColor = employeeAvatar.style.color;
-            const avatarText = employeeAvatar.textContent;
+            const avatarBg = employeeAvatar?.style.backgroundColor || '#e8eefa';
+            const avatarColor = employeeAvatar?.style.color || '#1a4fa0';
+            const avatarText = employeeAvatar?.textContent?.trim()
+                || employeeName
+                    .split(' ')
+                    .filter(Boolean)
+                    .slice(0, 2)
+                    .map(part => part[0]?.toUpperCase() ?? '')
+                    .join('')
+                || 'NA';
             
             const leaveType = row.querySelector('.dept-badge').textContent;
             const leaveTypeBg = row.querySelector('.dept-badge').style.backgroundColor;
@@ -564,28 +681,38 @@ document.addEventListener('DOMContentLoaded', function () {
             const card = document.createElement('div');
             card.className = 'mobile-emp-card';
             card.innerHTML = `
-                <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
-                    <div class="emp-avatar" style="background:${avatarBg};color:${avatarColor}">${avatarText}</div>
-                    <div style="flex:1">
-                        <div class="emp-name">${employeeName}</div>
-                        <div class="emp-id">${employeeId}</div>
+                <div class="mobile-card-top">
+                    <div class="mobile-card-person">
+                        <div style="min-width:0">
+                            <div class="mobile-card-name">${employeeName}</div>
+                            <div class="mobile-card-sub">${employeeId || leaveType}</div>
+                        </div>
                     </div>
                     <span class="status-badge" style="background:${statusBg};color:${statusText}">${status}</span>
                 </div>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+
+                <div class="mobile-card-grid">
                     <div>
-                        <div style="font-size:10px;color:var(--ink3);margin-bottom:2px">LEAVE TYPE</div>
-                        <span class="dept-badge" style="background:${leaveTypeBg};color:${leaveTypeColor}">${leaveType}</span>
+                        <div class="mobile-card-label">Leave Type</div>
+                        <div class="mobile-card-value"><span class="dept-badge" style="background:${leaveTypeBg};color:${leaveTypeColor}">${leaveType}</span></div>
                     </div>
                     <div>
-                        <div style="font-size:10px;color:var(--ink3);margin-bottom:2px">DURATION</div>
-                        <div style="font-size:12px">${duration} · ${days} days</div>
+                        <div class="mobile-card-label">Duration</div>
+                        <div class="mobile-card-value">${duration} · ${days} days</div>
+                    </div>
+                    <div>
+                        <div class="mobile-card-label">Start Date</div>
+                        <div class="mobile-card-value">${startDate}</div>
+                    </div>
+                    <div>
+                        <div class="mobile-card-label">End Date</div>
+                        <div class="mobile-card-value">${endDate}</div>
                     </div>
                 </div>
-                <div style="background:var(--bg2);border-radius:8px;padding:10px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center">
-                    <div style="font-size:11px;color:var(--ink3)">📅 ${startDate} — ${endDate}</div>
-                </div>
-                <div class="action-group" style="justify-content:flex-end">
+
+                <hr class="mobile-card-separator" />
+
+                <div class="action-group mobile-card-actions">
                     <a class="action-btn" href="${detailsLink}" title="View">
                         <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
                             <circle cx="7" cy="7" r="2.5" fill="currentColor"/>

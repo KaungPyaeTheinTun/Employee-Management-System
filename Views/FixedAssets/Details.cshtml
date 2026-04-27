@@ -1,0 +1,654 @@
+@model EmployeesManagement.Models.FixedAsset
+
+@{
+    ViewData["Title"] = "Fixed Asset Details";
+    var status = Model.Status?.Description ?? "Available";
+    var statusClass = status == "Available" ? "active" : (status == "Assigned" ? "assigned" : (status == "Maintenance" ? "maintenance" : "disposed"));
+    var bgColor = "#e8eefa";
+    var textColor = "#1a4fa0";
+    
+    var statusColors = new Dictionary<string, (string bg, string color)>()
+    {
+        { "Available", ("#e8f5ee", "#1a7a4a") },
+        { "Assigned", ("#e8eefa", "#1a4fa0") },
+        { "Maintenance", ("#fef3e0", "#a05c00") },
+        { "Disposed", ("#f2f2ef", "#3a3a38") }
+    };
+    var (statusBg, statusColor) = statusColors.ContainsKey(status) ? statusColors[status] : ("#e8f5ee", "#1a7a4a");
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-header-title">Fixed Asset Details</h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Dashboard</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index">Fixed Assets</a></li>
+            <li class="breadcrumb-item active">@Model.AssetNo</li>
+        </ol>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="add-btn">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path d="M9.5 2.5l2 2-7 7H2.5v-2l7-7z" stroke="currentColor" stroke-width="1.3" fill="none"/>
+            </svg>
+            Edit Asset
+        </a>
+        <a asp-action="Index" class="btn-ghost">Back to List</a>
+    </div>
+</div>
+
+<div class="detail-grid">
+    <!-- Left: Profile card -->
+    <div>
+        <div class="profile-card">
+            <div class="profile-card-top">
+                <div class="profile-avatar-lg">
+                    @if (!string.IsNullOrEmpty(Model.Photo))
+                    {
+                        <img src="@Url.Content("~/uploads/" + Model.Photo)" alt="Asset Photo" style="width:100%;height:100%;object-fit:cover;border-radius:10%;" />
+                    }
+                    else
+                    {
+                        <div style="background:@bgColor;color:@textColor;font-size:48px;width:100%;height:100%;display:flex;align-items:center;justify-content:center;">@(Model.AssetNo?.Substring(0, 1).ToUpper() ?? "A")</div>
+                    }
+                </div>
+                <div class="profile-name">@Model.AssetNo</div>
+                <div class="profile-role">
+                    <span class="dept-badge" style="background:@bgColor;color:@textColor;font-size:14px;padding:6px 12px;">@Model.Description</span>
+                </div>
+            </div>
+            <div class="profile-card-body">
+                <div class="info-row">
+                    <div class="info-icon">🔢</div>
+                    <div>
+                        <div class="info-label">ASSET NUMBER</div>
+                        <div class="info-value mono">@Model.AssetNo</div>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-icon">📝</div>
+                    <div>
+                        <div class="info-label">DESCRIPTION</div>
+                        <div class="info-value">@Model.Description</div>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-icon">📁</div>
+                    <div>
+                        <div class="info-label">CATEGORY</div>
+                        <div class="info-value">
+                            <span class="dept-badge" style="background:#f0eeff;color:#4a35c0">@(Model.Category?.Description ?? "—")</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-icon">🔖</div>
+                    <div>
+                        <div class="info-label">SERIAL NUMBER</div>
+                        <div class="info-value mono">@(string.IsNullOrEmpty(Model.SerialNo) ? "—" : Model.SerialNo)</div>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-icon">📟</div>
+                    <div>
+                        <div class="info-label">MODEL</div>
+                        <div class="info-value">@(string.IsNullOrEmpty(Model.Model) ? "—" : Model.Model)</div>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-icon">👤</div>
+                    <div>
+                        <div class="info-label">RESPONSIBLE</div>
+                        <div class="info-value">@(Model.ResponsibleEmployee?.FullName ?? "—")</div>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-icon">◎</div>
+                    <div>
+                        <div class="info-label">STATUS</div>
+                        <div class="info-value">
+                            <span class="status-badge @statusClass" style="background:@statusBg;color:@statusColor">@status</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Audit card -->
+        <div class="profile-card" style="margin-top:16px">
+            <div class="detail-section-header" style="border-radius:var(--r-lg) var(--r-lg) 0 0">
+                Audit Information
+            </div>
+            <div class="profile-card-body">
+                <div class="info-row">
+                    <div class="info-icon">⊕</div>
+                    <div>
+                        <div class="info-label">CREATED BY</div>
+                        <div class="info-value">@(Model.CreatedBy?.FullName ?? Model.CreatedById ?? "System")</div>
+                        <div class="mono" style="font-size:11px;color:var(--ink4)">@Model.CreatedOn.ToString("dd MMM yyyy, HH:mm")</div>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-icon">✎</div>
+                    <div>
+                        <div class="info-label">LAST MODIFIED</div>
+                        <div class="info-value">@(Model.ModifiedBy?.FullName ?? Model.ModifiedById ?? "Not modified")</div>
+                        @if (!string.IsNullOrEmpty(Model.ModifiedById))
+                        {
+                            <div class="mono" style="font-size:11px;color:var(--ink4)">@Model.ModifiedOn.ToString("dd MMM yyyy, HH:mm")</div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right: Detail sections -->
+    <div class="detail-sections">
+        <!-- Asset Information -->
+        <div class="detail-section">
+            <div class="detail-section-header">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="opacity:.6">
+                    <rect x="1.5" y="2.5" width="11" height="9" rx="1.5" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                    <path d="M3 5h8M3 7h6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+                Asset Information
+            </div>
+            <div class="detail-section-body">
+                <div class="detail-grid-2">
+                    <div>
+                        <div class="detail-field-label">ASSET NUMBER</div>
+                        <div class="detail-field-value mono">@Model.AssetNo</div>
+                    </div>
+                    <div>
+                        <div class="detail-field-label">DESCRIPTION</div>
+                        <div class="detail-field-value">@Model.Description</div>
+                    </div>
+                    <div>
+                        <div class="detail-field-label">CATEGORY</div>
+                        <div class="detail-field-value">
+                            <span class="dept-badge" style="background:#f0eeff;color:#4a35c0">@(Model.Category?.Description ?? "—")</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="detail-field-label">SERIAL NUMBER</div>
+                        <div class="detail-field-value mono">@(string.IsNullOrEmpty(Model.SerialNo) ? "—" : Model.SerialNo)</div>
+                    </div>
+                    <div>
+                        <div class="detail-field-label">MODEL</div>
+                        <div class="detail-field-value">@(string.IsNullOrEmpty(Model.Model) ? "—" : Model.Model)</div>
+                    </div>
+                    <div>
+                        <div class="detail-field-label">PURCHASE DATE</div>
+                        <div class="detail-field-value">@(Model.PurchaseDate.HasValue ? Model.PurchaseDate.Value.ToString("dd MMMM yyyy") : "—")</div>
+                    </div>
+                    <div>
+                        <div class="detail-field-label">RESPONSIBLE EMPLOYEE</div>
+                        <div class="detail-field-value">@(Model.ResponsibleEmployee?.FullName ?? "—")</div>
+                    </div>
+                    <div>
+                        <div class="detail-field-label">STATUS</div>
+                        <div class="detail-field-value">
+                            <span class="status-badge @statusClass" style="background:@statusBg;color:@statusColor">@status</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Information -->
+        @if (!string.IsNullOrEmpty(Model.Notes) || Model.Location != null)
+        {
+            <div class="detail-section">
+                <div class="detail-section-header">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="opacity:.6">
+                        <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                        <path d="M7 4v3l2 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                    </svg>
+                    Additional Information
+                </div>
+                <div class="detail-section-body">
+                    <div class="detail-grid-2">
+                        @if (Model.Location != null)
+                        {
+                            <div>
+                                <div class="detail-field-label">LOCATION</div>
+                                <div class="detail-field-value">@(Model.Location?.Description ?? "—")</div>
+                            </div>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Notes))
+                        {
+                            <div>
+                                <div class="detail-field-label">NOTES</div>
+                                <div class="detail-field-value">@Model.Notes</div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Asset Photo -->
+        @if (!string.IsNullOrEmpty(Model.Photo))
+        {
+            <div class="detail-section">
+                <div class="detail-section-header">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="opacity:.6">
+                        <rect x="1.5" y="2.5" width="11" height="9" rx="1.5" stroke="currentColor" stroke-width="1.2"/>
+                        <circle cx="5" cy="6" r="1" fill="currentColor"/>
+                        <path d="M1.5 10l2.5-2.5 2.5 2.5 3.5-3.5 2.5 2.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                    </svg>
+                    Asset Photo
+                </div>
+                <div class="detail-section-body">
+                    <div style="text-align:center;padding:16px;">
+                        <img src="@Url.Content("~/uploads/" + Model.Photo)" alt="Asset Photo" style="max-width:300px;max-height:300px;border-radius:12px;border:1px solid var(--border);padding:8px;background:white;" />
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Related Actions -->
+        <div class="detail-section">
+            <div class="detail-section-header">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="opacity:.6">
+                    <path d="M2 4h10v8H2V4z" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                    <path d="M4 2v2M10 2v2M2 7h10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+                Related Actions
+            </div>
+            <div class="detail-section-body">
+                <div class="action-buttons">
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="action-link">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M11 2l3 3-8 8H3v-3l8-8z" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                        </svg>
+                        Edit Asset
+                    </a>
+                    <a asp-action="Delete" asp-route-id="@Model.Id" class="action-link delete">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M3 4h10M5 4V3a1.5 1.5 0 0 1 3 0v1M11 4l-.7 8H5.7L5 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+                        </svg>
+                        Delete Asset
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Detail Grid Layout */
+    .detail-grid {
+        display: grid;
+        grid-template-columns: 340px 1fr;
+        gap: 20px;
+    }
+
+    /* Profile Card Styles */
+    .profile-card {
+        background: var(--card-bg);
+        border-radius: 16px;
+        border: 1px solid var(--border);
+        overflow: hidden;
+        position: sticky;
+        top: 20px;
+    }
+
+    .profile-card-top {
+        text-align: center;
+        padding: 24px 20px 16px;
+        background: linear-gradient(135deg, var(--bg2) 0%, var(--card-bg) 100%);
+        border-bottom: 1px solid var(--border);
+    }
+
+    .profile-avatar-lg {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 16px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 48px;
+        font-weight: 600;
+        border-radius: 50%;
+        overflow: hidden;
+    }
+
+    .profile-name {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--ink1);
+        margin-bottom: 4px;
+    }
+
+    .profile-role {
+        font-size: 12px;
+        color: var(--ink3);
+    }
+
+    .profile-card-body {
+        padding: 16px;
+    }
+
+    .info-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .info-row:last-child {
+        border-bottom: none;
+    }
+
+    .info-icon {
+        width: 32px;
+        height: 32px;
+        background: var(--bg2);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        flex-shrink: 0;
+    }
+
+    .info-label {
+        font-size: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--ink4);
+        margin-bottom: 2px;
+    }
+
+    .info-value {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--ink1);
+    }
+
+    /* Detail Sections Styles */
+    .detail-sections {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .detail-section {
+        background: var(--card-bg);
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        overflow: hidden;
+    }
+
+    .detail-section-header {
+        padding: 14px 20px;
+        background: var(--bg2);
+        border-bottom: 1px solid var(--border);
+        font-weight: 600;
+        font-size: 13px;
+        color: var(--ink2);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .detail-section-body {
+        padding: 20px;
+    }
+
+    .detail-grid-2 {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .detail-field-label {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--ink4);
+        margin-bottom: 6px;
+    }
+
+    .detail-field-value {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--ink1);
+        word-break: break-word;
+    }
+
+    /* Badge styles */
+    .dept-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    .status-badge.available {
+        background: #e8f5ee;
+        color: #1a7a4a;
+    }
+
+    .status-badge.assigned {
+        background: #e8eefa;
+        color: #1a4fa0;
+    }
+
+    .status-badge.maintenance {
+        background: #fef3e0;
+        color: #a05c00;
+    }
+
+    .status-badge.disposed {
+        background: #f2f2ef;
+        color: #3a3a38;
+    }
+
+    .mono {
+        font-family: monospace;
+        font-size: 11px;
+        color: var(--ink3);
+    }
+
+    /* Action Links */
+    .action-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .action-link {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 16px;
+        background: var(--bg2);
+        border-radius: 8px;
+        color: var(--ink2);
+        text-decoration: none;
+        transition: all 0.15s;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .action-link:hover {
+        background: var(--border);
+        color: var(--primary);
+        text-decoration: none;
+    }
+
+    .action-link.delete:hover {
+        background: #fdecea;
+        color: #c0392b;
+    }
+
+    /* Button styles */
+    .add-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        background: black;
+        color: white;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.15s;
+    }
+
+    .add-btn:hover {
+        background: #134080;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(26, 79, 160, 0.2);
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-ghost {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 16px;
+        background: var(--bg2);
+        color: var(--ink2);
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        text-decoration: none;
+        border: 1px solid var(--border);
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+
+    .btn-ghost:hover {
+        background: var(--border);
+        color: var(--ink1);
+        text-decoration: none;
+    }
+
+    /* Page Header */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 24px;
+        gap: 16px;
+    }
+
+    .page-header-title {
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--ink1);
+        margin: 0 0 8px 0;
+    }
+
+    .breadcrumb {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        gap: 8px;
+        font-size: 13px;
+    }
+
+    .breadcrumb-item {
+        color: var(--ink3);
+    }
+
+    .breadcrumb-item a {
+        color: var(--primary);
+        text-decoration: none;
+    }
+
+    .breadcrumb-item a:hover {
+        text-decoration: underline;
+    }
+
+    .breadcrumb-item.active {
+        color: var(--ink2);
+        font-weight: 500;
+    }
+
+    .breadcrumb-item + .breadcrumb-item::before {
+        content: "/";
+        margin-right: 8px;
+        color: var(--ink4);
+    }
+
+    /* CSS Variables */
+    :root {
+        --ink1: #1a1a1a;
+        --ink2: #4a4a4a;
+        --ink3: #8a8a8a;
+        --ink4: #c0c0c0;
+        --border: #e5e5e5;
+        --bg2: #f8f8f8;
+        --card-bg: #ffffff;
+        --primary: #1a4fa0;
+    }
+
+    /* Responsive */
+    @@media (max-width: 900px) {
+        .detail-grid {
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        .profile-card {
+            position: static;
+        }
+
+        .detail-grid-2 {
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .add-btn,
+        .btn-ghost {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .detail-section-body {
+            padding: 16px;
+        }
+
+        .profile-avatar-lg {
+            width: 100px;
+            height: 100px;
+            font-size: 40px;
+        }
+
+        .profile-name {
+            font-size: 16px;
+        }
+    }
+</style>

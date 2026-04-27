@@ -21,7 +21,7 @@
 
         <div class="filter-chips">
             <div class="chip filter-chip active" data-filter="all">All <span style="opacity:.5;margin-left:2px">@Model.Count()</span></div>
-            <div class="chip filter-chip" data-filter="pending">Pending</div>
+            <div class="chip filter-chip" data-filter="awaiting approval">Awaiting Approval</div>
             <div class="chip filter-chip" data-filter="approved">Approved</div>
             <div class="chip filter-chip" data-filter="rejected">Rejected</div>
         </div>
@@ -63,9 +63,10 @@
                 @{
                     var statusColors = new Dictionary<string, (string bg, string color)>()
                     {
+                        { "Awaiting Approval", ("#fef3e0", "#a05c00") },
                         { "Pending", ("#fef3e0", "#a05c00") },
-                        { "Approved", ("#e8f5ee", "#1a7a4a") },
-                        { "Rejected", ("#fdecea", "#c0392b") }
+                        { "Approval", ("#e8f5ee", "#1a7a4a") },
+                        { "Reject", ("#fdecea", "#c0392b") }
                     };
                     var avatarColors = new[] {
                         ("#e8eefa","#1a4fa0"), ("#e8f5ee","#1a7a4a"), ("#fef3e0","#a05c00"),
@@ -76,10 +77,13 @@
                 @foreach (var item in Model)
                 {
                     var (bg, tc) = avatarColors[colorIdx++ % avatarColors.Length];
-                    var status = item.Status?.Description ?? "Pending";
-                    var statusColor = statusColors.ContainsKey(status) ? statusColors[status] : ("#e8eefa", "#1a4fa0");
+                    var rawStatus = item.Status?.Description ?? "Pending";
+                    var displayStatus = rawStatus == "Awaiting Approval" ? "Awaiting Approval" : rawStatus;
+                    var statusColor = statusColors.ContainsKey(displayStatus) ? statusColors[displayStatus] : (bg: "#e8eefa", color: "#1a4fa0");
+                    // For filtering - convert to lowercase for data attribute
+                    var filterStatus = displayStatus.ToLower();
                     
-                    <tr data-id="@item.Id" data-status="@status.ToLower()">
+                    <tr data-id="@item.Id" data-status="@filterStatus">
                         <td>
                             <span class="mono" style="font-size:12px;color:var(--ink3);font-weight:500">@item.RecordId</span>
                         </td>
@@ -98,7 +102,7 @@
                             </div>
                         </td>
                         <td>
-                            <span class="status-badge" style="background:@statusColor.@bg;color:@statusColor">@status</span>
+                            <span class="status-badge" style="background:@statusColor.bg;color:@statusColor.color">@displayStatus</span>
                         </td>
                         <td>
                             <span class="date-badge">@item.DateSentForApproval.ToString("dd MMM yyyy")</span>
@@ -121,18 +125,13 @@
                                         </svg>
                                     </a>
                                 }
-                                @if (status == "Pending")
+                                @if (displayStatus == "Awaiting Approval")
                                 {
-                                    <a class="action-btn approve" asp-action="Approve" asp-route-id="@item.Id" title="Approve" style="background:#e8f5ee;color:#1a7a4a">
-                                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                                            <path d="M2 7l3.5 3.5L12 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                                        </svg>
-                                    </a>
-                                    <a class="action-btn reject" asp-action="Reject" asp-route-id="@item.Id" title="Reject" style="background:#fdecea;color:#c0392b">
-                                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                                            <path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                                        </svg>
-                                    </a>
+                                    <a class="action-btn approve" asp-action="Approval" title="Approve" style="color:#1a7a4a;">
+                                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                                        <path d="M2 7L5 10L12 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </a>
                                 }
                             </div>
                         </td>
@@ -811,7 +810,7 @@
                 const openLink = row.querySelector('.action-btn.open')?.href || '#';
                 const approveLink = row.querySelector('.action-btn.approve')?.href || '#';
                 const rejectLink = row.querySelector('.action-btn.reject')?.href || '#';
-                const showApproveReject = status === 'Pending';
+                const showApproveReject = status === 'Awaiting Approval';
 
                 const card = document.createElement('div');
                 card.className = 'mobile-emp-card';

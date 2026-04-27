@@ -13,13 +13,10 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" />
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
-    
     <link rel="stylesheet" href="~/css/custom-toast.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/loader.css" asp-append-version="true" />
     <style>
-        /* Mobile Sidebar Styles */
         .app-wrapper {
             position: relative;
             min-height: 100vh;
@@ -206,6 +203,24 @@
             fill: none;
         }
 
+        .mob-sidebar .nav-item {
+            color: #000000;
+        }
+
+        .mob-sidebar .nav-item:hover,
+        .mob-sidebar .nav-item.active,
+        .mob-sidebar .nav-item.active:hover {
+            color: #000000;
+            background: #d3d5d7;
+        }
+
+        .mob-sidebar .ni-icon,
+        .mob-sidebar .ni-icon svg,
+        .mob-sidebar .arrow-ic {
+            color: #000000;
+            stroke: #000000;
+        }
+
         .ni-text {
             color: black;
             flex: 1;
@@ -231,7 +246,7 @@
         }
 
         .nav-sub.open {
-            max-height: 300px;
+            max-height: 400px;
         }
 
         .sub-item {
@@ -289,83 +304,6 @@
             display: none;
             padding: 1rem;
             margin-top: 70px;
-        }
-
-        .page-header {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-        }
-
-        .stat-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .stat-c {
-            background: white;
-            padding: 1rem;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-
-        .sc-lbl {
-            font-size: 0.75rem;
-            color: #6b7280;
-            margin-bottom: 0.5rem;
-        }
-
-        .sc-val {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .sc-sub {
-            font-size: 0.75rem;
-            color: #10b981;
-        }
-
-        .activity {
-            background: white;
-            padding: 1rem;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-
-        .act-title {
-            font-weight: 600;
-            margin-bottom: 1rem;
-        }
-
-        .act-row {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid #f3f4f6;
-        }
-
-        .dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-        }
-
-        .dot.g { background: #10b981; }
-        .dot.y { background: #f59e0b; }
-        .dot.b { background: #3b82f6; }
-
-        .act-text {
-            flex: 1;
-            font-size: 0.875rem;
-        }
-
-        .act-time {
-            font-size: 0.75rem;
-            color: #9ca3af;
         }
 
         /* Toggle Button */
@@ -472,11 +410,11 @@
         .sub-item {
             text-decoration: none !important;
         }
-        
+
         a {
             text-decoration: none !important;
         }
-        
+
         .nav-item:hover,
         .nav-item.active:hover,
         .nav-item:focus,
@@ -484,100 +422,96 @@
             text-decoration: none !important;
             outline: none;
             box-shadow: none;
-        }/* Target both success and error containers */
-/* Update the container selector to include toast-warning */
-#toast-container > .toast-success,
-#toast-container > .toast-error,
-#toast-container > .toast-warning {
-    background-color: #ffffff;
-    color: #000000;
-    opacity: 1;
-    border-radius: 10px;
-    padding: 13px 25px 13px 55px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    min-width: 500px;
-    max-width: 650px;
-    height: 75px;
-    overflow: hidden;
-    position: relative;
-}
+        }
 
-/* Base Icon styling (Added toast-warning) */
-#toast-container > .toast-success:before,
-#toast-container > .toast-error:before,
-#toast-container > .toast-warning:before {
-    font-family: "Font Awesome 5 Free";
-    font-weight: 900;
-    position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    line-height: 1;
-    color: #ffffff; /* Changed to white icon on colored circle */
-}
+        /* Toast Styles */
+        #toast-container > .toast-success,
+        #toast-container > .toast-error,
+        #toast-container > .toast-warning {
+            background-color: #ffffff;
+            color: #000000;
+            opacity: 1;
+            border-radius: 10px;
+            padding: 13px 25px 13px 55px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            min-width: 500px;
+            max-width: 650px;
+            height: 75px;
+            overflow: hidden;
+            position: relative;
+        }
 
-/* Success Specific */
-#toast-container > .toast-success:before {
-    content: "\f00c";
-    background-color: #38ef7d;
-}
+        #toast-container > .toast-success:before,
+        #toast-container > .toast-error:before,
+        #toast-container > .toast-warning:before {
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            line-height: 1;
+            color: #ffffff;
+        }
 
-/* Error Specific */
-#toast-container > .toast-error:before {
-    content: "\f00d";
-    background-color: #ff4d4d;
-}
+        #toast-container > .toast-success:before {
+            content: "\f00c";
+            background-color: #38ef7d;
+        }
 
-/* DELETE SPECIFIC (Warning) */
-#toast-container > .toast-warning:before {
-    content: "\f1f8"; /* FontAwesome Trash Icon */
-    background-color: #f39c12; /* Warning Orange or use #e74c3c for Red */
-}
+        #toast-container > .toast-error:before {
+            content: "\f00d";
+            background-color: #ff4d4d;
+        }
 
-/* Shared Title, Message, and Button Styles */
-#toast-container > [class*="toast-"] .toast-title {
-    font-weight: 600;
-    font-size: 16px;
-    margin-bottom: 2px;
-}
+        #toast-container > .toast-warning:before {
+            content: "\f1f8";
+            background-color: #f39c12;
+        }
 
-#toast-container > [class*="toast-"] .toast-message {
-    font-size: 14px;
-    color: #000000;
-    margin-right: 70px;
-    display: block;
-}
+        #toast-container > [class*="toast-"] .toast-title {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 2px;
+        }
 
-#toast-container > [class*="toast-"] .toast-close-button {
-    background-color: black;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 8px;
-    color: white;
-    padding: 6px 14px;
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 1;
-}
+        #toast-container > [class*="toast-"] .toast-message {
+            font-size: 14px;
+            color: #000000;
+            margin-right: 70px;
+            display: block;
+        }
 
-#toast-container > [class*="toast-"] .toast-close-button:hover {
-    background-color: navy;
-}
+        #toast-container > [class*="toast-"] .toast-close-button {
+            background-color: black;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            color: white;
+            padding: 6px 14px;
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+        }
+
+        #toast-container > [class*="toast-"] .toast-close-button:hover {
+            background-color: navy;
+        }
     </style>
 </head>
 <body>
@@ -585,10 +519,12 @@
     <div id="page-loader">
         <div class="loader"></div>
     </div>
+
     <div class="app-wrapper">
-        <!-- Mobile Sidebar -->
+        <!-- Sidebar Overlay -->
         <div class="sidebar-overlay" id="overlay" onclick="closeMobileSidebar()"></div>
-        
+
+        <!-- ===== MOBILE SIDEBAR ===== -->
         <div class="mob-sidebar" id="mobileSidebar">
             <div class="sb-head">
                 <div class="sb-logo">
@@ -603,9 +539,9 @@
             </div>
 
             <div class="sb-nav">
-                <div class="nav-label">Main Menu</div>
 
-                <div class="nav-item" onclick="handleMobileNavClick(this, 'dashboard')">
+                <!-- Dashboard -->
+                <div class="nav-item" onclick="handleMobileNavClick(this, 'Home/Index')">
                     <div class="ni-icon">
                         <svg viewBox="0 0 16 16">
                             <rect x="1" y="1" width="6" height="6" rx="1"/>
@@ -615,6 +551,31 @@
                         </svg>
                     </div>
                     <span class="ni-text">Dashboard</span>
+                </div>
+
+                <!-- Clients -->
+                <div class="nav-item" onclick="handleMobileNavClick(this, 'Clients/Index')">
+                    <div class="ni-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                    </div>
+                    <span class="ni-text">Clients</span>
+                </div>
+
+                <!-- Fixed Assets -->
+                <div class="nav-item" onclick="handleMobileNavClick(this, 'FixedAssets/Index')">
+                    <div class="ni-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                        </svg>
+                    </div>
+                    <span class="ni-text">Fixed Assets</span>
                 </div>
 
                 <!-- HR & Payroll -->
@@ -691,6 +652,9 @@
                     </svg>
                 </div>
                 <div class="nav-sub" id="sysAdminSub">
+                    <div class="sub-item" onclick="handleMobileSubItemClick('WorkFlowUserGroups')">WorkFlow User Groups</div>
+                    <div class="sub-item" onclick="handleMobileSubItemClick('ApprovalEntries')">Approval Entry</div>
+                    <div class="sub-item" onclick="handleMobileSubItemClick('ApprovalsUserMatrixs')">Approval User Matrixs</div>
                     <div class="sub-item" onclick="handleMobileSubItemClick('Designations')">Designations</div>
                     <div class="sub-item" onclick="handleMobileSubItemClick('Departments')">Departments</div>
                     <div class="sub-item" onclick="handleMobileSubItemClick('Banks')">Banks</div>
@@ -700,7 +664,7 @@
                     <div class="sub-item" onclick="handleMobileSubItemClick('SystemCodeDetails')">SystemCodeDetails</div>
                 </div>
 
-                <!-- Setting Dropdown -->
+                <!-- Setting -->
                 <div class="nav-item nav-dropdown-toggle" onclick="toggleMobileSubMenu(this, 'settingSub')">
                     <div class="ni-icon">
                         <svg viewBox="0 0 16 16">
@@ -719,7 +683,8 @@
                     <div class="sub-item" onclick="handleMobileSubItemClick('GeneralSettings')">General Settings</div>
                 </div>
 
-                <div class="nav-item" onclick="handleMobileNavClick(this, 'attendance')">
+                <!-- Attendance -->
+                <div class="nav-item" onclick="handleMobileNavClick(this, 'Attendance/Index')">
                     <div class="ni-icon">
                         <svg viewBox="0 0 16 16">
                             <circle cx="8" cy="8" r="6.5"/>
@@ -741,7 +706,7 @@
             </div>
         </div>
 
-        <!-- Mobile Header -->
+        <!-- ===== MOBILE HEADER ===== -->
         <div class="mob-header">
             <div class="mob-logo">
                 <div class="lmark">EMS</div>
@@ -762,7 +727,7 @@
             </div>
         </div>
 
-        <!-- Desktop Sidebar -->
+        <!-- ===== DESKTOP SIDEBAR ===== -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-logo">
                 <div class="logo-mark">EMS</div>
@@ -770,7 +735,6 @@
             </div>
 
             <nav class="nav-section">
-                <div class="nav-label">MAIN MENU</div>
 
                 <a class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")"
                    asp-area="" asp-controller="Home" asp-action="Index">
@@ -783,6 +747,31 @@
                         </svg>
                     </div>
                     <span class="nav-text">Dashboard</span>
+                </a>
+
+                <a class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Clients" ? "active" : "")"
+                   asp-area="" asp-controller="Clients" asp-action="Index">
+                    <div class="nav-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                    </div>
+                    <span class="nav-text">Clients</span>
+                </a>
+
+                <a class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "FixedAssets" ? "active" : "")"
+                   asp-area="" asp-controller="FixedAssets" asp-action="Index">
+                    <div class="nav-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                        </svg>
+                    </div>
+                    <span class="nav-text">Fixed Assets</span>
                 </a>
 
                 <!-- HR & PayRoll dropdown -->
@@ -809,7 +798,7 @@
                     <a class="nav-sub-item" asp-area="" asp-controller="LeaveBalances" asp-action="Index">Leave Balances</a>
                     <a class="nav-sub-item" asp-area="" asp-controller="LeavePeriods" asp-action="Index">Leave Period</a>
                 </div>
-                
+
                 <!-- System Security dropdown -->
                 <div class="nav-item nav-dropdown-toggle" id="UserToggle">
                     <div class="nav-icon">
@@ -878,7 +867,7 @@
                     <a class="nav-sub-item" asp-area="" asp-controller="SystemCodeDetails" asp-action="Index">SystemCodeDetails</a>
                 </div>
 
-                <!-- Setting dropdown (FIXED) -->
+                <!-- Setting dropdown -->
                 <div class="nav-item nav-dropdown-toggle" id="setToggle">
                     <div class="nav-icon">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -918,14 +907,14 @@
             </div>
         </aside>
 
-        <!-- MAIN PANEL -->
+        <!-- ===== MAIN PANEL ===== -->
         <div class="main-panel">
 
             <!-- HEADER -->
             <header class="main-header">
                 <div class="header-left">
                     <button class="toggle-btn" id="sidebarToggle" type="button">
-                        <svg viewBox="-0.5 -0.5 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" id="Sidebar-Collapse--Streamline-Iconoir" height="16" width="16">
+                        <svg viewBox="-0.5 -0.5 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" height="16" width="16">
                             <path d="M12.7769375 14.284625H2.2230625c-0.8326875 0 -1.5076875 -0.675 -1.5076875 -1.5076875l0 -10.553875c0 -0.8326875 0.675 -1.5076875 1.5076875 -1.5076875h10.553875c0.8326875 0 1.5076875 0.675 1.5076875 1.5076875v10.553875c0 0.8326875 -0.675 1.5076875 -1.5076875 1.5076875Z" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"></path>
                             <path d="M3.9192500000000003 5.9923125 2.6 7.5l1.3192499999999998 1.5076875" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"></path>
                             <path d="M5.615375 14.284625V0.7153750000000001" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"></path>
@@ -969,6 +958,7 @@
                     </div>
 
                     <!-- Profile -->
+                     <!-- Profile -->
                     @if (SignInManager.IsSignedIn(User))
                     {
                         var user = await UserManager.GetUserAsync(User);
@@ -1010,14 +1000,15 @@
     </div>
 
     <script>
-        // Mobile sidebar functions
+        // =============================================
+        // MOBILE SIDEBAR — CORE FUNCTIONS
+        // =============================================
+
         function toggleMobileSidebar() {
             var sidebar = document.getElementById('mobileSidebar');
             var overlay = document.getElementById('overlay');
             var btn = document.getElementById('togBtn');
-            var isOpen = sidebar.classList.contains('open');
-            
-            if (isOpen) {
+            if (sidebar.classList.contains('open')) {
                 closeMobileSidebar();
             } else {
                 sidebar.classList.add('open');
@@ -1026,89 +1017,114 @@
                 document.body.style.overflow = 'hidden';
             }
         }
-        
+
         function closeMobileSidebar() {
             var sidebar = document.getElementById('mobileSidebar');
             var overlay = document.getElementById('overlay');
             var btn = document.getElementById('togBtn');
-            
             sidebar.classList.remove('open');
             overlay.classList.remove('open');
             if (btn) btn.classList.remove('open');
             document.body.style.overflow = '';
         }
-        
+
         function toggleMobileSubMenu(element, subId) {
             var sub = document.getElementById(subId);
             var isOpen = sub.classList.contains('open');
-            
+
             // Close all other submenus
-            document.querySelectorAll('.mob-sidebar .nav-sub').forEach(function(submenu) {
-                if (submenu.id !== subId) {
-                    submenu.classList.remove('open');
-                }
+            document.querySelectorAll('.mob-sidebar .nav-sub').forEach(function (submenu) {
+                if (submenu.id !== subId) submenu.classList.remove('open');
             });
-            
-            document.querySelectorAll('.mob-sidebar .nav-dropdown-toggle').forEach(function(item) {
-                if (item !== element) {
-                    item.classList.remove('expanded');
-                }
+            document.querySelectorAll('.mob-sidebar .nav-dropdown-toggle').forEach(function (item) {
+                if (item !== element) item.classList.remove('expanded');
             });
-            
-            // Toggle current submenu
-            if (sub) {
-                sub.classList.toggle('open');
-                element.classList.toggle('expanded');
-            }
+
+            // Toggle current
+            sub.classList.toggle('open', !isOpen);
+            element.classList.toggle('expanded', !isOpen);
         }
-        
-        function handleMobileNavClick(element, page) {
-            // Remove active class from all nav items
-            document.querySelectorAll('.mob-sidebar .nav-item').forEach(function(item) {
+
+        // =============================================
+        // MOBILE SIDEBAR — NAVIGATION (FIXED)
+        // =============================================
+
+        // Top-level nav items (Dashboard, Clients, Fixed Assets, Attendance)
+        function handleMobileNavClick(element, route) {
+            document.querySelectorAll('.mob-sidebar .nav-item').forEach(function (item) {
                 item.classList.remove('active');
             });
-            
-            // Add active class to clicked item
             element.classList.add('active');
-            
-            // Close sidebar after navigation
-            setTimeout(function() {
-                closeMobileSidebar();
-            }, 300);
-            
-            console.log('Navigating to:', page);
-        }
-        
-        function handleMobileSubItemClick(itemName) {
-            console.log('Selected sub-item:', itemName);
             closeMobileSidebar();
+            window.location.href = '/' + route;
         }
-        
+
+        // Sub-menu items — maps key to real controller URL
+        function handleMobileSubItemClick(controller) {
+            var routeMap = {
+                // HR & Payroll
+                'Employees':            '/Employees/Index',
+                'Holidays':             '/Holidays/Index',
+                'LeaveAdjustment':      '/LeaveAdjustmentEntries/Index',
+                'LeaveBalances':        '/LeaveBalances/Index',
+                'LeavePeriods':         '/LeavePeriods/Index',
+                // Leave Management
+                'LeaveTypes':           '/LeaveTypes/Index',
+                'LeaveApplications':    '/LeaveApplications/Index',
+                // System Security
+                'Users':                '/Users/Index',
+                'Roles':                '/Roles/Index',
+                'Profiles':             '/Profiles/Index',
+                'SystemProfiles':       '/SystemProfiles/Index',
+                'Audits':               '/Audits/Index',
+                // System Administration
+                'WorkFlowUserGroups':   '/WorkFlowUserGroups/Index',
+                'ApprovalEntries':      '/ApprovalEntries/Index',
+                'ApprovalsUserMatrixs': '/ApprovalsUserMatrixs/Index',
+                'Designations':         '/Designations/Index',
+                'Departments':          '/Departments/Index',
+                'Banks':                '/Banks/Index',
+                'Countries':            '/Countries/Index',
+                'Cities':               '/Cities/Index',
+                'SystemCodes':          '/SystemCodes/Index',
+                'SystemCodeDetails':    '/SystemCodeDetails/Index',
+                // Settings
+                'CompanyInformation':   '/CompanyInformations/Index',
+                'EmailSettings':        '/EmailSettings/Index',
+                'GeneralSettings':      '/GeneralSettings/Index'
+            };
+
+            var url = routeMap[controller];
+            if (url) {
+                closeMobileSidebar();
+                window.location.href = url;
+            }
+        }
+
         function showNotification() {
             alert('Notifications feature coming soon!');
         }
-        
-        // Close mobile sidebar when clicking outside
-        document.addEventListener('click', function(event) {
+
+        // Close sidebar when clicking outside
+        document.addEventListener('click', function (event) {
             var sidebar = document.getElementById('mobileSidebar');
-            var overlay = document.getElementById('overlay');
             var btn = document.getElementById('togBtn');
-            
             if (sidebar && sidebar.classList.contains('open')) {
-                if (!sidebar.contains(event.target) && !btn.contains(event.target)) {
+                if (!sidebar.contains(event.target) && btn && !btn.contains(event.target)) {
                     closeMobileSidebar();
                 }
             }
         });
-        
-        // Handle window resize
-        window.addEventListener('resize', function() {
-            if (window.innerWidth > 768) {
-                closeMobileSidebar();
-            }
+
+        // Close sidebar on resize to desktop
+        window.addEventListener('resize', function () {
+            if (window.innerWidth > 768) closeMobileSidebar();
         });
-        
-        // Desktop sidebar dropdown toggle (FIXED - includes Setting dropdown)
+
+        // =============================================
+        // DESKTOP SIDEBAR — DROPDOWN TOGGLE
+        // =============================================
+
         document.addEventListener('DOMContentLoaded', function () {
             var dropdownToggles = document.querySelectorAll('.sidebar .nav-dropdown-toggle');
 
@@ -1116,30 +1132,24 @@
                 toggle.addEventListener('click', function (e) {
                     e.stopPropagation();
 
-                    var subId = 
-                        this.id === 'HRToggle' ? 'HRSub' :
-                        this.id === 'UserToggle' ? 'UserSub' :
-                        this.id === 'leaveToggle' ? 'leaveSub' :
-                        this.id === 'setToggle' ? 'setSub' :
+                    var subId =
+                        this.id === 'HRToggle'     ? 'HRSub'     :
+                        this.id === 'UserToggle'   ? 'UserSub'   :
+                        this.id === 'leaveToggle'  ? 'leaveSub'  :
+                        this.id === 'setToggle'    ? 'setSub'    :
                         this.id === 'SystemToggle' ? 'SystemSub' : null;
 
                     if (subId) {
                         var sub = document.getElementById(subId);
                         if (sub) {
                             // Close all other submenus
-                            document.querySelectorAll('.sidebar .nav-sub').forEach(function(submenu) {
-                                if (submenu.id !== subId) {
-                                    submenu.classList.remove('open');
-                                }
+                            document.querySelectorAll('.sidebar .nav-sub').forEach(function (submenu) {
+                                if (submenu.id !== subId) submenu.classList.remove('open');
                             });
-                            
-                            document.querySelectorAll('.sidebar .nav-dropdown-toggle').forEach(function(item) {
-                                if (item.id !== toggle.id) {
-                                    item.classList.remove('expanded');
-                                }
+                            document.querySelectorAll('.sidebar .nav-dropdown-toggle').forEach(function (item) {
+                                if (item.id !== toggle.id) item.classList.remove('expanded');
                             });
-                            
-                            // Toggle current submenu
+                            // Toggle current
                             sub.classList.toggle('open');
                             toggle.classList.toggle('expanded');
                         }
@@ -1147,7 +1157,6 @@
                 });
             });
         });
-        
     </script>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
@@ -1160,7 +1169,7 @@
     <script src="~/js/loader.js" asp-append-version="true"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-    
+
     <partial name="_ToastNotification" />
     @await RenderSectionAsync("Scripts", required: false)
 </body>

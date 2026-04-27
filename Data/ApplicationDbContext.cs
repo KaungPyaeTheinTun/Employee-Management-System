@@ -103,6 +103,8 @@ namespace EmployeeManagement.Data
         public DbSet<WorkFlowUserGroup> WorkFlowUserGroups { get; set; }
         public DbSet<WorkFlowUserGroupMember> WorkFlowUserGroupMembers { get; set; }
         public DbSet<ApprovalsUserMatrix> ApprovalsUserMatrixs { get; set; }
+        public DbSet<Client> Clients { get; set; }
+        public DbSet<FixedAsset> FixedAssets { get; set; }
         public virtual async Task<int> SaveChangesAsync(string userId)
         {
             OnBeforeSavingChanges(userId);

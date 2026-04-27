@@ -1,0 +1,735 @@
+@model EmployeesManagement.Models.FixedAsset
+
+@{
+    ViewData["Title"] = "Edit Fixed Asset";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-header-title">Edit Fixed Asset</h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Dashboard</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index">Fixed Assets</a></li>
+            <li class="breadcrumb-item active">Edit @Model.AssetNo</li>
+        </ol>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <a asp-action="Details" asp-route-id="@Model.Id" class="btn-ghost">View Details</a>
+        <a asp-action="Index" class="btn-ghost">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin-right:6px">
+                <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            Back to List
+        </a>
+    </div>
+</div>
+
+<form asp-action="Edit" id="editForm" method="post" enctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly" class="field-error" style="padding:12px 16px;background:var(--red-bg);border-radius:9px;border:1px solid rgba(192,57,43,0.2);margin-bottom:20px;"></div>
+
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="CreatedById" />
+    <input type="hidden" asp-for="CreatedOn" />
+
+    <!-- Asset Information -->
+    <div class="form-card" style="margin-bottom:16px">
+        <div class="form-card-header">
+            <span class="section-badge blue">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <rect x="2" y="3" width="8" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                    <path d="M4 2v2M8 2v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+                Asset Information
+            </span>
+            <span class="mono" style="margin-left:auto;font-size:11px;color:var(--ink4)">ID: @Model.Id</span>
+        </div>
+        <div class="form-card-body">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label asp-for="AssetNo" class="field-label">Asset Number <span class="field-required">*</span></label>
+                    <input asp-for="AssetNo" class="field-control" placeholder="e.g. AST-001, EQ-2024-001" />
+                    <span asp-validation-for="AssetNo" class="field-error"></span>
+                    <span class="field-hint">Unique identifier for the asset</span>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="Description" class="field-label">Description <span class="field-required">*</span></label>
+                    <input asp-for="Description" class="field-control" placeholder="e.g. Dell Laptop, HP Printer" />
+                    <span asp-validation-for="Description" class="field-error"></span>
+                    <span class="field-hint">Brief description of the asset</span>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="CategoryId" class="field-label">Category <span class="field-required">*</span></label>
+                    <select asp-for="CategoryId" class="field-control" asp-items="ViewBag.CategoryId">
+                        <option value="">— Select Category —</option>
+                    </select>
+                    <span asp-validation-for="CategoryId" class="field-error"></span>
+                    <span class="field-hint">Asset category (e.g., IT Equipment, Furniture)</span>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="SerialNo" class="field-label">Serial Number</label>
+                    <input asp-for="SerialNo" class="field-control" placeholder="e.g. SN123456789" />
+                    <span asp-validation-for="SerialNo" class="field-error"></span>
+                    <span class="field-hint">Manufacturer serial number</span>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="Model" class="field-label">Model</label>
+                    <input asp-for="Model" class="field-control" placeholder="e.g. Latitude 5420, LaserJet Pro" />
+                    <span asp-validation-for="Model" class="field-error"></span>
+                    <span class="field-hint">Model number of the asset</span>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="ResponsibleEmployeeId" class="field-label">Responsible Employee</label>
+                    <select asp-for="ResponsibleEmployeeId" class="field-control" asp-items="ViewBag.ResponsibleEmployeeId">
+                        <option value="">— Select Employee —</option>
+                    </select>
+                    <span asp-validation-for="ResponsibleEmployeeId" class="field-error"></span>
+                    <span class="field-hint">Employee responsible for this asset</span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="PurchaseDate" class="field-label">Purchase Date</label>
+                    <input asp-for="PurchaseDate" class="field-control" type="date" />
+                    <span asp-validation-for="PurchaseDate" class="field-error"></span>
+                    <span class="field-hint">Date when the asset was purchased</span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Notes" class="field-label">Notes</label>
+                    <textarea asp-for="Notes" class="field-control" placeholder="Additional notes about the asset..." rows="3"></textarea>
+                    <span asp-validation-for="Notes" class="field-error"></span>
+                    <span class="field-hint">Any additional information</span>
+                </div>
+                <div class="col-md-12">
+                    <label asp-for="Photo" class="field-label">Asset Photo</label>
+                    @if (!string.IsNullOrEmpty(Model.Photo))
+                    {
+                        <div style="margin-bottom:12px;padding:12px;background:var(--bg2);border-radius:8px;">
+                            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                                <div>
+                                    <div style="font-size:11px;color:var(--ink3);margin-bottom:4px;">Current Photo</div>
+                                    <img src="@Url.Content("~/uploads/" + Model.Photo)" alt="Current Asset Photo" style="width:80px;height:80px;border-radius:8px;object-fit:cover;border:1px solid var(--border);" />
+                                </div>
+                                <div>
+                                    <div style="font-size:11px;color:var(--ink3);margin-bottom:4px;">File Name</div>
+                                    <div style="font-size:12px;color:var(--ink2);font-family:monospace;">@Model.Photo</div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    
+                    <div class="photo-upload-area" id="photoUploadArea">
+                        <div class="photo-preview" id="photoPreview" style="display: none;">
+                            <img id="previewImage" src="#" alt="New Asset Photo Preview" />
+                            <button type="button" class="remove-photo" id="removePhoto">×</button>
+                        </div>
+                        <div class="upload-placeholder" id="uploadPlaceholder">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <rect x="2" y="4" width="20" height="16" rx="2" stroke="currentColor" fill="none"/>
+                                <circle cx="8.5" cy="9.5" r="2" stroke="currentColor" fill="none"/>
+                                <path d="M22 14l-4-4-6 6-4-4-6 6" stroke="currentColor" stroke-linecap="round"/>
+                            </svg>
+                            <p class="upload-text">Click or drag to upload new photo</p>
+                            <p class="upload-hint">PNG, JPG, JPEG up to 2MB. Leave empty to keep current photo.</p>
+                            <input type="file" name="assetphoto" id="photoInput" class="photo-input" accept=".png,.jpg,.jpeg" />
+                        </div>
+                    </div>
+                    <span class="field-hint">Upload a photo of the asset (optional)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="form-actions" style="border-top:none;padding-top:0">
+        <a asp-action="Index" class="btn-ghost">Cancel</a>
+        <button type="submit" class="btn-primary" style="background-color: black;">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin-right:6px;vertical-align:-2px">
+                <path d="M2 7l3.5 3.5L12 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Update Asset
+        </button>
+    </div>
+</form>
+
+<style>
+    /* Form field styles */
+    .field-label {
+        display: block;
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--ink2);
+        margin-bottom: 6px;
+    }
+
+    .field-required {
+        color: #c0392b;
+        font-size: 12px;
+    }
+
+    .field-control {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-size: 13px;
+        color: var(--ink1);
+        background: var(--card-bg);
+        transition: all 0.15s;
+    }
+
+    .field-control:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(26, 79, 160, 0.1);
+    }
+
+    /* Select field specific styles */
+    select.field-control {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 12 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2 4L6 8L10 4' stroke='%23666' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        padding-right: 32px;
+        cursor: pointer;
+    }
+
+    select.field-control:hover {
+        border-color: var(--primary);
+    }
+
+    select.field-control option {
+        padding: 8px;
+        font-size: 13px;
+    }
+
+    textarea.field-control {
+        resize: vertical;
+        min-height: 80px;
+    }
+
+    input[type="date"].field-control {
+        appearance: none;
+        -webkit-appearance: none;
+    }
+
+    input[type="date"].field-control::-webkit-calendar-picker-indicator {
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 4px;
+    }
+
+    .field-error {
+        font-size: 11px;
+        color: #c0392b;
+        margin-top: 4px;
+        display: block;
+    }
+
+    .field-hint {
+        display: block;
+        font-size: 11px;
+        color: var(--ink3);
+        margin-top: 4px;
+    }
+
+    input[readonly], 
+    input[disabled] {
+        background-color: var(--bg2);
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
+
+    /* Photo Upload Area Styles */
+    .photo-upload-area {
+        border: 2px dashed var(--border);
+        border-radius: 12px;
+        background: var(--bg2);
+        transition: all 0.2s;
+        cursor: pointer;
+        overflow: hidden;
+        margin-top: 4px;
+    }
+
+    .photo-upload-area:hover {
+        border-color: var(--primary);
+        background: rgba(26, 79, 160, 0.02);
+    }
+
+    .upload-placeholder {
+        padding: 40px 20px;
+        text-align: center;
+        position: relative;
+    }
+
+    .upload-placeholder svg {
+        color: var(--ink3);
+        margin-bottom: 12px;
+    }
+
+    .upload-text {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--ink2);
+        margin: 0 0 4px 0;
+    }
+
+    .upload-hint {
+        font-size: 11px;
+        color: var(--ink3);
+        margin: 0;
+    }
+
+    .photo-input {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .photo-preview {
+        position: relative;
+        padding: 20px;
+        text-align: center;
+        background: var(--card-bg);
+    }
+
+    .photo-preview img {
+        max-width: 200px;
+        max-height: 150px;
+        border-radius: 8px;
+        object-fit: contain;
+        border: 1px solid var(--border);
+        background: white;
+        padding: 8px;
+    }
+
+    .remove-photo {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: #c0392b;
+        color: white;
+        border: none;
+        font-size: 18px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+    }
+
+    .remove-photo:hover {
+        background: #a0281a;
+        transform: scale(1.05);
+    }
+
+    /* Form card styles */
+    .form-card {
+        background: var(--card-bg);
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        overflow: hidden;
+    }
+
+    .form-card-header {
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+        background: var(--bg2);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .form-card-body {
+        padding: 20px;
+    }
+
+    .section-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .section-badge.blue {
+        background: #e8eefa;
+        color: #1a4fa0;
+    }
+
+    .section-badge.green {
+        background: #e8f5ee;
+        color: #1a7a4a;
+    }
+
+    .section-badge.neutral {
+        background: var(--bg2);
+        color: var(--ink2);
+    }
+
+    /* Badge styles */
+    .dept-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    .emp-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 12px;
+        flex-shrink: 0;
+    }
+
+    .mono {
+        font-family: monospace;
+        font-size: 11px;
+        color: var(--ink3);
+    }
+
+    /* Button styles */
+    .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        padding: 10px 20px;
+        background: var(--primary);
+        color: white;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        border: none;
+        cursor: pointer;
+        transition: all 0.15s;
+        text-decoration: none;
+    }
+
+    .btn-primary:hover {
+        background: #134080;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(26, 79, 160, 0.2);
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-ghost {
+        display: inline-flex;
+        align-items: center;
+        padding: 10px 20px;
+        background: var(--bg2);
+        color: var(--ink2);
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        text-decoration: none;
+        border: 1px solid var(--border);
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+
+    .btn-ghost:hover {
+        background: var(--border);
+        color: var(--ink1);
+        text-decoration: none;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+        padding: 20px 0;
+        border-top: 1px solid var(--border);
+        margin-top: 20px;
+    }
+
+    /* Page Header */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 24px;
+        gap: 16px;
+    }
+
+    .page-header-title {
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--ink1);
+        margin: 0 0 8px 0;
+    }
+
+    .breadcrumb {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        gap: 8px;
+        font-size: 13px;
+    }
+
+    .breadcrumb-item {
+        color: var(--ink3);
+    }
+
+    .breadcrumb-item a {
+        color: var(--primary);
+        text-decoration: none;
+    }
+
+    .breadcrumb-item a:hover {
+        text-decoration: underline;
+    }
+
+    .breadcrumb-item.active {
+        color: var(--ink2);
+        font-weight: 500;
+    }
+
+    .breadcrumb-item + .breadcrumb-item::before {
+        content: "/";
+        margin-right: 8px;
+        color: var(--ink4);
+    }
+
+    /* Grid system */
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin: -8px;
+    }
+
+    .g-3 {
+        margin: -8px;
+    }
+
+    .g-3 > [class*="col-"] {
+        padding: 8px;
+    }
+
+    .col-md-3 {
+        flex: 0 0 25%;
+        max-width: 25%;
+    }
+
+    .col-md-4 {
+        flex: 0 0 33.333333%;
+        max-width: 33.333333%;
+    }
+
+    .col-md-6 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+
+    .col-md-12 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    /* CSS Variables */
+    :root {
+        --ink1: #1a1a1a;
+        --ink2: #4a4a4a;
+        --ink3: #8a8a8a;
+        --ink4: #c0c0c0;
+        --border: #e5e5e5;
+        --bg2: #f8f8f8;
+        --card-bg: #ffffff;
+        --primary: #1a4fa0;
+        --red-bg: rgba(192, 57, 43, 0.1);
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .col-md-3,
+        .col-md-4,
+        .col-md-6,
+        .col-md-12 {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+        
+        .form-actions {
+            flex-direction: column-reverse;
+        }
+        
+        .btn-primary,
+        .btn-ghost {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .form-card-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .mono {
+            margin-left: 0 !important;
+        }
+
+        .photo-preview img {
+            max-width: 150px;
+            max-height: 120px;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get form elements
+        const assetNoInput = document.getElementById('AssetNo');
+        const descriptionInput = document.getElementById('Description');
+        const categorySelect = document.getElementById('CategoryId');
+        const serialInput = document.getElementById('SerialNo');
+        const modelInput = document.getElementById('Model');
+        const responsibleSelect = document.getElementById('ResponsibleEmployeeId');
+        const purchaseDateInput = document.getElementById('PurchaseDate');
+        const notesInput = document.getElementById('Notes');
+        
+
+        // Photo upload functionality
+        const photoInput = document.getElementById('photoInput');
+        const photoPreview = document.getElementById('photoPreview');
+        const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+        const previewImage = document.getElementById('previewImage');
+        const removePhotoBtn = document.getElementById('removePhoto');
+        const uploadArea = document.getElementById('photoUploadArea');
+
+        if (photoInput) {
+            photoInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+                    if (!allowedTypes.includes(file.type)) {
+                        alert('Please upload only PNG, JPG, or JPEG files.');
+                        photoInput.value = '';
+                        return;
+                    }
+                    
+                    if (file.size > 2 * 1024 * 1024) {
+                        alert('File size must be less than 2MB.');
+                        photoInput.value = '';
+                        return;
+                    }
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        previewImage.src = event.target.result;
+                        uploadPlaceholder.style.display = 'none';
+                        photoPreview.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        if (removePhotoBtn) {
+            removePhotoBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (photoInput) photoInput.value = '';
+                previewImage.src = '#';
+                photoPreview.style.display = 'none';
+                uploadPlaceholder.style.display = 'block';
+            });
+        }
+
+        if (uploadArea) {
+            uploadArea.addEventListener('click', function(e) {
+                if (e.target !== removePhotoBtn && !removePhotoBtn?.contains(e.target)) {
+                    if (photoInput) photoInput.click();
+                }
+            });
+            
+            uploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                uploadArea.style.borderColor = 'var(--primary)';
+                uploadArea.style.background = 'rgba(26, 79, 160, 0.05)';
+            });
+            
+            uploadArea.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                uploadArea.style.borderColor = 'var(--border)';
+                uploadArea.style.background = 'var(--bg2)';
+            });
+            
+            uploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                uploadArea.style.borderColor = 'var(--border)';
+                uploadArea.style.background = 'var(--bg2)';
+                
+                const file = e.dataTransfer.files[0];
+                if (file && photoInput) {
+                    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+                    if (!allowedTypes.includes(file.type)) {
+                        alert('Please upload only PNG, JPG, or JPEG files.');
+                        return;
+                    }
+                    
+                    if (file.size > 2 * 1024 * 1024) {
+                        alert('File size must be less than 2MB.');
+                        return;
+                    }
+                    
+                    photoInput.files = e.dataTransfer.files;
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        previewImage.src = event.target.result;
+                        uploadPlaceholder.style.display = 'none';
+                        photoPreview.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        // Track unsaved changes
+        const form = document.getElementById('editForm');
+        const cancelBtn = document.querySelector('.btn-ghost[asp-action="Index"]');
+        let formChanged = false;
+        
+        if (form) {
+            form.addEventListener('input', function() {
+                formChanged = true;
+            });
+        }
+        
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', function(e) {
+                if (formChanged) {
+                    if (!confirm('You have unsaved changes. Are you sure you want to leave?')) {
+                        e.preventDefault();
+                    }
+                }
+            });
+        }
+
+        // Initialize preview
+        updatePreview();
+    });
+</script>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

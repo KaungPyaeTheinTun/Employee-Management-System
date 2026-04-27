@@ -261,6 +261,26 @@
       "PackagePath": "staticwebassets/lib/jquery/dist/jquery.min.map"
     },
     {
+      "Id": "/app/wwwroot/uploads/AssetPhoto_20260427070525_photo_2026-04-25 14.36.07.jpeg",
+      "PackagePath": "staticwebassets/uploads/AssetPhoto_20260427070525_photo_2026-04-25 14.36.07.jpeg"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/AssetPhoto_20260427072922_photo_2026-04-26 22.04.39.jpeg",
+      "PackagePath": "staticwebassets/uploads/AssetPhoto_20260427072922_photo_2026-04-26 22.04.39.jpeg"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/AssetPhoto_20260427073821_photo_2026-04-25 14.36.07.jpeg",
+      "PackagePath": "staticwebassets/uploads/AssetPhoto_20260427073821_photo_2026-04-25 14.36.07.jpeg"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/AssetPhoto_20260427094846_photo_2026-04-26 22.04.48.jpeg",
+      "PackagePath": "staticwebassets/uploads/AssetPhoto_20260427094846_photo_2026-04-26 22.04.48.jpeg"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/AssetPhoto_20260427101859_photo_2026-04-26 22.04.48.jpeg",
+      "PackagePath": "staticwebassets/uploads/AssetPhoto_20260427101859_photo_2026-04-26 22.04.48.jpeg"
+    },
+    {
       "Id": "/app/wwwroot/uploads/EmployeePhoto_20260322133650_Gemini_Generated_Image_qph720qph720qph7.png",
       "PackagePath": "staticwebassets/uploads/EmployeePhoto_20260322133650_Gemini_Generated_Image_qph720qph720qph7.png"
     },
@@ -449,6 +469,10 @@
       "PackagePath": "staticwebassets/uploads/EmployeePhoto_20260424063214_Gemini_Generated_Image_qph720qph720qph7.png"
     },
     {
+      "Id": "/app/wwwroot/uploads/EmployeePhoto_20260427105648_photo_2026-04-25 14.36.07.jpeg",
+      "PackagePath": "staticwebassets/uploads/EmployeePhoto_20260427105648_photo_2026-04-25 14.36.07.jpeg"
+    },
+    {
       "Id": "/app/wwwroot/uploads/LeaveAttachment20260924040902_Gemini_Generated_Image_qph720qph720qph7.png",
       "PackagePath": "staticwebassets/uploads/LeaveAttachment20260924040902_Gemini_Generated_Image_qph720qph720qph7.png"
     },
@@ -487,6 +511,62 @@
     {
       "Id": "/app/wwwroot/uploads/Leave_20260424084912_Gemini_Generated_Image_qph720qph720qph7.png",
       "PackagePath": "staticwebassets/uploads/Leave_20260424084912_Gemini_Generated_Image_qph720qph720qph7.png"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/Leave_20260424151823_Gemini_Generated_Image_qph720qph720qph7.png",
+      "PackagePath": "staticwebassets/uploads/Leave_20260424151823_Gemini_Generated_Image_qph720qph720qph7.png"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/Leave_20260424151832_Gemini_Generated_Image_qph720qph720qph7.png",
+      "PackagePath": "staticwebassets/uploads/Leave_20260424151832_Gemini_Generated_Image_qph720qph720qph7.png"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/Leave_20260424151840_Gemini_Generated_Image_qph720qph720qph7.png",
+      "PackagePath": "staticwebassets/uploads/Leave_20260424151840_Gemini_Generated_Image_qph720qph720qph7.png"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/Leave_20260424151846_Gemini_Generated_Image_qph720qph720qph7.png",
+      "PackagePath": "staticwebassets/uploads/Leave_20260424151846_Gemini_Generated_Image_qph720qph720qph7.png"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/Leave_20260424151859_gautama-buddha-3840x2160-15438.jpg",
+      "PackagePath": "staticwebassets/uploads/Leave_20260424151859_gautama-buddha-3840x2160-15438.jpg"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/Leave_20260424151942_fall-foliage-aerial-3840x2160-25382.jpg",
+      "PackagePath": "staticwebassets/uploads/Leave_20260424151942_fall-foliage-aerial-3840x2160-25382.jpg"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/Leave_20260424152023_Gemini_Generated_Image_qph720qph720qph7.png",
+      "PackagePath": "staticwebassets/uploads/Leave_20260424152023_Gemini_Generated_Image_qph720qph720qph7.png"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/Leave_20260424152444_Gemini_Generated_Image_qph720qph720qph7.png",
+      "PackagePath": "staticwebassets/uploads/Leave_20260424152444_Gemini_Generated_Image_qph720qph720qph7.png"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/Leave_20260424152508_Gemini_Generated_Image_qph720qph720qph7.png",
+      "PackagePath": "staticwebassets/uploads/Leave_20260424152508_Gemini_Generated_Image_qph720qph720qph7.png"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/Leave_20260424152559_Gemini_Generated_Image_qph720qph720qph7.png",
+      "PackagePath": "staticwebassets/uploads/Leave_20260424152559_Gemini_Generated_Image_qph720qph720qph7.png"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/Leave_20260424152903_Gemini_Generated_Image_qph720qph720qph7.png",
+      "PackagePath": "staticwebassets/uploads/Leave_20260424152903_Gemini_Generated_Image_qph720qph720qph7.png"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/Leave_20260424153556_Gemini_Generated_Image_qph720qph720qph7.png",
+      "PackagePath": "staticwebassets/uploads/Leave_20260424153556_Gemini_Generated_Image_qph720qph720qph7.png"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/Leave_20260424153826_Gemini_Generated_Image_qph720qph720qph7.png",
+      "PackagePath": "staticwebassets/uploads/Leave_20260424153826_Gemini_Generated_Image_qph720qph720qph7.png"
+    },
+    {
+      "Id": "/app/wwwroot/uploads/Leave_20260427023920_photo_2026-04-25 14.36.07.jpeg",
+      "PackagePath": "staticwebassets/uploads/Leave_20260427023920_photo_2026-04-25 14.36.07.jpeg"
     },
     {
       "Id": "/app/wwwroot/uploads/logo_20260406082645_photo_2026-02-18 16.41.34.jpeg",

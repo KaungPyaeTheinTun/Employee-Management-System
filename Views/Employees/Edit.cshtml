@@ -277,33 +277,6 @@
         </div>
     </div>
 
-    <!-- Audit Info (read-only) -->
-    <div class="form-card" style="margin-bottom:16px">
-        <div class="form-card-header">
-            <span class="section-badge neutral">Audit Trail</span>
-        </div>
-        <div class="form-card-body">
-            <div class="audit-row">
-                <div class="audit-cell">
-                    <div class="audit-cell-label">CREATED BY</div>
-                    <div class="audit-cell-value">@(Model.CreatedById ?? "System")</div>
-                </div>
-                <div class="audit-cell">
-                    <div class="audit-cell-label">CREATED ON</div>
-                    <div class="audit-cell-value">@Model.CreatedOn.ToString("dd MMM yyyy HH:mm")</div>
-                </div>
-                <div class="audit-cell">
-                    <div class="audit-cell-label">MODIFIED BY</div>
-                    <div class="audit-cell-value">@(Model.ModifiedById ?? "—")</div>
-                </div>
-                <div class="audit-cell">
-                    <div class="audit-cell-label">MODIFIED ON</div>
-                    <div class="audit-cell-value">@(Model.ModifiedOn.ToString("dd MMM yyyy HH:mm") ?? "—")</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Actions -->
     <div class="form-actions" style="border-top:none;padding-top:0">
         <a asp-action="Index" class="btn-ghost">Cancel</a>

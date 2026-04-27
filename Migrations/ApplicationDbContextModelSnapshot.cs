@@ -335,6 +335,60 @@ namespace EmployeeManagement.Migrations
                     b.ToTable("Cities");
                 });
 
+            modelBuilder.Entity("EmployeesManagement.Models.Client", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ModifiedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("ModifiedById");
+
+                    b.HasIndex("StatusId");
+
+                    b.ToTable("Clients");
+                });
+
             modelBuilder.Entity("EmployeesManagement.Models.CompanyInformation", b =>
                 {
                     b.Property<int>("Id")
@@ -663,6 +717,80 @@ namespace EmployeeManagement.Migrations
                     b.ToTable("Employees");
                 });
 
+            modelBuilder.Entity("EmployeesManagement.Models.FixedAsset", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AssetNo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CreatedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("LocationId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Model")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ModifiedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Photo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("PurchaseDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ResponsibleEmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SerialNo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("LocationId");
+
+                    b.HasIndex("ModifiedById");
+
+                    b.HasIndex("ResponsibleEmployeeId");
+
+                    b.HasIndex("StatusId");
+
+                    b.ToTable("FixedAssets");
+                });
+
             modelBuilder.Entity("EmployeesManagement.Models.Holiday", b =>
                 {
                     b.Property<int>("Id")
@@ -815,7 +943,7 @@ namespace EmployeeManagement.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("RejectedById")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("RejectedOn")
                         .HasColumnType("datetime2");
@@ -839,6 +967,8 @@ namespace EmployeeManagement.Migrations
                     b.HasIndex("LeaveTypeId");
 
                     b.HasIndex("ModifiedById");
+
+                    b.HasIndex("RejectedById");
 
                     b.HasIndex("StatusId");
 
@@ -1402,6 +1532,29 @@ namespace EmployeeManagement.Migrations
                     b.Navigation("Country");
                 });
 
+            modelBuilder.Entity("EmployeesManagement.Models.Client", b =>
+                {
+                    b.HasOne("EmployeeManagement.Models.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("EmployeeManagement.Models.ApplicationUser", "ModifiedBy")
+                        .WithMany()
+                        .HasForeignKey("ModifiedById");
+
+                    b.HasOne("EmployeesManagement.Models.SystemCodeDetail", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("ModifiedBy");
+
+                    b.Navigation("Status");
+                });
+
             modelBuilder.Entity("EmployeesManagement.Models.CompanyInformation", b =>
                 {
                     b.HasOne("EmployeesManagement.Models.City", "City")
@@ -1541,6 +1694,49 @@ namespace EmployeeManagement.Migrations
                     b.Navigation("Status");
                 });
 
+            modelBuilder.Entity("EmployeesManagement.Models.FixedAsset", b =>
+                {
+                    b.HasOne("EmployeesManagement.Models.SystemCodeDetail", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId");
+
+                    b.HasOne("EmployeeManagement.Models.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("EmployeesManagement.Models.SystemCodeDetail", "Location")
+                        .WithMany()
+                        .HasForeignKey("LocationId");
+
+                    b.HasOne("EmployeeManagement.Models.ApplicationUser", "ModifiedBy")
+                        .WithMany()
+                        .HasForeignKey("ModifiedById");
+
+                    b.HasOne("EmployeesManagement.Models.Employee", "ResponsibleEmployee")
+                        .WithMany()
+                        .HasForeignKey("ResponsibleEmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EmployeesManagement.Models.SystemCodeDetail", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("Location");
+
+                    b.Navigation("ModifiedBy");
+
+                    b.Navigation("ResponsibleEmployee");
+
+                    b.Navigation("Status");
+                });
+
             modelBuilder.Entity("EmployeesManagement.Models.Holiday", b =>
                 {
                     b.HasOne("EmployeeManagement.Models.ApplicationUser", "CreatedBy")
@@ -1625,6 +1821,10 @@ namespace EmployeeManagement.Migrations
                         .WithMany()
                         .HasForeignKey("ModifiedById");
 
+                    b.HasOne("EmployeeManagement.Models.ApplicationUser", "RejectedBy")
+                        .WithMany()
+                        .HasForeignKey("RejectedById");
+
                     b.HasOne("EmployeesManagement.Models.SystemCodeDetail", "Status")
                         .WithMany()
                         .HasForeignKey("StatusId")
@@ -1642,6 +1842,8 @@ namespace EmployeeManagement.Migrations
                     b.Navigation("LeaveType");
 
                     b.Navigation("ModifiedBy");
+
+                    b.Navigation("RejectedBy");
 
                     b.Navigation("Status");
                 });
